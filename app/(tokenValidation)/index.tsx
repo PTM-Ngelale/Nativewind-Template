@@ -5,6 +5,7 @@ import {
   View,
   Image,
   TextInput,
+  KeyboardAvoidingView,
 } from "react-native";
 import CustomButton from "@/components/ui/CustomButton";
 import { useState } from "react";
@@ -25,41 +26,43 @@ const index = () => {
 
   return (
     <SafeAreaView className="h-full bg-white">
-      <ScrollView className="w-full h-full flex-col  relative">
-        <View className="px-4 flex-col space-y-[25px] top-[50%]">
-          <View className="w-full flex-row justify-center">
-            <Image source={require("@/assets/images/logo.png")} />
-          </View>
-          <Text className="text-center p-4 bg-[#F8F8F8] rounded-xl">
-            Loremm ipsum dolor sit amet consectetur. Congue magna arcu sapien
-            sed duis dolor enim.
-          </Text>
-          <View className="flex-col space-y-[25px]">
-            <View className="w-full flex-row justify-center bg-[#F8F8F8] p-4 rounded-xl">
-              <TextInput
-                placeholder="Input Company Token"
-                placeholderTextColor="#000000"
-                className="w-full text-center"
-                value={token}
-                onChangeText={setToken}
-              />
+      <KeyboardAvoidingView enabled behavior="position">
+        <ScrollView className="w-full h-full flex-col  relative">
+          <View className="px-4 flex-col space-y-[25px] top-[50%]">
+            <View className="w-full flex-row justify-center">
+              <Image source={require("@/assets/images/logo.png")} />
             </View>
-            {errorMessage ? (
-              <Text className="text-red-500 text-center mt-2">
-                {errorMessage}
-              </Text>
-            ) : null}
-            <View>
-              <CustomButton
-                title="Continue"
-                onPress={handleContinue}
-                customStyle="bg-[#192655]"
-                textStyle="text-white"
-              />
+            <Text className="text-center p-4 bg-[#F8F8F8] rounded-xl">
+              Loremm ipsum dolor sit amet consectetur. Congue magna arcu sapien
+              sed duis dolor enim.
+            </Text>
+            <View className="flex-col space-y-[25px]">
+              <View className="w-full flex-row justify-center bg-[#F8F8F8] p-4 rounded-xl">
+                <TextInput
+                  placeholder="Input Company Token"
+                  placeholderTextColor="#000000"
+                  className="w-full text-center"
+                  value={token}
+                  onChangeText={setToken}
+                />
+              </View>
+              {errorMessage ? (
+                <Text className="text-red-500 text-center mt-2">
+                  {errorMessage}
+                </Text>
+              ) : null}
+              <View>
+                <CustomButton
+                  title="Continue"
+                  onPress={handleContinue}
+                  customStyle="bg-[#192655]"
+                  textStyle="text-white"
+                />
+              </View>
             </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
