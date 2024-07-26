@@ -61,7 +61,7 @@ export default function HomeScreen() {
       </MapView>
       <View className="h-[20vh] w-[13%] bg-[#00000040] absolute bottom-5 right-5 rounded-full items-center justify-between">
         <TouchableOpacity
-          onPress={() => router.push("/(modals)/Sos")}
+          onPress={() => router.push("/(modals)/Report")}
           activeOpacity={0.8}
           className="items-center pt-3 gap-y-2"
         >
