@@ -1,11 +1,17 @@
-import { View, Text } from "react-native";
+import { View, Text, ScrollView } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import BackArrow from "@/components/ui/BackArrow";
+import ImageUpload from "@/components/ui/ImageUpload";
 import React from "react";
 
 const Profile = () => {
   return (
-    <View>
-      <Text>Profile</Text>
-    </View>
+    <SafeAreaView className="h-full bg-white">
+      <ScrollView className="h-full px-4">
+        <BackArrow label="My Profile" />
+        <ImageUpload />
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

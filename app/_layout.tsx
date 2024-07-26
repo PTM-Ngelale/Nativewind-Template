@@ -36,6 +36,8 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
       </Stack>
+
+      {/* <Stack.Screen name="(tokenValidation)" options={{ headerShown: false }} /> */}
     </ThemeProvider>
   );
 }
