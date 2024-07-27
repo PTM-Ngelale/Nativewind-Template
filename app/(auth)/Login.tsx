@@ -43,7 +43,7 @@ const Login = () => {
 
   const handleContinue = () => {
     if (validateForm()) {
-      router.push("/(auth)");
+      router.push("/(tabs)");
     }
   };
   return (

@@ -6,7 +6,9 @@ import {
   FlatList,
   TouchableOpacity,
 } from "react-native";
+import CustomButton from "@/components/ui/CustomButton";
 import React from "react";
+import { Link, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 
@@ -31,7 +33,7 @@ const MenuNavigation = [
 const Menu = () => {
   return (
     <SafeAreaView className="bg-white h-full">
-      <ScrollView className="h-full relative bg-white">
+      <View className="h-full relative bg-white">
         <View className="w-full bg-[#192655] px-4 py-4">
           <Image
             resizeMode="contain"
@@ -39,20 +41,30 @@ const Menu = () => {
             source={require("../../../assets/images/Alarmix_logo.png")}
           />
         </View>
-        <View className="px-4 py-4">
+        <View className="px-4">
           <FlatList
             data={MenuNavigation}
             keyExtractor={(item) => item.name}
             className=""
             renderItem={({ item }) => (
-              <TouchableOpacity className="py-4 last:border-b-none border-b border-b-[#D9D9D9] flex flex-row items-center space-x-4">
+              <TouchableOpacity
+                onPress={() => router.push(item.link)}
+                className="py-4 last:border-b-none border-b border-b-[#D9D9D9] flex flex-row items-center space-x-4"
+              >
                 {item.icon}
                 <Text>{item.name}</Text>
               </TouchableOpacity>
             )}
           />
         </View>
-      </ScrollView>
+        <View className="px-4 absolute w-full bottom-2">
+          <CustomButton
+            title="Eleme Group"
+            textStyle="text-[#F8BD00]"
+            customStyle="bg-[#ffffff] border-[1px] border-solid border-[#F8BD00]"
+          />
+        </View>
+      </View>
     </SafeAreaView>
   );
 };
