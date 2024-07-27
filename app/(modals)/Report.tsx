@@ -54,7 +54,7 @@ const Report = () => {
     if (selectedEmergency && selectedEmergency.length > 0) {
       setEmergency(selectedEmergency);
       // router.dismiss(1);
-      router.replace("/");
+      router.replace("/(tabs)");
     }
   };
   return (
