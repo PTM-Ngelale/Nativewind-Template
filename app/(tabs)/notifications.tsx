@@ -64,35 +64,26 @@ const notifications = () => {
   ];
   return (
     <SafeAreaView className="h-full w-full bg-slate-100">
-      <View className="px-4">
-        <FlatList
-          data={notifs}
-          style={{}}
-        //   contentContainerStyle={{ paddingBottom: 20 }}
-          renderItem={({ item, index }) => (
-            <TouchableOpacity
-              activeOpacity={0.9}
-              key={index}
-              className="flex items-center flex-row gap-x-4 mt-4 bg-white p-3 border border-[#19265580] rounded-xl"
-            >
-              <Image
-                source={require("../../assets/images/Alert.png")}
-                className="w-[37px] h-[40px]"
-                resizeMode="contain"
-              />
-              <View>
-                <Text>{item.title}</Text>
-                <Text>{item.user}</Text>
-                <Text className="">
-                  {item.distance}
-                </Text>
-                <Text className="">
-                  {item.Location}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          )}
-        />
+      <View className="mx-4">
+        {notifs.map((item, index) => (
+          <TouchableOpacity
+            activeOpacity={0.9}
+            key={index}
+            className="flex items-center flex-row mt-4 bg-white p-3 border border-[#19265580] rounded-xl"
+          >
+            <Image
+              source={require("../../assets/images/Alert.png")}
+              className="w-[37px] h-[40px]"
+              resizeMode="contain"
+            />
+            <View className="ml-4">
+              <Text className="text-sm font-bold">{item.title}</Text>
+              <Text className="text-sm">{item.user}</Text>
+              <Text className="text-sm">{item.distance}</Text>
+              <Text className="text-sm">{item.Location}</Text>
+            </View>
+          </TouchableOpacity>
+        ))}
       </View>
       <StatusBar backgroundColor="#000000" style="dark" />
     </SafeAreaView>
