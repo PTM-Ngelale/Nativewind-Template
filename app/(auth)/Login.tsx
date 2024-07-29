@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import CustomTextInput from "@/components/ui/CustomInput";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, Link } from "expo-router";
 
 const Login = () => {
@@ -47,6 +47,17 @@ const Login = () => {
       router.push("/(auth)/Validation");
     }
   };
+
+  useEffect(() => {
+    if (errorMessage) {
+      const timer = setTimeout(() => {
+        setErrorMessage("");
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [errorMessage]);
+
   return (
     <SafeAreaView className="bg-white h-full">
       <KeyboardAvoidingView enabled behavior="position">
@@ -111,7 +122,7 @@ const Login = () => {
                     </View>
                     <View className="flex-row space-x-1">
                       <Text>Don't have an account?</Text>
-                      <Link href={"/(auth)"}>
+                      <Link href={"/(auth)/SignUp"}>
                         <Text className="text-[#192655] font-bold">
                           Sign Up
                         </Text>

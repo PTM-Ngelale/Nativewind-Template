@@ -8,11 +8,11 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 import CustomTextInput from "@/components/ui/CustomInput";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, Link } from "expo-router";
 import { TouchableOpacity } from "react-native";
 
-const index = () => {
+const SignUp = () => {
   const router = useRouter();
 
   const handleBack = () => {
@@ -47,6 +47,16 @@ const index = () => {
       router.push("/(auth)/Validation");
     }
   };
+
+  useEffect(() => {
+    if (errorMessage) {
+      const timer = setTimeout(() => {
+        setErrorMessage("");
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [errorMessage]);
 
   return (
     <SafeAreaView className="bg-white h-full">
@@ -127,4 +137,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default SignUp;

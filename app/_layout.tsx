@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { EmergencyProvider } from "@/context/EmergencyContext";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -32,20 +33,30 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      {/* <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack> */}
-
-      <Stack>
-        <Stack.Screen
-          name="(tokenValidation)"
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-
-        <Stack.Screen name="+not-found" />
-      </Stack>
+      <EmergencyProvider>
+        <Stack>
+          {/* <Stack.Screen name="index" options={{ headerShown: false }} /> */}
+          <Stack.Screen
+            name="(tokenValidation)"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          {/* <Stack.Screen
+            name="(tokenValidation)"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="(modals)/Report"
+            options={{
+              presentation: "modal",
+              headerShown: false,
+              animation: "simple_push",
+            }}
+          />
+          <Stack.Screen name="+not-found" /> */}
+        </Stack>
+      </EmergencyProvider>
     </ThemeProvider>
   );
 }
