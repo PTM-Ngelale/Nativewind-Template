@@ -61,6 +61,7 @@ export default function TabLayout() {
         name="notifications"
         options={{
           title: "Notifications",
+          headerShown: true,
           tabBarIcon: ({ color, focused }) => (
             <TabIcon
               icon={"notifications"}
