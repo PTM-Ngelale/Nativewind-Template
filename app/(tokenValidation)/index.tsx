@@ -5,7 +5,6 @@ import {
   View,
   Image,
   TextInput,
-  KeyboardAvoidingView,
 } from "react-native";
 import CustomButton from "@/components/ui/CustomButton";
 import { useState } from "react";
@@ -26,9 +25,9 @@ const index = () => {
 
   return (
     <SafeAreaView className="h-full bg-white">
-      <KeyboardAvoidingView enabled behavior="position">
-        <ScrollView className="w-full h-full flex-col  relative">
-          <View className="px-4 flex-col space-y-[25px] top-[50%]">
+      <ScrollView contentContainerStyle={{ height: "100%" }}>
+        <View className="w-full justify-center items-center min-h-[85vh] px-4 ">
+          <View className="flex-col space-y-[25px] w-full">
             <View className="w-full flex-row justify-center">
               <Image source={require("@/assets/images/logo.png")} />
             </View>
@@ -61,8 +60,8 @@ const index = () => {
               </View>
             </View>
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
