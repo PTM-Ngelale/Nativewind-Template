@@ -37,7 +37,7 @@ const index = () => {
 
   const handleContinue = () => {
     if (validateForm()) {
-      router.push("/(auth)");
+      router.push("/(tabs)");
     }
   };
 

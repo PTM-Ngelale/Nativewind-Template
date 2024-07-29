@@ -3,13 +3,13 @@ import {
   Text,
   ScrollView,
   Image,
+  SafeAreaView,
   FlatList,
   TouchableOpacity,
 } from "react-native";
 import CustomButton from "@/components/ui/CustomButton";
 import React from "react";
-import { Link, router } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { router } from "expo-router";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 
 const MenuNavigation = [
@@ -20,7 +20,7 @@ const MenuNavigation = [
   },
   {
     name: "Settings",
-    link: "/profile",
+    link: "/settings",
     icon: <TabBarIcon name={"settings"} color={"#192655"} />,
   },
   {
@@ -33,7 +33,7 @@ const MenuNavigation = [
 const Menu = () => {
   return (
     <SafeAreaView className="bg-white h-full">
-      <View className="h-full relative bg-white">
+      <ScrollView className="h-full relative">
         <View className="w-full bg-[#192655] px-4 py-4">
           <Image
             resizeMode="contain"
@@ -45,7 +45,8 @@ const Menu = () => {
           <FlatList
             data={MenuNavigation}
             keyExtractor={(item) => item.name}
-            className=""
+            contentContainerStyle={{ height: "100%" }}
+            scrollEnabled={false}
             renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() => router.push(item.link)}
@@ -57,14 +58,14 @@ const Menu = () => {
             )}
           />
         </View>
-        <View className="px-4 absolute w-full bottom-2">
+        <View className="w-full absolute bottom-[-450px] px-4 ">
           <CustomButton
             title="Eleme Group"
             textStyle="text-[#F8BD00]"
-            customStyle="bg-[#ffffff] border-[1px] border-solid border-[#F8BD00]"
+            customStyle="bg-[#fdf6da] border-[1px] border-solid border-[#F8BD00]"
           />
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

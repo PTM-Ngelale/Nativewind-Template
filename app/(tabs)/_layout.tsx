@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 // import { Colors } from "@/constants/Colors";
 // import { useColorScheme } from "@/hooks/useColorScheme";
-import { View, Image, Text } from "react-native";
+import { View, Image, Text, StatusBar } from "react-native";
 
 const TabIcon = ({
   icon,
@@ -57,8 +57,8 @@ export default function TabLayout() {
           ),
         }}
       />
-      {/* <Tabs.Screen
-        name="notification"
+      <Tabs.Screen
+        name="notifications"
         options={{
           title: "Notifications",
           tabBarIcon: ({ color, focused }) => (
@@ -70,7 +70,7 @@ export default function TabLayout() {
             />
           ),
         }}
-      /> */}
+      />
       <Tabs.Screen
         name="(menu)"
         options={{
@@ -85,6 +85,7 @@ export default function TabLayout() {
           ),
         }}
       />
+      {/* <StatusBar backgroundColor='#000000' /> */}
     </Tabs>
   );
 }
