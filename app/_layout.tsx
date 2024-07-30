@@ -36,13 +36,13 @@ export default function RootLayout() {
       <EmergencyProvider>
         <Stack>
           {/* <Stack.Screen name="index" options={{ headerShown: false }} /> */}
-          {/* <Stack.Screen
+          <Stack.Screen
             name="(tokenValidation)"
             options={{ headerShown: false }}
-          /> */}
-          {/* <Stack.Screen name="(auth)" options={{ headerShown: false }} /> */}
+          />
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          {/* <Stack.Screen
+          <Stack.Screen
             name="(modals)/Report"
             options={{
               presentation: "modal",
@@ -50,7 +50,7 @@ export default function RootLayout() {
               animation: "simple_push",
             }}
           />
-          <Stack.Screen name="+not-found" /> */}
+          <Stack.Screen name="+not-found" />
         </Stack>
       </EmergencyProvider>
     </ThemeProvider>

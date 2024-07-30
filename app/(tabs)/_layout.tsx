@@ -4,7 +4,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 // import { Colors } from "@/constants/Colors";
 // import { useColorScheme } from "@/hooks/useColorScheme";
-import { View, Image, Text, StatusBar } from "react-native";
+import { View, Image, Text } from "react-native";
+import { StatusBar } from "expo-status-bar";
 
 const TabIcon = ({
   icon,
@@ -35,58 +36,65 @@ const TabIcon = ({
 
 export default function TabLayout() {
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: "#FFFFFF",
-        tabBarInactiveTintColor: "#BDBDBD",
-        headerShown: false,
-        tabBarShowLabel: false,
-        tabBarStyle: {
-          backgroundColor: "#192655",
-          height: 100,
-          paddingVertical: 10,
-        },
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Home",
-          tabBarIcon: ({ color, focused }) => (
-            <TabIcon icon={"map"} color={color} name="Home" focused={focused} />
-          ),
+    <>
+      <Tabs
+        screenOptions={{
+          tabBarActiveTintColor: "#FFFFFF",
+          tabBarInactiveTintColor: "#BDBDBD",
+          headerShown: false,
+          tabBarShowLabel: false,
+          tabBarStyle: {
+            backgroundColor: "#192655",
+            height: 100,
+            paddingVertical: 10,
+          },
         }}
-      />
-      <Tabs.Screen
-        name="notifications"
-        options={{
-          title: "Notifications",
-          headerShown: true,
-          tabBarIcon: ({ color, focused }) => (
-            <TabIcon
-              icon={"notifications"}
-              color={color}
-              name="Notifications"
-              focused={focused}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="(menu)"
-        options={{
-          title: "Menu",
-          tabBarIcon: ({ color, focused }) => (
-            <TabIcon
-              icon={"menu"}
-              color={color}
-              name="Menu"
-              focused={focused}
-            />
-          ),
-        }}
-      />
-      {/* <StatusBar backgroundColor='#000000' /> */}
-    </Tabs>
+      >
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: "Home",
+            tabBarIcon: ({ color, focused }) => (
+              <TabIcon
+                icon={"map"}
+                color={color}
+                name="Home"
+                focused={focused}
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="notifications"
+          options={{
+            title: "Notifications",
+            headerShown: true,
+            tabBarIcon: ({ color, focused }) => (
+              <TabIcon
+                icon={"notifications"}
+                color={color}
+                name="Notifications"
+                focused={focused}
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="(menu)"
+          options={{
+            title: "Menu",
+            tabBarIcon: ({ color, focused }) => (
+              <TabIcon
+                icon={"menu"}
+                color={color}
+                name="Menu"
+                focused={focused}
+              />
+            ),
+          }}
+        />
+      </Tabs>
+      <StatusBar backgroundColor="#FFFFFF" style="light" />
+    </>
   );
 }

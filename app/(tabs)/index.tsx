@@ -13,15 +13,16 @@ import {
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
+import SosModal from "@/components/SosModal";
 // import GeoLocation
 
 export default function HomeScreen() {
   // const [userlocation, setUserLocation] = React.useState();
 
   const [emergencyModal, setEmergencyModal] = React.useState(false);
+  const [sosModal, setSosModal] = React.useState(false);
 
   const { emergency } = useEmergency();
-  console.log("Emergency", emergency);
 
   useEffect(() => {
     if (emergency) {
@@ -104,7 +105,7 @@ export default function HomeScreen() {
     }
   };
 
-  console.log(displayCurrentAddress)
+  console.log(displayCurrentAddress);
 
   const requestPermissionAgain = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -149,6 +150,7 @@ export default function HomeScreen() {
         <View className="w-full h-[2px] bg-[#FFFFFF80]"></View>
 
         <TouchableOpacity
+          onPress={() => setSosModal(!sosModal)}
           activeOpacity={0.8}
           className="pb-4 items-center gap-y-2"
         >
@@ -166,6 +168,10 @@ export default function HomeScreen() {
           emergencyModal={emergencyModal}
           setEmergencyModal={setEmergencyModal}
         />
+      </View>
+
+      <View>
+        <SosModal sosModal={sosModal} setSosModal={setSosModal} />
       </View>
     </View>
   );
