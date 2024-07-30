@@ -5,6 +5,7 @@ import {
   Text,
   Image,
   TouchableOpacity,
+  StyleSheet,
 } from "react-native";
 import CustomButton from "@/components/ui/CustomButton";
 import OTPTextView from "react-native-otp-textinput";
@@ -18,10 +19,35 @@ const Validation = () => {
   };
 
   const [otp, setOtp] = useState("");
+  const [error, setError] = useState("");
 
   const handleOtpChange = (otp: any) => {
     setOtp(otp);
+    setError("");
   };
+
+  const handleValidation = () => {
+    if (otp !== "00000") {
+      setError("Invalid OTP. Please try again.");
+    } else {
+      router.push("/(tabs)");
+    }
+  };
+
+  const styles = StyleSheet.create({
+    inputCell: {
+      borderWidth: 1,
+
+      borderColor: "#F8F8F8",
+      backgroundColor: "#F8F8F8",
+      width: 40,
+      height: 40,
+      textAlign: "center",
+      borderBottomWidth: 1,
+      borderRadius: 5,
+    },
+  });
+
   return (
     <SafeAreaView className="h-full bg-white">
       <ScrollView contentContainerStyle={{ height: "100%" }}>
@@ -46,18 +72,22 @@ const Validation = () => {
                 autoFocus={true}
                 tintColor="#2196F3"
                 offTintColor="#787878"
-                containerStyle={{ width: 40 }}
+                containerStyle={{ justifyContent: "space-between" }}
+                inputCellLength={1}
+                textInputStyle={styles.inputCell}
                 handleTextChange={handleOtpChange}
               />
-
-              <Text className="">
+              {error && (
+                <Text className="text-red-500 text-[12px]">{error}</Text>
+              )}
+              <Text>
                 Code not sent?{" "}
                 <Text className="text-[#192655] font-bold">Resend Code</Text>
               </Text>
             </View>
             <View className="mt-[300px]">
               <CustomButton
-                onPress={() => router.push("/(tabs)")}
+                onPress={handleValidation}
                 title="Validate"
                 customStyle="bg-[#192655]"
                 textStyle="text-white"
