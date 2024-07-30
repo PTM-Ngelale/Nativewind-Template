@@ -13,6 +13,7 @@ import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { EmergencyProvider } from "@/context/EmergencyContext";
 import { TouchableOpacity, View, Image, SafeAreaView } from "react-native";
+import { StatusBar } from "expo-status-bar";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -59,6 +60,7 @@ export default function RootLayout() {
           <Stack.Screen name="+not-found" />
         </Stack>
       </EmergencyProvider>
+      <StatusBar backgroundColor="#FFFFFF" style="dark" />
     </ThemeProvider>
   );
 }
