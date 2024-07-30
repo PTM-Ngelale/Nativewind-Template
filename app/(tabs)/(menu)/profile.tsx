@@ -5,8 +5,14 @@ import CustomTextInput from "@/components/ui/CustomInput";
 import CustomButton from "@/components/ui/CustomButton";
 import ImageUpload from "@/components/ui/ImageUpload";
 import React from "react";
+import { useRouter } from "expo-router";
 
 const Profile = () => {
+  const router = useRouter();
+
+  const handleBack = () => {
+    router.back();
+  };
   return (
     <KeyboardAvoidingView
       className="flex-1 flex items-start"
