@@ -17,6 +17,7 @@ const Login = () => {
 
   const handleBack = () => {
     router.back();
+    // router.push("/(tokenValidation)/onBoarding");
   };
   const [form, setForm] = useState({
     email: "",
@@ -62,12 +63,21 @@ const Login = () => {
     <SafeAreaView className="bg-white h-full">
       <KeyboardAvoidingView enabled behavior="position">
         <ScrollView contentContainerStyle={{ height: "100%" }}>
-          <View className="w-full justify-center items-center min-h-[85vh]">
-            <View className="px-4 w-full h-full flex-col">
+          <View className="relative h-full">
+            <View className=" relative h-full">
+              <TouchableOpacity
+                className="absolute top-5 left-5 z-10"
+                onPress={handleBack}
+              >
+                <Image source={require("@/assets/images/left-white.png")} />
+              </TouchableOpacity>
+              <Image
+                source={require("@/assets/images/heroBg.png")}
+                className="w-full rounded-[8px]"
+              />
+            </View>
+            <View className="absolute -bottom-20 w-full flex-col px-4 justify-center items-center h-full ">
               <View className="max-w-[312px]  mx-auto flex-col space-y-[25px] ">
-                <TouchableOpacity onPress={handleBack}>
-                  <Image source={require("@/assets/images/left.png")} />
-                </TouchableOpacity>
                 <View className="flex-col space-y-[15px]">
                   <View className="flex-col space-y-2">
                     <Text className="font-[700] text-[#192655] text-[24px]">
@@ -78,12 +88,7 @@ const Login = () => {
                       security. To continue please fill in your details
                     </Text>
                   </View>
-                  <View className="w-full  flex-row justify-center">
-                    <Image
-                      source={require("@/assets/images/heroImg.png")}
-                      className="w-[312px] rounded-[8px]"
-                    />
-                  </View>
+
                   <View className="flex-col space-y-[25px]">
                     <View className="space-y-[15px]">
                       <View>

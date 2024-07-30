@@ -106,7 +106,7 @@ const notifications = () => {
                 <TouchableOpacity
                   activeOpacity={0.9}
                   key={index}
-                  className="flex items-center flex-row mt-4 bg-white p-3 border border-[#19265580] rounded-xl"
+                  className="flex items-center flex-row mt-4 bg-white p-3 border border-[#192655] border-opacity-50 rounded-xl"
                 >
                   <Image
                     source={require("../../assets/images/Alert.png")}
