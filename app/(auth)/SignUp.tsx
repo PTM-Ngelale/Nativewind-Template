@@ -6,13 +6,13 @@ import {
   Text,
   Image,
   KeyboardAvoidingView,
-  TouchableOpacity,
 } from "react-native";
 import CustomTextInput from "@/components/ui/CustomInput";
 import { useState, useEffect } from "react";
 import { useRouter, Link } from "expo-router";
+import { TouchableOpacity } from "react-native";
 
-const Login = () => {
+const SignUp = () => {
   const router = useRouter();
 
   const handleBack = () => {
@@ -71,11 +71,11 @@ const Login = () => {
                 <View className="flex-col space-y-[15px]">
                   <View className="flex-col space-y-2">
                     <Text className="font-[700] text-[#192655] text-[24px]">
-                      Login
+                      Sign Up
                     </Text>
                     <Text className="text-[12px]">
-                      Welcome back to Whistler, your go to app for safety &
-                      security. To continue please fill in your details
+                      Welcome to Whistler, your go to app for safety & security.
+                      To continue please fill in your details
                     </Text>
                   </View>
                   <View className="w-full  flex-row justify-center">
@@ -114,18 +114,16 @@ const Login = () => {
                     ) : null}
                     <View>
                       <CustomButton
-                        title="Login"
+                        title="Sign Up"
                         textStyle="text-white"
                         customStyle="bg-[#192655]"
                         onPress={handleContinue}
                       />
                     </View>
                     <View className="flex-row space-x-1">
-                      <Text>Don't have an account?</Text>
-                      <Link href={"/(auth)/SignUp"}>
-                        <Text className="text-[#192655] font-bold">
-                          Sign Up
-                        </Text>
+                      <Text>Already have an account?</Text>
+                      <Link href={"/(auth)/Login"}>
+                        <Text className="text-[#192655] font-bold">Login</Text>
                       </Link>
                     </View>
                   </View>
@@ -139,4 +137,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUp;

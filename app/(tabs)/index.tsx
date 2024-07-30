@@ -3,7 +3,7 @@ import EmergencyModal from "@/components/EmergencyModal";
 import Onboarding from "@/components/Onboarding";
 import { useEmergency } from "@/context/EmergencyContext";
 import { router } from "expo-router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -13,10 +13,11 @@ import {
   Alert,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
+import * as Location from "expo-location";
 // import GeoLocation
 
 export default function HomeScreen() {
-  const [userlocation, setUserLocation] = React.useState();
+  // const [userlocation, setUserLocation] = React.useState();
 
   const [emergencyModal, setEmergencyModal] = React.useState(false);
   const [onboardingModal, setOnBoardingModal] = React.useState(false);
@@ -37,32 +38,108 @@ export default function HomeScreen() {
     setOnBoardingModal(true);
   }, []);
 
-  // useEffect(() => {
-  //   Geolocation.getCurrentPosition(
-  //     (position) => {
-  //       setUserLocation({
-  //         latitude: position.coords.latitude,
-  //         longitude: position.coords.longitude,
-  //         latitudeDelta: 0.0922,
-  //         longitudeDelta: 0.0421,
-  //       });
-  //     },
-  //     (error) => console.error(error),
-  //     { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-  //   );
-  // }, []);
+  useEffect(() => {
+    setOnBoardingModal(true);
+  }, []);
+
+  const [displayCurrentAddress, setDisplayCurrentAddress] = useState(
+    "Location Loading....."
+  );
+  const [locationServicesEnabled, setLocationServicesEnabled] = useState(false);
+  const [initialRegion, setInitialRegion] = useState({
+    latitude: 37.78825,
+    longitude: -122.4324,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
+
+  useEffect(() => {
+    checkIfLocationEnabled();
+  }, []);
+
+  const checkIfLocationEnabled = async () => {
+    let enabled = await Location.hasServicesEnabledAsync();
+    if (!enabled) {
+      Alert.alert("Location not enabled", "Please enable your Location", [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+        { text: "OK", onPress: () => getCurrentLocation() },
+      ]);
+    } else {
+      setLocationServicesEnabled(enabled);
+      getCurrentLocation();
+    }
+  };
+
+  const getCurrentLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert(
+        "Permission denied",
+        "Allow the app to use the location services",
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
+          },
+          { text: "OK", onPress: () => requestPermissionAgain() },
+        ]
+      );
+      return;
+    }
+
+    const { coords } = await Location.getCurrentPositionAsync();
+    if (coords) {
+      const { latitude, longitude } = coords;
+
+      setInitialRegion({
+        latitude,
+        longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      });
+
+      let response = await Location.reverseGeocodeAsync({
+        latitude,
+        longitude,
+      });
+      for (let item of response) {
+        let address = `${item.name} ${item.region} ${item.country})`;
+        setDisplayCurrentAddress(address);
+      }
+    }
+  };
+
+  console.log(displayCurrentAddress);
+
+  const requestPermissionAgain = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status === "granted") {
+      getCurrentLocation();
+    } else {
+      console.log("Permission denied again");
+    }
+  };
+
   return (
     <View className="h-full w-full bg-white">
       <MapView
         showsUserLocation={true}
         followsUserLocation={true}
         style={styles.map}
-        initialRegion={userlocation}
+        initialRegion={initialRegion}
       >
         <Marker
-          coordinate={{ latitude: 37.78825, longitude: -122.4324 }}
-          title="Marker Title"
-          description="Marker Description"
+          coordinate={{
+            latitude: initialRegion.latitude,
+            longitude: initialRegion.longitude,
+          }}
+          title="Your location"
+          description={displayCurrentAddress}
         />
       </MapView>
       <View className="h-[20vh] w-[13%] bg-[#00000040] absolute bottom-5 right-5 rounded-full items-center justify-between">

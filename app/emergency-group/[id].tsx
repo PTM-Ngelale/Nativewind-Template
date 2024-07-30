@@ -17,7 +17,7 @@ import * as ImagePicker from "expo-image-picker";
 import { useLocalSearchParams } from "expo-router";
 import CustomButton from "@/components/ui/CustomButton";
 import { useState } from "react";
-import { notifs } from "../(tabs)/notifications";
+import { myAlerts } from "../(tabs)/notifications";
 
 const EmergencyData = [
   {
@@ -111,9 +111,12 @@ const EmergencyPost = ({
 };
 const EmergencyGroup = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const emergencyNotification = notifs.find((notif) => notif.id === Number(id));
+  const emergencyNotification = myAlerts.find(
+    (notif) => notif.id === Number(id)
+  );
 
   const [selectedImage, setSelectedImage] = useState<null | string>(null);
+
   const pickImageAsync = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
@@ -148,7 +151,7 @@ const EmergencyGroup = () => {
                 </View>
                 <View className="px-4 py-[34px] bg-[#192655] space-y-2 items-center">
                   <Text className="font-bold text-base text-white">
-                    {emergencyNotification?.user}
+                    Jane Kameroon
                   </Text>
                   <View className="flex flex-row items-center space-x-2">
                     <Image
@@ -157,7 +160,7 @@ const EmergencyGroup = () => {
                       className="h-[16px] w-[16px]"
                     />
                     <Text className="text-white text-sm">
-                      {emergencyNotification?.Location}
+                      Location 4 Baduchum, off Nvigue Close...
                     </Text>
                   </View>
                   <CustomButton
