@@ -17,7 +17,7 @@ const SignUp = () => {
 
   const handleBack = () => {
     router.back();
-    // router.push("/(tokenValidation)/onBoarding");
+    // router.push("/(tokenValidation)");
   };
   const [form, setForm] = useState({
     email: "",
@@ -119,7 +119,7 @@ const SignUp = () => {
                       </View>
                       <View>
                         <CustomTextInput
-                          placeholder="Input Company Token"
+                          placeholder="Input Token"
                           placeholderTextColor="#000"
                           value={form.token}
                           onChangeText={(e: any) =>
