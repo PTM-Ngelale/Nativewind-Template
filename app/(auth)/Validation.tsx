@@ -57,6 +57,7 @@ const Validation = () => {
             </View>
             <View className="mt-[300px]">
               <CustomButton
+                onPress={() => router.push("(tabs)")}
                 title="Validate"
                 customStyle="bg-[#192655]"
                 textStyle="text-white"

@@ -1,7 +1,6 @@
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { TouchableOpacity, Image } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import React, { useState } from "react";
-import { TabBarIcon } from "../navigation/TabBarIcon";
 
 const ImageUpload = () => {
   const [selectedImage, setSelectedImage] = useState<null | string>(null);

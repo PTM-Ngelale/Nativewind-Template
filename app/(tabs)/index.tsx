@@ -1,5 +1,6 @@
 // import Geolocation from "@react-native-community/geolocation";
 import EmergencyModal from "@/components/EmergencyModal";
+import Onboarding from "@/components/Onboarding";
 import { useEmergency } from "@/context/EmergencyContext";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -19,6 +20,7 @@ export default function HomeScreen() {
   // const [userlocation, setUserLocation] = React.useState();
 
   const [emergencyModal, setEmergencyModal] = React.useState(false);
+  const [onboardingModal, setOnBoardingModal] = React.useState(false);
 
   const { emergency } = useEmergency();
   console.log("Emergency", emergency);
@@ -31,6 +33,14 @@ export default function HomeScreen() {
       console.log("No emergency detected or empty emergency array");
     }
   }, [emergency]);
+
+  useEffect(() => {
+    setOnBoardingModal(true);
+  }, []);
+
+  useEffect(() => {
+    setOnBoardingModal(true);
+  }, []);
 
   const [displayCurrentAddress, setDisplayCurrentAddress] = useState(
     "Location Loading....."
@@ -104,7 +114,7 @@ export default function HomeScreen() {
     }
   };
 
-  console.log(displayCurrentAddress)
+  console.log(displayCurrentAddress);
 
   const requestPermissionAgain = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -151,6 +161,7 @@ export default function HomeScreen() {
         <TouchableOpacity
           activeOpacity={0.8}
           className="pb-4 items-center gap-y-2"
+          onPress={() => setEmergencyModal(true)}
         >
           <Image
             source={require("../../assets/images/Sos.png")}
@@ -165,6 +176,13 @@ export default function HomeScreen() {
         <EmergencyModal
           emergencyModal={emergencyModal}
           setEmergencyModal={setEmergencyModal}
+        />
+      </View>
+
+      <View>
+        <Onboarding
+          onboardingModal={onboardingModal}
+          setOnBoardingModal={setOnBoardingModal}
         />
       </View>
     </View>
