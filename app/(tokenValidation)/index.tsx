@@ -5,8 +5,6 @@ import {
   View,
   Image,
   TextInput,
-  KeyboardAvoidingView,
-  TouchableOpacity,
 } from "react-native";
 import CustomButton from "@/components/ui/CustomButton";
 import { useState } from "react";
@@ -17,19 +15,19 @@ const index = () => {
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleContinue = () => {
-    // if (token !== "000") {
-    //   setErrorMessage("Please Input a correct token.");
-    // } else {
-    //   setErrorMessage("");
-    router.push("/(tabs)/index");
-    // }
+    if (token !== "000") {
+      setErrorMessage("Please Input a correct token.");
+    } else {
+      setErrorMessage("");
+      router.push("/onBoarding");
+    }
   };
 
   return (
     <SafeAreaView className="h-full bg-white">
-      <KeyboardAvoidingView enabled behavior="position">
-        <ScrollView className="w-full h-full flex-col  relative">
-          <View className="px-4 flex-col space-y-[25px] top-[50%]">
+      <ScrollView contentContainerStyle={{ height: "100%" }}>
+        <View className="w-full justify-center items-center min-h-[85vh] px-4 ">
+          <View className="flex-col space-y-[25px] w-full">
             <View className="w-full flex-row justify-center">
               <Image source={require("@/assets/images/logo.png")} />
             </View>
@@ -52,22 +50,18 @@ const index = () => {
                   {errorMessage}
                 </Text>
               ) : null}
-              <TouchableOpacity
-                activeOpacity={0.8}
-                onPress={() => router.push("/(tabs)/index")}
-                className="mt-[300px]"
-              >
+              <View>
                 <CustomButton
                   title="Continue"
                   onPress={handleContinue}
                   customStyle="bg-[#192655]"
                   textStyle="text-white"
                 />
-              </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
