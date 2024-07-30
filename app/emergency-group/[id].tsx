@@ -14,7 +14,7 @@ import {
 } from "react-native";
 import CustomTextInput from "@/components/ui/CustomInput";
 import * as ImagePicker from "expo-image-picker";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import CustomButton from "@/components/ui/CustomButton";
 import { useState } from "react";
 import { myAlerts } from "../(tabs)/notifications";
@@ -85,7 +85,11 @@ const EmergencyPost = ({
 }) => {
   return (
     <View className="px-4 flex flex-row space-x-4 py-6 bg-[#EAEAEA]">
-      <TouchableOpacity className="w-[32px] h-[32px] rounded-full overflow-hidden">
+      <TouchableOpacity
+        activeOpacity={0.9}
+        onPress={() => router.back()}
+        className="w-[32px] h-[32px] rounded-full overflow-hidden"
+      >
         <Image
           source={profilePicture}
           className="w-full h-full"
@@ -141,7 +145,10 @@ const EmergencyGroup = () => {
             return (
               <View>
                 <View className="bg-white p-4">
-                  <TouchableOpacity>
+                  <TouchableOpacity
+                    activeOpacity={0.9}
+                    onPress={() => router.back()}
+                  >
                     <Image
                       source={require("../../assets/images/backbutton.png")}
                       resizeMode="contain"
