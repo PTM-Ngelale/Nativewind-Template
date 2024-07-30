@@ -18,7 +18,7 @@ const Login = () => {
 
   const handleBack = () => {
     router.back();
-    // router.push("/(tokenValidation)/onBoarding");
+    // router.push(/(tokenValidation));
   };
   const [form, setForm] = useState({
     email: "",
