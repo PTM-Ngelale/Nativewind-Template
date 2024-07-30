@@ -45,7 +45,7 @@ const index = () => {
     <SafeAreaView className="bg-white h-full">
       <ScrollView className="w-full h-full flex-col">
         <View className="px-4 ">
-          <View className="max-w-[312px]  mx-auto flex-col space-y-[25px] ">
+          <View className="max-w-full  mx-auto flex-col space-y-[25px] ">
             <TouchableOpacity onPress={handleBack}>
               <Image source={require("@/assets/images/left.png")} />
             </TouchableOpacity>
@@ -54,7 +54,7 @@ const index = () => {
                 <Text className="font-[700] text-[#192655] text-[24px]">
                   Sign Up
                 </Text>
-                <Text className="text-[12px]">
+                <Text className="text-[14px]">
                   Welcome to Whistler, your go to app for safety & security. To
                   continue please fill in your details
                 </Text>

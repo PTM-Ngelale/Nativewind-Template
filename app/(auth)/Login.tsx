@@ -77,16 +77,19 @@ const Login = () => {
                 className="w-full rounded-[8px]"
               />
             </View>
-            <View className="absolute -bottom-20 w-full flex-col px-4 justify-center items-center h-full ">
-              <View className="max-w-[312px]  mx-auto flex-col space-y-[25px] ">
+            <View className="absolute -bottom-[40px] w-full flex-col px-4 justify-center items-center h-full ">
+              <View className="w-full  mx-auto flex-col space-y-[25px] ">
                 <View className="flex-col space-y-[15px]">
                   <View className="flex-col space-y-2">
                     <Text className="font-[700] text-[#192655] text-[24px]">
                       Login
                     </Text>
-                    <Text className="text-[12px]">
-                      Welcome back to Whistler, your go to app for safety &
-                      security. To continue please fill in your details
+                    <Text className="text-[14px]">
+                      <Text className="font-bold">
+                        Welcome back to ALARMIXX
+                      </Text>
+                      , your go to app for safety & security. To continue please
+                      fill in your details
                     </Text>
                   </View>
 

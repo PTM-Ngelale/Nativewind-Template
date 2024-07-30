@@ -82,16 +82,17 @@ const SignUp = () => {
                 className="w-full rounded-[8px]"
               />
             </View>
-            <View className=" absolute -bottom-32 w-full flex-col px-4 justify-center items-center h-full">
-              <View className="max-w-[312px]  mx-auto flex-col space-y-[25px] ">
+            <View className=" absolute -bottom-[60px] w-full flex-col px-4 justify-center items-center h-full">
+              <View className="max-w-full  mx-auto flex-col space-y-[25px] ">
                 <View className="flex-col space-y-[15px]">
                   <View className="flex-col space-y-2">
                     <Text className="font-[700] text-[#192655] text-[24px]">
                       Sign Up
                     </Text>
-                    <Text className="text-[12px]">
-                      Welcome to Whistler, your go to app for safety & security.
-                      To continue please fill in your details
+                    <Text className="text-[14px]">
+                      <Text className="font-bold">Welcome to ALARMIXX</Text>,
+                      your go to app for safety & security. To continue please
+                      fill in your details
                     </Text>
                   </View>
 
