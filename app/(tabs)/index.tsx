@@ -56,8 +56,6 @@ export default function HomeScreen() {
     checkIfLocationEnabled();
   }, [emergency]);
 
-  useEffect(() => {}, []);
-
   const checkIfLocationEnabled = async () => {
     let enabled = await Location.hasServicesEnabledAsync();
     if (!enabled) {
@@ -150,7 +148,6 @@ export default function HomeScreen() {
     setEmergencyModal(false);
   };
   const GOOGLE_MAPS_APIKEY = "AIzaSyAarxyzQsNQtOzS0rSr51QGbDSkxJkcwzk";
-  console.log(GOOGLE_MAPS_APIKEY);
 
   return (
     <View className="h-full w-full bg-white">
