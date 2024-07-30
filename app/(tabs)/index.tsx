@@ -12,10 +12,8 @@ import {
   Alert,
 } from "react-native";
 import MapView, {
-  Callout,
   Circle,
   Marker,
-  Overlay,
   PROVIDER_DEFAULT,
 } from "react-native-maps";
 import * as Location from "expo-location";

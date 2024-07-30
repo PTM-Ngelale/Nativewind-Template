@@ -1,12 +1,8 @@
 import {
   FlatList,
   Text,
-  ScrollView,
   TouchableOpacity,
   SafeAreaView,
-  useWindowDimensions,
-  ImageBackground,
-  TextInput,
   Image,
   View,
   ImageProps,

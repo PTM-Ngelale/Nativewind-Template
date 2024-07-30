@@ -11,7 +11,6 @@ import {
 import CustomTextInput from "@/components/ui/CustomInput";
 import { useState, useEffect } from "react";
 import { useRouter, Link } from "expo-router";
-import { StatusBar } from "expo-status-bar";
 
 const Login = () => {
   const router = useRouter();
