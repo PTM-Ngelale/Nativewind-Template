@@ -10,59 +10,59 @@ import {
 import React from "react";
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
+export const notifs = [
+  {
+    id: 0,
+    title: "Emergency: Robbery in progress",
+    user: "Jane Kameroon",
+    distance: "Distance 5km away",
+    Location: "Location 4 Baduchum, off Nvigue Close...",
+  },
+  {
+    id: 1,
+    title: "Emergency: Robbery in progress",
+    user: "Jane Kameroon",
+    distance: "Distance 5km away",
+    Location: "Location 4 Baduchum, off Nvigue Close...",
+  },
+  {
+    id: 2,
+    title: "Emergency: Robbery in progress",
+    user: "Jane Kameroon",
+    distance: "Distance 5km away",
+    Location: "Location 4 Baduchum, off Nvigue Close...",
+  },
+  {
+    id: 3,
+    title: "Emergency: Robbery in progress",
+    user: "Jane Kameroon",
+    distance: "Distance 5km away",
+    Location: "Location 4 Baduchum, off Nvigue Close...",
+  },
+  {
+    id: 4,
+    title: "Emergency: Robbery in progress",
+    user: "Jane Kameroon",
+    distance: "Distance 5km away",
+    Location: "Location 4 Baduchum, off Nvigue Close...",
+  },
+  {
+    id: 5,
+    title: "Emergency: Robbery in progress",
+    user: "Jane Kameroon",
+    distance: "Distance 5km away",
+    Location: "Location 4 Baduchum, off Nvigue Close...",
+  },
+  {
+    id: 6,
+    title: "Emergency: Robbery in progress",
+    user: "Jane Kameroon",
+    distance: "Distance 5km away",
+    Location: "Location 4 Baduchum, off Nvigue Close...",
+  },
+];
 
 const notifications = () => {
-  const notifs = [
-    {
-      id: 0,
-      title: "Emergency: Robbery in progress",
-      user: "Jane Kameroon",
-      distance: "Distance 5km away",
-      Location: "Location 4 Baduchum, off Nvigue Close...",
-    },
-    {
-      id: 1,
-      title: "Emergency: Robbery in progress",
-      user: "Jane Kameroon",
-      distance: "Distance 5km away",
-      Location: "Location 4 Baduchum, off Nvigue Close...",
-    },
-    {
-      id: 2,
-      title: "Emergency: Robbery in progress",
-      user: "Jane Kameroon",
-      distance: "Distance 5km away",
-      Location: "Location 4 Baduchum, off Nvigue Close...",
-    },
-    {
-      id: 3,
-      title: "Emergency: Robbery in progress",
-      user: "Jane Kameroon",
-      distance: "Distance 5km away",
-      Location: "Location 4 Baduchum, off Nvigue Close...",
-    },
-    {
-      id: 4,
-      title: "Emergency: Robbery in progress",
-      user: "Jane Kameroon",
-      distance: "Distance 5km away",
-      Location: "Location 4 Baduchum, off Nvigue Close...",
-    },
-    {
-      id: 5,
-      title: "Emergency: Robbery in progress",
-      user: "Jane Kameroon",
-      distance: "Distance 5km away",
-      Location: "Location 4 Baduchum, off Nvigue Close...",
-    },
-    {
-      id: 6,
-      title: "Emergency: Robbery in progress",
-      user: "Jane Kameroon",
-      distance: "Distance 5km away",
-      Location: "Location 4 Baduchum, off Nvigue Close...",
-    },
-  ];
   return (
     <SafeAreaView className="h-full w-full bg-slate-100">
       <View className="px-4">
