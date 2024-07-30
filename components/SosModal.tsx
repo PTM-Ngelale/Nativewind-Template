@@ -1,5 +1,5 @@
 import { useEmergency } from "@/context/EmergencyContext";
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import {
   Alert,
   Modal,
@@ -12,39 +12,27 @@ import {
 } from "react-native";
 
 interface Props {
-  getDirection: () => void;
-  emergencyModal: boolean;
-  setEmergencyModal: Dispatch<SetStateAction<boolean>>;
+  sosModal: boolean;
+  setSosModal: Dispatch<SetStateAction<boolean>>;
 }
 
-const EmergencyModal = ({
-  emergencyModal,
-  setEmergencyModal,
-  getDirection,
-}: Props) => {
-  const { emergency } = useEmergency();
-  // const getDirection = () => {
-  //   console.log("clicked");
-  //   setDirection(true);
-  //   setEmergencyModal(!emergencyModal);
-  // };
+const SosModal = ({ sosModal, setSosModal }: Props) => {
   return (
     <View style={styles.centeredView}>
       <Modal
         animationType="slide"
         transparent={true}
-        visible={emergencyModal}
+        visible={sosModal}
         onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
-          setEmergencyModal(!emergencyModal);
+          setSosModal(!sosModal);
         }}
       >
         <View style={styles.centeredView}>
-          <View style={styles.modalView} className="px-5">
-            <View className="px-6 items-center">
+          <View style={styles.modalView} className="px-6">
+            <View className="px-10 items-center">
               <Image
-                source={require("../assets/images/User-img.png")}
-                className="h-[120px] w-[120px]"
+                source={require("../assets/images/SOS-2.png")}
+                className="h-[182px] w-[182px]"
                 resizeMode="contain"
               />
               <View className="flex-row bg-[#D22121] items-center gap-x-1 rounded-xl px-2 py-1 mt-5">
@@ -53,35 +41,25 @@ const EmergencyModal = ({
                   className="h-[24px] w-[24px]"
                   resizeMode="contain"
                 />
-                <Text className="text-white">{emergency || "Robbery"}</Text>
+                <Text className="text-white">{"SOS"}</Text>
               </View>
               <View className="gap-y-1 items-center">
-                <Text className="text-base font-bold">Jane Kameroon</Text>
-                <Text>5km away</Text>
-                <Text className="text-center text-sm text-[#6B7280] max-w-[200px]">
-                  4 Baduchm, Off Nvigue Close, Woji, Port Harcourt.
-                </Text>
+                <Text className="text-base font-bold">Emergency Escalated</Text>
+                <Text>20+ People Notified</Text>
               </View>
 
-              <View className="mt-4 flex-row gap-x-4 items-center">
+              <View className="mt-4 items-center">
                 <TouchableOpacity
                   activeOpacity={0.8}
                   className="bg-[#192655] border px-4 py-[10px] rounded-xl"
                 >
                   <Text className="text-white">Join Group</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  onPress={getDirection}
-                  className="border border-[#192655] px-4 py-[10px] rounded-xl"
-                >
-                  <Text>Get Directions</Text>
-                </TouchableOpacity>
               </View>
             </View>
             <TouchableOpacity
               activeOpacity={0.8}
-              onPress={() => setEmergencyModal(!emergencyModal)}
+              onPress={() => setSosModal(!sosModal)}
               className="absolute top-3 right-3"
             >
               <Image
@@ -103,7 +81,7 @@ const EmergencyModal = ({
   );
 };
 
-export default EmergencyModal;
+export default SosModal;
 
 const styles = StyleSheet.create({
   centeredView: {
@@ -113,7 +91,7 @@ const styles = StyleSheet.create({
     marginTop: 22,
   },
   modalView: {
-    margin: 20,
+    margin: 10,
     backgroundColor: "white",
     borderRadius: 20,
     padding: 35,

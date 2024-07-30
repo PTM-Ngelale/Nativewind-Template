@@ -126,7 +126,7 @@ const notifications = () => {
             </View>
           </View>
         </View>
-        <StatusBar backgroundColor="#000000" style="dark" />
+        <StatusBar backgroundColor="#000000" style="light" />
       </ScrollView>
     </SafeAreaView>
   );
