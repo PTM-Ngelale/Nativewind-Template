@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import React from "react";
-import * as ImagePicker from "expo-image-picker";
+import { router } from "expo-router";
 
 type Props = {
   label: string;
@@ -9,7 +9,7 @@ type Props = {
 const BackArrow = ({ label }: Props) => {
   return (
     <View className="space-y-2">
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => router.back()}>
         <Image
           resizeMode="contain"
           className="h-[24px] w-[24px]"

@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
+import { router } from "expo-router";
 
 const allAlerts = [
   {
@@ -26,7 +27,7 @@ const allAlerts = [
   },
 ];
 
-const myAlerts = [
+export const myAlerts = [
   {
     id: 1,
     title: "Emergency: Robbery in progress",
@@ -105,6 +106,7 @@ const notifications = () => {
               {alertsToDisplay.map((alert, index) => (
                 <TouchableOpacity
                   activeOpacity={0.9}
+                  onPress={() => router.push(`/emergency-group/${alert.id}`)}
                   key={index}
                   className="flex items-center flex-row mt-4 bg-white p-3 border border-[#19265580] rounded-xl"
                 >
