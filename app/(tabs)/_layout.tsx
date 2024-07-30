@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 // import { Colors } from "@/constants/Colors";
 // import { useColorScheme } from "@/hooks/useColorScheme";
-import { View, Image, Text } from "react-native";
+import { View, Text } from "react-native";
 import { StatusBar } from "expo-status-bar";
 
 const TabIcon = ({
