@@ -8,8 +8,8 @@ const Report = () => {
 
   const [selectedEmergency, setSelectedEmergency] = React.useState("");
 
-  console.log('selected Emergency', selectedEmergency)
-  console.log('emergency', emergency)
+  console.log("selected Emergency", selectedEmergency);
+  console.log("emergency", emergency);
 
   const emergencies = [
     {

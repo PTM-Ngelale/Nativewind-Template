@@ -1,5 +1,5 @@
 import { useEmergency } from "@/context/EmergencyContext";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import {
   Alert,
   Modal,
