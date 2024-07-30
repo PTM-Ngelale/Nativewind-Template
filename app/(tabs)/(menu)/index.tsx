@@ -25,7 +25,7 @@ const MenuNavigation = [
   },
   {
     name: "Logout",
-    link: "/profile",
+    link: "/(auth)",
     icon: <TabBarIcon name={"log-out"} color={"#192655"} />,
   },
 ];
