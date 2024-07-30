@@ -17,7 +17,6 @@ interface Props {
 }
 
 const SosModal = ({ sosModal, setSosModal }: Props) => {
-  const { emergency } = useEmergency();
   return (
     <View style={styles.centeredView}>
       <Modal
@@ -25,7 +24,6 @@ const SosModal = ({ sosModal, setSosModal }: Props) => {
         transparent={true}
         visible={sosModal}
         onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
           setSosModal(!sosModal);
         }}
       >

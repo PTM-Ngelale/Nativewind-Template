@@ -1,4 +1,3 @@
-// import Geolocation from "@react-native-community/geolocation";
 import EmergencyModal from "@/components/EmergencyModal";
 import Onboarding from "@/components/Onboarding";
 import { useEmergency } from "@/context/EmergencyContext";
@@ -12,51 +11,52 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import MapView, {
+  Callout,
+  Circle,
+  Marker,
+  Overlay,
+  PROVIDER_DEFAULT,
+} from "react-native-maps";
 import * as Location from "expo-location";
 import SosModal from "@/components/SosModal";
-// import GeoLocation
+import MapViewDirections from "react-native-maps-directions";
 
 export default function HomeScreen() {
-  // const [userlocation, setUserLocation] = React.useState();
-
   const [emergencyModal, setEmergencyModal] = React.useState(false);
   const [sosModal, setSosModal] = React.useState(false);
   const [onboardingModal, setOnBoardingModal] = React.useState(false);
-
-  const { emergency } = useEmergency();
-
-  useEffect(() => {
-    if (emergency) {
-      console.log("Emergency detected, opening modal");
-      setEmergencyModal(true);
-    } else {
-      console.log("No emergency detected or empty emergency array");
-    }
-  }, [emergency]);
-
-  useEffect(() => {
-    setOnBoardingModal(true);
-  }, []);
-
-  useEffect(() => {
-    setOnBoardingModal(true);
-  }, []);
-
+  const [direction, setDirection] = React.useState(false);
+  const [directionOrigin, setDirectionOrigin] = React.useState({
+    latitude: 0,
+    longitude: 0,
+  });
+  const [directionDestination, setDirectionDestination] = React.useState({
+    latitude: 0,
+    longitude: 0,
+  });
   const [displayCurrentAddress, setDisplayCurrentAddress] = useState(
     "Location Loading....."
   );
   const [locationServicesEnabled, setLocationServicesEnabled] = useState(false);
   const [initialRegion, setInitialRegion] = useState({
-    latitude: 37.78825,
-    longitude: -122.4324,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
+    latitude: 0,
+    longitude: 0,
+    latitudeDelta: 0,
+    longitudeDelta: 0,
   });
 
+  const { emergency } = useEmergency();
+
   useEffect(() => {
+    if (emergency) {
+      setEmergencyModal(true);
+    }
+    setOnBoardingModal(true);
     checkIfLocationEnabled();
-  }, []);
+  }, [emergency]);
+
+  useEffect(() => {}, []);
 
   const checkIfLocationEnabled = async () => {
     let enabled = await Location.hasServicesEnabledAsync();
@@ -64,7 +64,6 @@ export default function HomeScreen() {
       Alert.alert("Location not enabled", "Please enable your Location", [
         {
           text: "Cancel",
-          onPress: () => console.log("Cancel Pressed"),
           style: "cancel",
         },
         { text: "OK", onPress: () => getCurrentLocation() },
@@ -84,7 +83,6 @@ export default function HomeScreen() {
         [
           {
             text: "Cancel",
-            onPress: () => console.log("Cancel Pressed"),
             style: "cancel",
           },
           { text: "OK", onPress: () => requestPermissionAgain() },
@@ -100,14 +98,15 @@ export default function HomeScreen() {
       setInitialRegion({
         latitude,
         longitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
+        latitudeDelta: 0.004757,
+        longitudeDelta: 0.006866,
       });
 
       let response = await Location.reverseGeocodeAsync({
         latitude,
         longitude,
       });
+
       for (let item of response) {
         let address = `${item.name} ${item.region} ${item.country}`;
         setDisplayCurrentAddress(address);
@@ -115,34 +114,93 @@ export default function HomeScreen() {
     }
   };
 
-  console.log(displayCurrentAddress);
-  console.log(displayCurrentAddress);
-
   const requestPermissionAgain = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status === "granted") {
       getCurrentLocation();
-    } else {
-      console.log("Permission denied again");
     }
   };
+
+  const circles = [
+    {
+      center: initialRegion,
+      color: "#0090FA33",
+    },
+    {
+      center: {
+        latitude: initialRegion.latitude + 0.00714,
+        longitude: initialRegion.longitude + 0.00075,
+        latitudeDelta: 0.004757,
+        longitudeDelta: 0.006866,
+      },
+      color: "#FA000033",
+    },
+  ];
+
+  const getDirection = () => {
+    setDirectionOrigin({
+      latitude: initialRegion.latitude,
+      longitude: initialRegion.longitude,
+    });
+    setDirectionDestination({
+      latitude: initialRegion.latitude + 0.00714,
+      longitude: initialRegion.longitude + 0.00075,
+    });
+    setDirection(true);
+    setEmergencyModal(false);
+  };
+  const GOOGLE_MAPS_APIKEY = "AIzaSyAarxyzQsNQtOzS0rSr51QGbDSkxJkcwzk";
+  console.log(GOOGLE_MAPS_APIKEY);
 
   return (
     <View className="h-full w-full bg-white">
       <MapView
+        region={initialRegion}
         showsUserLocation={true}
-        followsUserLocation={true}
+        // followsUserLocation={true}
         style={styles.map}
         initialRegion={initialRegion}
+        provider={PROVIDER_DEFAULT}
       >
+        {circles.map((circle, i) => (
+          <Circle
+            key={i}
+            center={circle.center}
+            radius={150}
+            strokeWidth={1}
+            strokeColor={circle.color}
+            fillColor={circle.color}
+          />
+        ))}
+
         <Marker
           coordinate={{
-            latitude: initialRegion.latitude,
-            longitude: initialRegion.longitude,
+            latitude: initialRegion.latitude + 0.00714,
+            longitude: initialRegion.longitude + 0.00075,
           }}
-          title="Your location"
+          title="Location"
           description={displayCurrentAddress}
-        />
+          image={require("../../assets/images/alert-triangle.png")}
+          tappable
+          onPress={() => setEmergencyModal(true)}
+        >
+          {/* <Callout className="w-[54px] h-[54px] items-center">
+            <Image
+              source={require("../../assets/images/User.png")}
+              className="w-[54px] h-[54px]"
+              resizeMode="contain"
+            />
+          </Callout> */}
+        </Marker>
+        {direction === true && (
+          <MapViewDirections
+            origin={directionOrigin}
+            destination={directionDestination}
+            apikey={GOOGLE_MAPS_APIKEY}
+            strokeWidth={3}
+            strokeColor="hotpink"
+          />
+        )}
       </MapView>
       <View className="h-[20vh] w-[13%] bg-[#00000040] absolute bottom-5 right-5 rounded-full items-center justify-between">
         <TouchableOpacity
@@ -164,7 +222,6 @@ export default function HomeScreen() {
           onPress={() => setSosModal(!sosModal)}
           activeOpacity={0.8}
           className="pb-4 items-center gap-y-2"
-          // onPress={() => setEmergencyModal(true)}
         >
           <Image
             source={require("../../assets/images/Sos.png")}
@@ -177,6 +234,7 @@ export default function HomeScreen() {
 
       <View>
         <EmergencyModal
+          getDirection={getDirection}
           emergencyModal={emergencyModal}
           setEmergencyModal={setEmergencyModal}
         />

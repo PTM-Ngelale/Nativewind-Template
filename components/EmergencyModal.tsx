@@ -12,12 +12,22 @@ import {
 } from "react-native";
 
 interface Props {
+  getDirection: () => void;
   emergencyModal: boolean;
   setEmergencyModal: Dispatch<SetStateAction<boolean>>;
 }
 
-const EmergencyModal = ({ emergencyModal, setEmergencyModal }: Props) => {
+const EmergencyModal = ({
+  emergencyModal,
+  setEmergencyModal,
+  getDirection,
+}: Props) => {
   const { emergency } = useEmergency();
+  // const getDirection = () => {
+  //   console.log("clicked");
+  //   setDirection(true);
+  //   setEmergencyModal(!emergencyModal);
+  // };
   return (
     <View style={styles.centeredView}>
       <Modal
@@ -62,7 +72,7 @@ const EmergencyModal = ({ emergencyModal, setEmergencyModal }: Props) => {
                 </TouchableOpacity>
                 <TouchableOpacity
                   activeOpacity={0.8}
-                  onPress={() => setEmergencyModal(!emergencyModal)}
+                  onPress={getDirection}
                   className="border border-[#192655] px-4 py-[10px] rounded-xl"
                 >
                   <Text>Get Directions</Text>
