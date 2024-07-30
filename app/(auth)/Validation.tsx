@@ -61,7 +61,7 @@ const Validation = () => {
                 <Text className="font-[700] text-[#192655] text-[24px]">
                   Validation
                 </Text>
-                <Text className="text-[12px]">
+                <Text className="text-[14px]">
                   An OTP was sent, please enter the Email code
                 </Text>
               </View>
@@ -78,7 +78,7 @@ const Validation = () => {
                 handleTextChange={handleOtpChange}
               />
               {error && (
-                <Text className="text-red-500 text-[12px]">{error}</Text>
+                <Text className="text-red-500 text-[14px]">{error}</Text>
               )}
               <Text>
                 Code not sent?{" "}
