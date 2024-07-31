@@ -2,7 +2,6 @@ import {
   FlatList,
   Text,
   TouchableOpacity,
-  SafeAreaView,
   Image,
   View,
   ImageProps,
@@ -10,6 +9,7 @@ import {
 } from "react-native";
 import CustomTextInput from "@/components/ui/CustomInput";
 import * as ImagePicker from "expo-image-picker";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
 import CustomButton from "@/components/ui/CustomButton";
 import { useState } from "react";

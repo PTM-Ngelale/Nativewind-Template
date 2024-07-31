@@ -6,6 +6,7 @@ import {
   View,
   Image,
   TouchableOpacity,
+  useWindowDimensions,
   ImageProps,
 } from "react-native";
 import CustomButton from "./ui/CustomButton";
@@ -165,7 +166,7 @@ const Onboarding = ({ onboardingModal, setOnBoardingModal }: Props) => {
               shadowRadius: 4,
               elevation: 5,
             }}
-            className="bg-white m-5 w-[380px] space-y-[24px] rounded-[20px]  p-5 items-center"
+            className="bg-white m-5 w-[380px] space-y-[24px] rounded-[20px] p-5 items-center"
           >
             <Beads activeItem={activeItem} />
             <FlatList
