@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import CustomTextInput from "@/components/ui/CustomInput";
 import { useState, useEffect } from "react";
-import { useRouter, Link } from "expo-router";
+import { useRouter, Link, Href } from "expo-router";
 import { TouchableOpacity } from "react-native";
 
 const SignUp = () => {
@@ -51,7 +51,7 @@ const SignUp = () => {
 
   const handleContinue = () => {
     if (validateForm()) {
-      router.push("/(auth)/Validation");
+      router.push("/(auth)/Validation" as Href<string>);
     }
   };
 
@@ -144,7 +144,7 @@ const SignUp = () => {
                     </View>
                     <View className="flex-row space-x-1">
                       <Text>Already have an account?</Text>
-                      <Link href={"/(auth)/Login"}>
+                      <Link href={"/(auth)/Login" as Href<string>}>
                         <Text className="text-[#192655] font-bold">Login</Text>
                       </Link>
                     </View>

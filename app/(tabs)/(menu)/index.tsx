@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import CustomButton from "@/components/ui/CustomButton";
 import React from "react";
-import { router } from "expo-router";
+import { Href, router } from "expo-router";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 
 const MenuNavigation = [
@@ -49,7 +49,7 @@ const Menu = () => {
             scrollEnabled={false}
             renderItem={({ item }) => (
               <TouchableOpacity
-                onPress={() => router.push(item.link)}
+                onPress={() => router.push(item.link as Href<string>)}
                 className="py-4 last:border-b-none border-b border-b-[#D9D9D9] flex flex-row items-center space-x-4"
               >
                 {item.icon}
