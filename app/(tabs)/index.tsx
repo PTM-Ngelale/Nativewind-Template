@@ -1,20 +1,13 @@
 import EmergencyModal from "@/components/EmergencyModal";
 import Onboarding from "@/components/Onboarding";
-import { useEmergency } from "@/context/EmergencyContext";
-import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Text,
-  Image,
-  TouchableOpacity,
-  Alert,
-} from "react-native";
+import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
 import MapView, { Circle, Marker, PROVIDER_DEFAULT } from "react-native-maps";
-import * as Location from "expo-location";
+
 import SosModal from "@/components/SosModal";
 import MapViewDirections from "react-native-maps-directions";
+import ReportModal from "@/components/ReportModal";
+import { useUser } from "@/context/userContext";
 
 export default function HomeScreen() {
   const [emergencyModal, setEmergencyModal] = React.useState(false);
@@ -29,95 +22,15 @@ export default function HomeScreen() {
     latitude: 0,
     longitude: 0,
   });
-  const [displayCurrentAddress, setDisplayCurrentAddress] = useState(
-    "Location Loading....."
-  );
-  const [locationServicesEnabled, setLocationServicesEnabled] = useState(false);
-  const [initialRegion, setInitialRegion] = useState({
-    latitude: 0,
-    longitude: 0,
-    latitudeDelta: 0,
-    longitudeDelta: 0,
-  });
 
-  const { emergency } = useEmergency();
+  const [selectedEmergency, setSelectedEmergency] = React.useState("");
+  const [reportModal, setReportModal] = useState(false);
 
-  useEffect(() => {
-    if (emergency) {
-      setEmergencyModal(true);
-    }
-  }, [emergency]);
+  const { initialRegion, displayCurrentAddress } = useUser();
 
   useEffect(() => {
     setOnBoardingModal(true);
   }, []);
-
-  useEffect(() => {
-    checkIfLocationEnabled();
-  }, []);
-
-  const checkIfLocationEnabled = async () => {
-    let enabled = await Location.hasServicesEnabledAsync();
-    if (!enabled) {
-      Alert.alert("Location not enabled", "Please enable your Location", [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-        { text: "OK", onPress: () => getCurrentLocation() },
-      ]);
-    } else {
-      setLocationServicesEnabled(enabled);
-      getCurrentLocation();
-    }
-  };
-
-  const getCurrentLocation = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert(
-        "Permission denied",
-        "Allow the app to use the location services",
-        [
-          {
-            text: "Cancel",
-            style: "cancel",
-          },
-          { text: "OK", onPress: () => requestPermissionAgain() },
-        ]
-      );
-      return;
-    }
-
-    const { coords } = await Location.getCurrentPositionAsync();
-    if (coords) {
-      const { latitude, longitude } = coords;
-
-      setInitialRegion({
-        latitude,
-        longitude,
-        latitudeDelta: 0.004757,
-        longitudeDelta: 0.006866,
-      });
-
-      let response = await Location.reverseGeocodeAsync({
-        latitude,
-        longitude,
-      });
-
-      for (let item of response) {
-        let address = `${item.name} ${item.region} ${item.country}`;
-        setDisplayCurrentAddress(address);
-      }
-    }
-  };
-
-  const requestPermissionAgain = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status === "granted") {
-      getCurrentLocation();
-    }
-  };
 
   const circles = [
     {
@@ -193,7 +106,7 @@ export default function HomeScreen() {
       </MapView>
       <View className="h-[20vh] w-[13%] bg-[#00000040] absolute bottom-5 right-5 rounded-full items-center justify-between">
         <TouchableOpacity
-          onPress={() => router.push("/(modals)/Report")}
+          onPress={() => setReportModal(true)}
           activeOpacity={0.8}
           className="items-center pt-3 gap-y-2"
         >
@@ -223,6 +136,7 @@ export default function HomeScreen() {
 
       <View>
         <EmergencyModal
+          selectedEmergency={selectedEmergency}
           getDirection={getDirection}
           emergencyModal={emergencyModal}
           setEmergencyModal={setEmergencyModal}
@@ -238,6 +152,17 @@ export default function HomeScreen() {
 
       <View>
         <SosModal sosModal={sosModal} setSosModal={setSosModal} />
+      </View>
+
+      <View>
+        <ReportModal
+          emergencyModal={emergencyModal}
+          setEmergencyModal={setEmergencyModal}
+          selectedEmergency={selectedEmergency}
+          setSelectedEmergency={setSelectedEmergency}
+          reportModal={reportModal}
+          setReportModal={setReportModal}
+        />
       </View>
     </View>
   );

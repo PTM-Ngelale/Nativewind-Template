@@ -1,4 +1,3 @@
-import { useEmergency } from "@/context/EmergencyContext";
 import { router } from "expo-router";
 import React, { Dispatch, SetStateAction } from "react";
 import {
@@ -6,25 +5,24 @@ import {
   Modal,
   StyleSheet,
   Text,
-  Pressable,
   View,
   Image,
   TouchableOpacity,
 } from "react-native";
 
 interface Props {
+  selectedEmergency: string;
   getDirection: () => void;
   emergencyModal: boolean;
   setEmergencyModal: Dispatch<SetStateAction<boolean>>;
 }
 
 const EmergencyModal = ({
+  selectedEmergency,
   emergencyModal,
   setEmergencyModal,
   getDirection,
 }: Props) => {
-  const { emergency } = useEmergency();
-
   const onClick = () => {};
 
   return (
@@ -52,7 +50,9 @@ const EmergencyModal = ({
                   className="h-[24px] w-[24px]"
                   resizeMode="contain"
                 />
-                <Text className="text-white">{emergency || "Robbery"}</Text>
+                <Text className="text-white">
+                  {selectedEmergency || "Robbery"}
+                </Text>
               </View>
               <View className="gap-y-1 items-center">
                 <Text className="text-base font-bold">Jane Kameroon</Text>

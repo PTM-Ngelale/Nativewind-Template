@@ -2,8 +2,15 @@ import { Platform, SafeAreaView, ScrollView, View } from "react-native";
 import { Image } from "react-native";
 import CustomButton from "@/components/ui/CustomButton";
 import { Href, router } from "expo-router";
+import { useUser } from "@/context/userContext";
+import { useEffect } from "react";
 
 const OnBoarding = () => {
+  const { checkIfLocationEnabled } = useUser();
+
+  useEffect(() => {
+    checkIfLocationEnabled();
+  }, []);
   return (
     <SafeAreaView className="h-full bg-white">
       <ScrollView contentContainerStyle={{ height: "100%" }}>
