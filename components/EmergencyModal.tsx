@@ -1,4 +1,5 @@
 import { useEmergency } from "@/context/EmergencyContext";
+import { router } from "expo-router";
 import React, { Dispatch, SetStateAction } from "react";
 import {
   Alert,
@@ -23,11 +24,9 @@ const EmergencyModal = ({
   getDirection,
 }: Props) => {
   const { emergency } = useEmergency();
-  // const getDirection = () => {
-  //   console.log("clicked");
-  //   setDirection(true);
-  //   setEmergencyModal(!emergencyModal);
-  // };
+
+  const onClick = () => {};
+
   return (
     <View style={styles.centeredView}>
       <Modal
@@ -65,6 +64,10 @@ const EmergencyModal = ({
 
               <View className="mt-4 flex-row gap-x-4 items-center">
                 <TouchableOpacity
+                  onPress={() => {
+                    router.push("/emergency-group/1");
+                    setEmergencyModal(false);
+                  }}
                   activeOpacity={0.8}
                   className="bg-[#192655] border px-4 py-[10px] rounded-xl"
                 >

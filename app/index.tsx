@@ -1,4 +1,4 @@
-import { SafeAreaView, ScrollView, View } from "react-native";
+import { Platform, SafeAreaView, ScrollView, View } from "react-native";
 import { Image } from "react-native";
 import CustomButton from "@/components/ui/CustomButton";
 import { router } from "expo-router";
@@ -38,3 +38,5 @@ const OnBoarding = () => {
 };
 
 export default OnBoarding;
+
+
