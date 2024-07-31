@@ -40,8 +40,8 @@ const Validation = () => {
 
       borderColor: "#F8F8F8",
       backgroundColor: "#F8F8F8",
-      width: 40,
-      height: 40,
+      width: 55,
+      height: 55,
       textAlign: "center",
       borderBottomWidth: 1,
       borderRadius: 5,
