@@ -11,11 +11,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import MapView, {
-  Circle,
-  Marker,
-  PROVIDER_DEFAULT,
-} from "react-native-maps";
+import MapView, { Circle, Marker, PROVIDER_DEFAULT } from "react-native-maps";
 import * as Location from "expo-location";
 import SosModal from "@/components/SosModal";
 import MapViewDirections from "react-native-maps-directions";
@@ -50,9 +46,15 @@ export default function HomeScreen() {
     if (emergency) {
       setEmergencyModal(true);
     }
-    setOnBoardingModal(true);
-    checkIfLocationEnabled();
   }, [emergency]);
+
+  useEffect(() => {
+    setOnBoardingModal(true);
+  }, []);
+
+  useEffect(() => {
+    checkIfLocationEnabled();
+  }, []);
 
   const checkIfLocationEnabled = async () => {
     let enabled = await Location.hasServicesEnabledAsync();
