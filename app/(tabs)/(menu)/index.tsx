@@ -3,26 +3,30 @@ import {
   Text,
   ScrollView,
   Image,
-  SafeAreaView,
   FlatList,
   TouchableOpacity,
 } from "react-native";
 import CustomButton from "@/components/ui/CustomButton";
+import { SafeAreaView } from "react-native-safe-area-context";
 import React from "react";
-import { router } from "expo-router";
+import { Href, router } from "expo-router";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 
-const MenuNavigation = [
+const MenuNavigation: {
+  name: string;
+  link: any;
+  icon: React.JSX.Element;
+}[] = [
   {
     name: "My Profile",
     link: "/profile",
     icon: <TabBarIcon name={"person"} color={"#192655"} />,
   },
-  {
-    name: "Settings",
-    link: "/settings",
-    icon: <TabBarIcon name={"settings"} color={"#192655"} />,
-  },
+  // {
+  //   name: "Settings",
+  //   link: "/settings",
+  //   icon: <TabBarIcon name={"settings"} color={"#192655"} />,
+  // },
   {
     name: "Logout",
     link: "/(tokenValidation)",
@@ -32,7 +36,7 @@ const MenuNavigation = [
 
 const Menu = () => {
   return (
-    <SafeAreaView className="bg-white h-full">
+    <SafeAreaView edges={["top"]} className="bg-white h-full">
       <ScrollView className="h-full relative">
         <View className="w-full bg-[#192655] px-4 py-4">
           <Image
@@ -58,7 +62,7 @@ const Menu = () => {
             )}
           />
         </View>
-        <View className="w-full absolute bottom-[-450px] px-4 ">
+        <View className="w-full absolute bottom-[-500px] px-4 ">
           <CustomButton
             title="Eleme Group"
             textStyle="text-[#F8BD00]"

@@ -50,7 +50,7 @@ const Profile = () => {
           <CustomButton
             title="Update Profile"
             textStyle="text-white"
-            customStyle="bg-[#192655]"
+            customStyle="bg-[#192655] mb-2"
           />
         </ScrollView>
       </SafeAreaView>

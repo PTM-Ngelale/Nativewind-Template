@@ -18,7 +18,7 @@ const OnBoarding = () => {
                   title="Login"
                   textStyle="text-white"
                   customStyle="bg-[#192655]"
-                  onPress={() => router.push("/(auth)/Login")}
+                  onPress={() => router.push("/Login")}
                 />
               </View>
               <View>
@@ -26,7 +26,7 @@ const OnBoarding = () => {
                   title="Sign Up"
                   textStyle="text-[#192655]"
                   customStyle="bg-[#ffffff] border-[1px] border-solid border-[#192655]"
-                  onPress={() => router.push("/(auth)/SignUp")}
+                  onPress={() => router.push("/SignUp")}
                 />
               </View>
             </View>

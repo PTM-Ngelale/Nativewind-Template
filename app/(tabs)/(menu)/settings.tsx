@@ -1,4 +1,5 @@
-import { View, Text, ScrollView, SafeAreaView } from "react-native";
+import { View, Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState } from "react";
 import BackArrow from "@/components/ui/BackArrow";
 import DropDownPicker from "react-native-dropdown-picker";
@@ -15,7 +16,7 @@ const Settings = () => {
   ]);
   return (
     <SafeAreaView className="h-full bg-white">
-      <ScrollView className="h-full px-4">
+      <View className="h-full px-4">
         <BackArrow label="Settings" />
         <View className="flex space-y-2">
           <Text className="text-[#4E4E4F] font-normal">
@@ -34,7 +35,7 @@ const Settings = () => {
             Customize your preferred notification alert radius
           </Text>
         </View>
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 };
