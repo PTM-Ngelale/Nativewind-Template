@@ -180,15 +180,7 @@ export default function HomeScreen() {
           image={require("../../assets/images/alert-triangle.png")}
           tappable
           onPress={() => setEmergencyModal(true)}
-        >
-          {/* <Callout className="w-[54px] h-[54px] items-center">
-            <Image
-              source={require("../../assets/images/User.png")}
-              className="w-[54px] h-[54px]"
-              resizeMode="contain"
-            />
-          </Callout> */}
-        </Marker>
+        ></Marker>
         {direction === true && (
           <MapViewDirections
             origin={directionOrigin}

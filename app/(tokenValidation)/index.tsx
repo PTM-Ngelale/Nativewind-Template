@@ -1,7 +1,7 @@
 import { SafeAreaView, ScrollView, View, Image } from "react-native";
 import CustomButton from "@/components/ui/CustomButton";
 
-import { router } from "expo-router";
+import { Href, router } from "expo-router";
 
 const index = () => {
   return (
@@ -18,7 +18,7 @@ const index = () => {
                   title="Login"
                   textStyle="text-white"
                   customStyle="bg-[#192655]"
-                  onPress={() => router.push("/(auth)/Login")}
+                  onPress={() => router.push("/(auth)/Login" as Href<string>)}
                 />
               </View>
               <View>
@@ -26,7 +26,7 @@ const index = () => {
                   title="Sign Up"
                   textStyle="text-[#192655]"
                   customStyle="bg-[#ffffff] border-[1px] border-solid border-[#192655]"
-                  onPress={() => router.push("/(auth)/SignUp")}
+                  onPress={() => router.push("/(auth)/SignUp" as Href<string>)}
                 />
               </View>
             </View>
