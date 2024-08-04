@@ -15,6 +15,7 @@ import CustomButton from "@/components/ui/CustomButton";
 import { useState } from "react";
 import { myAlerts } from "../(tabs)/notifications";
 
+
 const EmergencyData = [
   {
     name: "Kizito Don-Pedro",
@@ -111,9 +112,6 @@ const EmergencyPost = ({
 };
 const EmergencyGroup = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const emergencyNotification = myAlerts.find(
-    (notif) => notif.id === Number(id)
-  );
 
   const [selectedImage, setSelectedImage] = useState<null | string>(null);
 
@@ -197,7 +195,7 @@ const EmergencyGroup = () => {
               <Image
                 resizeMode="contain"
                 className="w-5 h-5"
-                source={require("../../assets/images/plus (1).png")}
+                source={require("../../assets/images/plus.png")}
               />
             </View>
           </TouchableOpacity>

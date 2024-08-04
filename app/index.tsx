@@ -3,14 +3,25 @@ import { useUser } from "@/context/userContext";
 import { router } from "expo-router";
 import { useEffect } from "react";
 import { Image, SafeAreaView, ScrollView, View } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const OnBoarding = () => {
   const { checkIfLocationEnabled } = useUser();
 
+
   useEffect(() => {
-    checkIfLocationEnabled();
+    const checkUserToken = async () => {
+      const userToken = await AsyncStorage.getItem("userToken");
+      if (userToken) {
+        // router.push("/(tabs)");
+      } else {
+        checkIfLocationEnabled();
+      }
+    };
+
+    checkUserToken();
   }, []);
-  
+
   return (
     <SafeAreaView className="h-full bg-white">
       <ScrollView contentContainerStyle={{ height: "100%" }}>

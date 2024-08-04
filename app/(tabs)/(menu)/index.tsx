@@ -11,6 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import React from "react";
 import { Href, router } from "expo-router";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const MenuNavigation: {
   name: string;
@@ -53,7 +54,14 @@ const Menu = () => {
             scrollEnabled={false}
             renderItem={({ item }) => (
               <TouchableOpacity
-                onPress={() => router.push(item.link as Href<string>)}
+                onPress={async () => {
+                  if (item.name === "Logout") {
+                    await AsyncStorage.removeItem("userToken");
+                    router.push("/" as Href<string>);
+                  } else {
+                    router.push(item.link as Href<string>);
+                  }
+                }}
                 className="py-4 last:border-b-none border-b border-b-[#D9D9D9] flex flex-row items-center space-x-4"
               >
                 {item.icon}
@@ -62,7 +70,7 @@ const Menu = () => {
             )}
           />
         </View>
-        <View className="w-full absolute bottom-[-500px] px-4 ">
+        <View className="w-full absolute bottom-[-450px] px-4 ">
           <CustomButton
             title="Eleme Group"
             textStyle="text-[#F8BD00]"

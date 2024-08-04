@@ -1,63 +1,84 @@
+import { UserProvider } from "@/context/userContext";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { createApolloClient } from "@/utils/authUtil";
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
+import { persistCache } from "apollo3-cache-persist";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Href, router, Slot } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "react-native-reanimated";
-
-import { useColorScheme } from "@/hooks/useColorScheme";
-import { UserProvider } from "@/context/userContext";
+import Toast from "react-native-toast-message";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
+export const unstable_settings = {
+  // Ensure that reloading on `/modal` keeps a back button present.
+  initialRouteName: "/(tabs)",
+};
+
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
+  const [loadingCache, setLoadingCache] = useState(true);
+  const [fontsLoaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
+  const [initialRoute, setInitialRoute] = useState<string | null>("/");
+  const [client, setClient] = useState<ApolloClient<any> | null>(null);
 
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
+    const loadResources = async () => {
+      const apolloClient = await createApolloClient();
+      setClient(apolloClient);
 
-  if (!loaded) {
+      await persistCache({
+        cache: apolloClient.cache,
+        storage: AsyncStorage,
+      });
+
+      const token = await AsyncStorage.getItem("userToken");
+
+      if (token) {
+        setInitialRoute("/(tabs)");
+      } else {
+        setInitialRoute("/");
+        console.log("no token", initialRoute);
+      }
+
+      setLoadingCache(false);
+    };
+
+    loadResources();
+  }, []);
+
+  useEffect(() => {
+    if (fontsLoaded && !loadingCache) {
+      SplashScreen.hideAsync();
+      if (initialRoute) {
+        router.replace(initialRoute as Href<string>);
+      }
+    }
+  }, [fontsLoaded, loadingCache, initialRoute, router]);
+
+  if (!fontsLoaded || loadingCache || initialRoute === null || !client) {
     return null;
   }
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <UserProvider>
-        <Stack>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="(tokenValidation)"
-            options={{ headerShown: false }}
-          />
-
-          <Stack.Screen
-            name="(modals)/Report"
-            options={{
-              presentation: "modal",
-              headerShown: false,
-              animation: "simple_push",
-            }}
-          />
-          <Stack.Screen
-            name="emergency-group/[id]"
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-      </UserProvider>
-    </ThemeProvider>
+    <ApolloProvider client={client}>
+      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+        <UserProvider>
+          <Slot />
+          <Toast />
+        </UserProvider>
+      </ThemeProvider>
+    </ApolloProvider>
   );
 }

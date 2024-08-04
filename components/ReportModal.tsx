@@ -1,12 +1,16 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import {
   Modal,
+  ScrollView,
   StyleSheet,
   Text,
-  View,
   TouchableOpacity,
-  ScrollView,
+  View,
 } from "react-native";
+import {
+  PanGestureHandlerGestureEvent,
+  State,
+} from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Props {
@@ -19,7 +23,6 @@ interface Props {
 }
 
 const ReportModal = ({
-  emergencyModal,
   setEmergencyModal,
   selectedEmergency,
   setSelectedEmergency,
@@ -70,6 +73,7 @@ const ReportModal = ({
       setEmergencyModal(true);
     }
   };
+
   return (
     <View style={styles.centeredView}>
       <Modal

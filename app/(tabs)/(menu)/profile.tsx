@@ -4,15 +4,51 @@ import BackArrow from "@/components/ui/BackArrow";
 import CustomTextInput from "@/components/ui/CustomInput";
 import CustomButton from "@/components/ui/CustomButton";
 import ImageUpload from "@/components/ui/ImageUpload";
-import React from "react";
-import { useRouter } from "expo-router";
+import React, { useState } from "react";
+import { useMutation, useQuery } from "@apollo/client";
+import { GetUserBasicInfoQuery } from "@/graphql/query";
+import Loading from "@/components/Loading";
+import { UPDATE_USER_MUTATION } from "@/graphql/mutations";
+import { showToast } from "@/components/ToastComponent";
 
 const Profile = () => {
-  const router = useRouter();
+  const { data, loading, error } = useQuery(GetUserBasicInfoQuery);
 
-  const handleBack = () => {
-    router.back();
+  const [updateUser, { loading: userUpdating, error: userUpdateError }] =
+    useMutation(UPDATE_USER_MUTATION);
+
+  const {
+    firstName: initialFirstName,
+    lastName: initialLastName,
+    id,
+  } = data?.getCurrentUser || {};
+
+  const [firstName, setFirstName] = useState(initialFirstName || "");
+  const [lastName, setLastName] = useState(initialLastName || "");
+  const [nextOfKinName, setNextOfKinName] = useState("");
+  const [nextOfKinContact, setNextOfKinContact] = useState("");
+
+  const handleUpdateProfile = async () => {
+    try {
+      await updateUser({
+        variables: {
+          where: { id },
+          data: {
+            firstName: { set: firstName },
+            lastName: { set: lastName },
+            profilePhoto: { set: "" },
+          },
+        },
+      });
+      showToast("success", "Profile updated successfully");
+    } catch (err) {
+      showToast("error", "Error updating profile");
+    }
   };
+
+  if (loading) return <Loading />;
+  if (error || userUpdateError) console.log(error);
+
   return (
     <KeyboardAvoidingView
       className="flex-1 flex items-start"
@@ -25,25 +61,33 @@ const Profile = () => {
           <ImageUpload />
           <View className="flex space-y-4 my-6">
             <CustomTextInput
+              value={firstName}
+              onChangeText={setFirstName}
               placeholder="First Name"
-              placeholderTextColor="#000"
+              placeholderTextColor="gray"
             />
             <CustomTextInput
+              value={lastName}
+              onChangeText={setLastName}
               placeholder="Last Name"
-              placeholderTextColor="#000"
+              placeholderTextColor="gray"
               borderStyle="mt-4"
             />
             <Text className="text-[#192655] font-normal">
               Additional information
             </Text>
             <CustomTextInput
-              placeholder="First Name"
-              placeholderTextColor="#000"
+              value={nextOfKinName}
+              onChangeText={setNextOfKinName}
+              placeholder="Next of kin Name"
+              placeholderTextColor="gray"
               borderStyle="mt-4"
             />
             <CustomTextInput
-              placeholder="Last Name"
-              placeholderTextColor="#000"
+              value={nextOfKinContact}
+              onChangeText={setNextOfKinContact}
+              placeholder="Next of Kin Contact"
+              placeholderTextColor="gray"
               borderStyle="mt-4"
             />
           </View>
@@ -51,6 +95,8 @@ const Profile = () => {
             title="Update Profile"
             textStyle="text-white"
             customStyle="bg-[#192655] mb-2"
+            onPress={handleUpdateProfile}
+            isLoading={loading || userUpdating}
           />
         </ScrollView>
       </SafeAreaView>

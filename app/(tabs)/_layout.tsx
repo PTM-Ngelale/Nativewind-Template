@@ -1,36 +1,57 @@
-import { Tabs } from "expo-router";
-import React from "react";
-import { Ionicons } from "@expo/vector-icons";
+import Loading from "@/components/Loading";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
-// import { Colors } from "@/constants/Colors";
-// import { useColorScheme } from "@/hooks/useColorScheme";
-import { View, Text } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Href, router, Tabs } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import React, { useEffect, useState } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
 
-const TabIcon = ({
-  icon,
-  color,
-  name,
-  focused,
-}: {
+interface TabIconProps {
   icon: keyof typeof Ionicons.glyphMap;
   color: string;
   name: string;
   focused: boolean;
+  onPress: () => void;
+}
+
+const TabIcon: React.FC<TabIconProps> = ({
+  icon,
+  color,
+  name,
+  focused,
+  onPress,
 }) => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) {
+        router.replace("/(auth)/Login" as Href<string>);
+      }
+      setIsLoading(false);
+    };
+    fetchToken();
+  }, []);
+
+  if (isLoading) return <Loading />;
+
   return (
-    <View className="items-center justify-center gap-2">
-      <View
-        className={`${focused ? "" : "opacity-0"} w-[36px] bg-[#0090FA] h-1`}
-      />
-      <TabBarIcon name={icon} color={color} />
-      <Text
-        style={{ color: color }}
-        className={`${focused ? "font-bold" : "font-normal"} text-xs`}
-      >
-        {name}
-      </Text>
-    </View>
+    <TouchableOpacity onPress={onPress}>
+      <View className="items-center justify-center gap-2">
+        <View
+          className={`${focused ? "" : "opacity-0"} w-[36px] bg-[#0090FA] h-1`}
+        />
+        <TabBarIcon name={icon} color={color} />
+        <Text
+          style={{ color: color }}
+          className={`${focused ? "font-bold" : "font-normal"} text-xs`}
+        >
+          {name}
+        </Text>
+      </View>
+    </TouchableOpacity>
   );
 };
 
@@ -60,6 +81,7 @@ export default function TabLayout() {
                 color={color}
                 name="Home"
                 focused={focused}
+                onPress={() => router.replace("/(tabs)")}
               />
             ),
           }}
@@ -75,6 +97,7 @@ export default function TabLayout() {
                 color={color}
                 name="Notifications"
                 focused={focused}
+                onPress={() => router.replace("/notifications")}
               />
             ),
           }}
@@ -89,6 +112,7 @@ export default function TabLayout() {
                 color={color}
                 name="Menu"
                 focused={focused}
+                onPress={() => router.replace("/(menu)")}
               />
             ),
           }}

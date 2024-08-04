@@ -11,10 +11,14 @@ import {
 import CustomTextInput from "@/components/ui/CustomInput";
 import { useState, useEffect } from "react";
 import { useRouter, Href } from "expo-router";
+import { LOGIN_MUTATION } from "@/graphql/mutations";
+import { useMutation } from "@apollo/client";
+import { showToast } from "@/components/ToastComponent";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Login = () => {
   const router = useRouter();
-
+  const [login, { loading, error }] = useMutation(LOGIN_MUTATION);
   const handleBack = () => {
     router.back();
     // router.push(/(tokenValidation));
@@ -43,9 +47,29 @@ const Login = () => {
     return true;
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (validateForm()) {
-      router.push("/(auth)/Validation" as Href<string>);
+      const { data } = await login({
+        variables: { email: form.email, password: form.password },
+      });
+      if (data.login.token) {
+        showToast("success", "Login Successful");
+        // Store token in AsyncStorage
+        await AsyncStorage.setItem("userToken", data.login.token);
+        // Handle successful login, e.g., store token, navigate to another screen
+
+        router.push("/(tabs)" as Href<string>);
+      }
+
+      // Check for GraphQL errors from the useMutation hook
+      if (error) {
+        const graphQLErrors = error.graphQLErrors;
+        if (graphQLErrors && graphQLErrors.length > 0) {
+          showToast("error", graphQLErrors[0].message);
+        } else {
+          showToast("error", "Login failed. Please try again.");
+        }
+      }
     }
   };
 
@@ -115,17 +139,14 @@ const Login = () => {
                         />
                       </View>
                     </View>
-                    {errorMessage ? (
-                      <Text className="text-red-500 text-center mt-2">
-                        {errorMessage}
-                      </Text>
-                    ) : null}
+
                     <View>
                       <CustomButton
                         title="Login"
                         textStyle="text-white"
                         customStyle="bg-[#192655]"
                         onPress={handleContinue}
+                        isLoading={loading}
                       />
                     </View>
                     <View className="flex-row space-x-1">

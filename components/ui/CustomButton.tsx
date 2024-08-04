@@ -1,10 +1,10 @@
-import { TouchableOpacity, Text } from "react-native";
+import { TouchableOpacity, Text, View, ActivityIndicator } from "react-native";
 
 interface CustomButtonProps {
   title: string;
   onPress?: any;
   customStyle?: string;
-  isLoading?: any;
+  isLoading?: Boolean;
   textStyle?: string;
 }
 
@@ -17,10 +17,17 @@ const CustomButton = ({
 }: CustomButtonProps) => {
   return (
     <TouchableOpacity
-      onPress={onPress}
+      onPress={isLoading ? null : onPress} // Disable onPress when loading
       className={`rounded-xl min-h-[50px] justify-center items-center ${customStyle}`}
     >
-      <Text className={`${textStyle} text-lg`}>{title}</Text>
+      {isLoading ? (
+        <View className="flex-row items-center">
+          <ActivityIndicator size="small" color="#fff" />
+          <Text className="ml-2 text-lg text-white">Please Wait...</Text>
+        </View>
+      ) : (
+        <Text className={`${textStyle} text-lg`}>{title}</Text>
+      )}
     </TouchableOpacity>
   );
 };

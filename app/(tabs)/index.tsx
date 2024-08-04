@@ -1,8 +1,20 @@
 import EmergencyModal from "@/components/EmergencyModal";
 import Onboarding from "@/components/Onboarding";
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
-import MapView, { Circle, Marker, PROVIDER_DEFAULT } from "react-native-maps";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
+import MapView, {
+  Circle,
+  Marker,
+  PROVIDER_DEFAULT,
+  PROVIDER_GOOGLE,
+} from "react-native-maps";
 
 import SosModal from "@/components/SosModal";
 import MapViewDirections from "react-native-maps-directions";
@@ -10,26 +22,32 @@ import ReportModal from "@/components/ReportModal";
 import { useUser } from "@/context/userContext";
 
 export default function HomeScreen() {
-  const [emergencyModal, setEmergencyModal] = React.useState(false);
-  const [sosModal, setSosModal] = React.useState(false);
-  const [onboardingModal, setOnBoardingModal] = React.useState(false);
-  const [direction, setDirection] = React.useState(false);
-  const [directionOrigin, setDirectionOrigin] = React.useState({
+  const [emergencyModal, setEmergencyModal] = useState(false);
+  const [sosModal, setSosModal] = useState(false);
+  const [onboardingModal, setOnBoardingModal] = useState(false);
+  const [direction, setDirection] = useState(false);
+  const [directionOrigin, setDirectionOrigin] = useState({
     latitude: 0,
     longitude: 0,
   });
-  const [directionDestination, setDirectionDestination] = React.useState({
+  const [directionDestination, setDirectionDestination] = useState({
     latitude: 0,
     longitude: 0,
   });
-
-  const [selectedEmergency, setSelectedEmergency] = React.useState("");
+  const [selectedEmergency, setSelectedEmergency] = useState("");
   const [reportModal, setReportModal] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const { initialRegion, displayCurrentAddress } = useUser();
+  const { initialRegion, displayCurrentAddress, getCurrentLocation } =
+    useUser();
 
   useEffect(() => {
-    setOnBoardingModal(true);
+    const fetchLocation = async () => {
+      getCurrentLocation();
+      setLoading(false);
+    };
+
+    fetchLocation();
   }, []);
 
   const circles = [
@@ -60,7 +78,17 @@ export default function HomeScreen() {
     setDirection(true);
     setEmergencyModal(false);
   };
+
   const GOOGLE_MAPS_APIKEY = "AIzaSyAarxyzQsNQtOzS0rSr51QGbDSkxJkcwzk";
+
+  if (loading) {
+    return (
+      <View className="h-full w-full bg-white items-center justify-center">
+        <ActivityIndicator size="large" color="#0000ff" />
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
 
   return (
     <View className="h-full w-full bg-white">
