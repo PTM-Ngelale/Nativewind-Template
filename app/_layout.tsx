@@ -1,7 +1,8 @@
 import { UserProvider } from "@/context/userContext";
+import useAuth from "@/hooks/useAuth";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { createApolloClient } from "@/utils/authUtil";
-import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import { ApolloClient, ApolloProvider } from "@apollo/client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   DarkTheme,
@@ -10,19 +11,13 @@ import {
 } from "@react-navigation/native";
 import { persistCache } from "apollo3-cache-persist";
 import { useFonts } from "expo-font";
-import { Href, router, Slot } from "expo-router";
+import { Slot } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import "react-native-reanimated";
 import Toast from "react-native-toast-message";
-
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
-
-export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: "/(tabs)",
-};
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -32,6 +27,7 @@ export default function RootLayout() {
   });
   const [initialRoute, setInitialRoute] = useState<string | null>("/");
   const [client, setClient] = useState<ApolloClient<any> | null>(null);
+  const { isLoading: authLoading, userToken } = useAuth();
 
   useEffect(() => {
     const loadResources = async () => {
@@ -43,15 +39,6 @@ export default function RootLayout() {
         storage: AsyncStorage,
       });
 
-      const token = await AsyncStorage.getItem("userToken");
-
-      if (token) {
-        setInitialRoute("/(tabs)");
-      } else {
-        setInitialRoute("/");
-        console.log("no token", initialRoute);
-      }
-
       setLoadingCache(false);
     };
 
@@ -59,15 +46,18 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
-    if (fontsLoaded && !loadingCache) {
+    if (!authLoading && !loadingCache && fontsLoaded) {
       SplashScreen.hideAsync();
-      if (initialRoute) {
-        router.replace(initialRoute as Href<string>);
-      }
     }
-  }, [fontsLoaded, loadingCache, initialRoute, router]);
+  }, [authLoading, loadingCache, fontsLoaded, userToken]);
 
-  if (!fontsLoaded || loadingCache || initialRoute === null || !client) {
+  if (
+    authLoading ||
+    !fontsLoaded ||
+    loadingCache ||
+    initialRoute === null ||
+    !client
+  ) {
     return null;
   }
 

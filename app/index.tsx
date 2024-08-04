@@ -3,24 +3,26 @@ import { useUser } from "@/context/userContext";
 import { router } from "expo-router";
 import { useEffect } from "react";
 import { Image, SafeAreaView, ScrollView, View } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import useAuth from "@/hooks/useAuth";
+import Loading from "@/components/Loading";
 
 const OnBoarding = () => {
   const { checkIfLocationEnabled } = useUser();
-
+  const { isLoading, userToken } = useAuth();
 
   useEffect(() => {
-    const checkUserToken = async () => {
-      const userToken = await AsyncStorage.getItem("userToken");
+    if (!isLoading) {
       if (userToken) {
-        // router.push("/(tabs)");
+        router.push("/(tabs)");
       } else {
         checkIfLocationEnabled();
       }
-    };
+    }
+  }, [isLoading, userToken, checkIfLocationEnabled]);
 
-    checkUserToken();
-  }, []);
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <SafeAreaView className="h-full bg-white">
