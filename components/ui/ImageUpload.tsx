@@ -1,9 +1,26 @@
 import { TouchableOpacity, Image } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-const ImageUpload = () => {
-  const [selectedImage, setSelectedImage] = useState<null | string>(null);
+interface ImageUploadProps {
+  onImageSelected: (image: ImagePicker.ImagePickerResult) => void;
+  initialImage?: string | null; // Add initialImage prop
+}
+
+const ImageUpload: React.FC<ImageUploadProps> = ({
+  onImageSelected,
+  initialImage,
+}) => {
+  const [selectedImage, setSelectedImage] = useState<null | string>(
+    initialImage || null
+  );
+
+  useEffect(() => {
+    if (initialImage) {
+      setSelectedImage(initialImage);
+    }
+  }, [initialImage]);
+
   const pickImageAsync = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
@@ -12,10 +29,12 @@ const ImageUpload = () => {
 
     if (!result.canceled) {
       setSelectedImage(result.assets[0].uri);
+      onImageSelected(result); // Pass the selected image to the parent component
     } else {
       alert("You did not select any image.");
     }
   };
+
   return (
     <TouchableOpacity
       onPress={pickImageAsync}

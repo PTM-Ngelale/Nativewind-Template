@@ -16,6 +16,8 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import "react-native-reanimated";
 import Toast from "react-native-toast-message";
+
+
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
@@ -25,7 +27,6 @@ export default function RootLayout() {
   const [fontsLoaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
-  const [initialRoute, setInitialRoute] = useState<string | null>("/");
   const [client, setClient] = useState<ApolloClient<any> | null>(null);
   const { isLoading: authLoading, userToken } = useAuth();
 
@@ -55,7 +56,6 @@ export default function RootLayout() {
     authLoading ||
     !fontsLoaded ||
     loadingCache ||
-    initialRoute === null ||
     !client
   ) {
     return null;

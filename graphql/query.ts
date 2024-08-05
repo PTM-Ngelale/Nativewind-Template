@@ -7,6 +7,7 @@ export const GetUserBasicInfoQuery = gql`
       id
       firstName
       lastName
+      profilePhoto
     }
   }
 `;

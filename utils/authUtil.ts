@@ -8,7 +8,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const httpLink = createHttpLink({
-  uri: "http://localhost:9090/graphql",
+  uri: "https://519a-102-215-57-136.ngrok-free.app/graphql",
 });
 
 export const createAuthLink = (userToken: string) => {

@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, KeyboardAvoidingView } from "react-native";
+import { View, Text, ScrollView, KeyboardAvoidingView, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BackArrow from "@/components/ui/BackArrow";
 import CustomTextInput from "@/components/ui/CustomInput";
@@ -10,8 +10,10 @@ import { GetUserBasicInfoQuery } from "@/graphql/query";
 import Loading from "@/components/Loading";
 import { UPDATE_USER_MUTATION } from "@/graphql/mutations";
 import { showToast } from "@/components/ToastComponent";
+import axios from "axios";
+import { ImagePickerAsset, ImagePickerResult } from "expo-image-picker";
 
-const Profile = () => {
+const Profile: React.FC = () => {
   const { data, loading, error } = useQuery(GetUserBasicInfoQuery);
 
   const [updateUser, { loading: userUpdating, error: userUpdateError }] =
@@ -21,22 +23,72 @@ const Profile = () => {
     firstName: initialFirstName,
     lastName: initialLastName,
     id,
+    profilePhoto,
   } = data?.getCurrentUser || {};
 
-  const [firstName, setFirstName] = useState(initialFirstName || "");
-  const [lastName, setLastName] = useState(initialLastName || "");
-  const [nextOfKinName, setNextOfKinName] = useState("");
-  const [nextOfKinContact, setNextOfKinContact] = useState("");
+  const [firstName, setFirstName] = useState<string>(initialFirstName || "");
+  const [lastName, setLastName] = useState<string>(initialLastName || "");
+  const [nextOfKinName, setNextOfKinName] = useState<string>("");
+  const [nextOfKinContact, setNextOfKinContact] = useState<string>("");
+  const [selectedImage, setSelectedImage] = useState<ImagePickerResult | null>(
+    null
+  );
+  const [isUploading, setIsUploading] = useState<boolean>(false); // Add state for upload status
+
+  const handleImageUpload = async (
+    image: ImagePickerResult
+  ): Promise<string> => {
+    try {
+      setIsUploading(true); 
+      const asset: ImagePickerAsset | undefined = image.assets
+        ? image.assets[0]
+        : undefined;
+      if (!asset || !asset.uri || !asset.type || !asset.fileName) {
+        throw new Error("No image selected or missing required properties");
+      }
+
+      const formData = new FormData();
+      formData.append("file", {
+        uri: asset.uri,
+        type: asset.type,
+        name: asset.fileName,
+      } as any); // Type assertion to satisfy FormData.append
+
+      const response = await axios.post(
+        "https://519a-102-215-57-136.ngrok-free.app/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      return response.data.data;
+    } catch (error) {
+      showToast("error", "Error uploading image");
+      throw error;
+    } finally {
+      setIsUploading(false); // Set uploading status to false
+    }
+  };
 
   const handleUpdateProfile = async () => {
     try {
+      let profilePhotoUrl = profilePhoto || "";
+
+      if (selectedImage) {
+        // Check if an image is selected
+        profilePhotoUrl = await handleImageUpload(selectedImage);
+      }
+
       await updateUser({
         variables: {
           where: { id },
           data: {
             firstName: { set: firstName },
             lastName: { set: lastName },
-            profilePhoto: { set: "" },
+            profilePhoto: { set: profilePhotoUrl },
           },
         },
       });
@@ -58,7 +110,10 @@ const Profile = () => {
       <SafeAreaView className="h-full bg-white">
         <ScrollView className="h-full px-4">
           <BackArrow label="My Profile" />
-          <ImageUpload />
+          <ImageUpload
+            onImageSelected={setSelectedImage}
+            initialImage={profilePhoto}
+          />
           <View className="flex space-y-4 my-6">
             <CustomTextInput
               value={firstName}
@@ -99,6 +154,25 @@ const Profile = () => {
             isLoading={loading || userUpdating}
           />
         </ScrollView>
+        {isUploading && (
+          <View
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "rgba(0,0,0,0.5)",
+            }}
+          >
+            <ActivityIndicator size="large" color="#ffffff" />
+            <Text style={{ color: "#ffffff", marginTop: 10 }}>
+              Uploading...
+            </Text>
+          </View>
+        )}
       </SafeAreaView>
     </KeyboardAvoidingView>
   );
