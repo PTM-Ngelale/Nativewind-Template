@@ -4,7 +4,7 @@ import BackArrow from "@/components/ui/BackArrow";
 import CustomTextInput from "@/components/ui/CustomInput";
 import CustomButton from "@/components/ui/CustomButton";
 import ImageUpload from "@/components/ui/ImageUpload";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import { GetUserBasicInfoQuery } from "@/graphql/query";
 import Loading from "@/components/Loading";
@@ -33,7 +33,13 @@ const Profile: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<ImagePickerResult | null>(
     null
   );
-  const [isUploading, setIsUploading] = useState<boolean>(false); // Add state for upload status
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+
+
+  useEffect(() => {
+    setFirstName(initialFirstName || "");
+    setLastName(initialLastName || "");
+  }, [initialFirstName,  initialLastName, loading]);
 
   const handleImageUpload = async (
     image: ImagePickerResult
@@ -55,7 +61,7 @@ const Profile: React.FC = () => {
       } as any); // Type assertion to satisfy FormData.append
 
       const response = await axios.post(
-        "https://519a-102-215-57-136.ngrok-free.app/upload",
+        "https://alarm-saas-backend-y2v2v.ondigitalocean.app/upload",
         formData,
         {
           headers: {
@@ -66,8 +72,14 @@ const Profile: React.FC = () => {
 
       return response.data.data;
     } catch (error) {
-      showToast("error", "Error uploading image");
-      throw error;
+     if (axios.isAxiosError(error)) {
+      // If the error is an AxiosError, log the response error
+      showToast("error", error.response?.data?.message || error.message);
+    } else {
+      // For non-Axios errors, log the error message
+      showToast("error", (error as Error).message);
+    }
+    throw error;
     } finally {
       setIsUploading(false); // Set uploading status to false
     }
@@ -94,7 +106,7 @@ const Profile: React.FC = () => {
       });
       showToast("success", "Profile updated successfully");
     } catch (err) {
-      showToast("error", "Error updating profile");
+      showToast("error", "Error updating profile", err);
     }
   };
 

@@ -6,13 +6,13 @@ import {
   Text,
   Image,
   KeyboardAvoidingView,
-  TouchableOpacity,
+  TouchableOpacity
 } from "react-native";
 import CustomTextInput from "@/components/ui/CustomInput";
 import { useState, useEffect } from "react";
 import { useRouter, Href } from "expo-router";
 import { LOGIN_MUTATION } from "@/graphql/mutations";
-import { useMutation } from "@apollo/client";
+import { ApolloError, useMutation } from "@apollo/client";
 import { showToast } from "@/components/ToastComponent";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -25,7 +25,7 @@ const Login = () => {
   };
   const [form, setForm] = useState({
     email: "",
-    password: "",
+    password: ""
   });
 
   const [errorMessage, setErrorMessage] = useState("");
@@ -49,23 +49,19 @@ const Login = () => {
 
   const handleContinue = async () => {
     if (validateForm()) {
-      const { data } = await login({
-        variables: { email: form.email, password: form.password },
-      });
-      if (data.login.token) {
-        showToast("success", "Login Successful");
-        // Store token in AsyncStorage
-        await AsyncStorage.setItem("userToken", data.login.token);
-        // Handle successful login, e.g., store token, navigate to another screen
-
-        router.push("/(tabs)" as Href<string>);
-      }
-
-      // Check for GraphQL errors from the useMutation hook
-      if (error) {
-        const graphQLErrors = error.graphQLErrors;
-        if (graphQLErrors && graphQLErrors.length > 0) {
-          showToast("error", graphQLErrors[0].message);
+      try {
+        const { data } = await login({
+          variables: { email: form.email, password: form.password }
+        });
+        if (data.login.token) {
+          showToast("success", "Login Successful");
+          await AsyncStorage.setItem("userToken", data.login.token);
+          router.push("/(tabs)" as Href<string>);
+        }
+      } catch (error) {
+        const apolloError = error as ApolloError; 
+        if (apolloError.graphQLErrors && apolloError.graphQLErrors.length > 0) {
+          showToast("error", apolloError.graphQLErrors[0].message);
         } else {
           showToast("error", "Login failed. Please try again.");
         }
@@ -73,15 +69,18 @@ const Login = () => {
     }
   };
 
-  useEffect(() => {
-    if (errorMessage) {
-      const timer = setTimeout(() => {
-        setErrorMessage("");
-      }, 3000);
+  useEffect(
+    () => {
+      if (errorMessage) {
+        const timer = setTimeout(() => {
+          setErrorMessage("");
+        }, 3000);
 
-      return () => clearTimeout(timer);
-    }
-  }, [errorMessage]);
+        return () => clearTimeout(timer);
+      }
+    },
+    [errorMessage]
+  );
 
   return (
     <SafeAreaView className="bg-white h-full">
@@ -91,8 +90,7 @@ const Login = () => {
             <View className=" relative h-full">
               <TouchableOpacity
                 className="absolute top-5 left-5 z-10"
-                onPress={handleBack}
-              >
+                onPress={handleBack}>
                 <Image source={require("@/assets/images/left-white.png")} />
               </TouchableOpacity>
               <Image
@@ -124,8 +122,7 @@ const Login = () => {
                           placeholderTextColor="#000"
                           value={form.email}
                           onChangeText={(e: any) =>
-                            setForm({ ...form, email: e })
-                          }
+                            setForm({ ...form, email: e })}
                         />
                       </View>
                       <View>
@@ -134,8 +131,7 @@ const Login = () => {
                           placeholderTextColor="#000"
                           value={form.password}
                           onChangeText={(e: any) =>
-                            setForm({ ...form, password: e })
-                          }
+                            setForm({ ...form, password: e })}
                         />
                       </View>
                     </View>
@@ -153,9 +149,7 @@ const Login = () => {
                       <Text>Don't have an account?</Text>
                       <TouchableOpacity
                         onPress={() =>
-                          router.push("/(auth)/SignUp" as Href<string>)
-                        }
-                      >
+                          router.push("/(auth)/SignUp" as Href<string>)}>
                         <Text className="text-[#192655] font-bold">
                           Sign Up
                         </Text>

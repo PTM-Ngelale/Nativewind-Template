@@ -8,7 +8,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const httpLink = createHttpLink({
-  uri: "https://519a-102-215-57-136.ngrok-free.app/graphql",
+  uri: "https://alarm-saas-backend-y2v2v.ondigitalocean.app/graphql",
 });
 
 export const createAuthLink = (userToken: string) => {
@@ -29,7 +29,7 @@ export const createApolloClient = async () => {
   const cache = new InMemoryCache();
   const defaultOptions: DefaultOptions = {
     watchQuery: {
-      fetchPolicy: "cache-and-network",
+       fetchPolicy: 'network-only',
     },
   };
 
