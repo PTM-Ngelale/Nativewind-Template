@@ -6,9 +6,10 @@ import {
   DefaultOptions,
 } from "@apollo/client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Href, router } from "expo-router";
 
 const httpLink = createHttpLink({
-  uri: "https://519a-102-215-57-136.ngrok-free.app/graphql",
+  uri: "https://alarm-saas-backend-y2v2v.ondigitalocean.app/graphql",
 });
 
 export const createAuthLink = (userToken: string) => {
@@ -23,13 +24,28 @@ export const createAuthLink = (userToken: string) => {
 };
 
 export const createApolloClient = async () => {
-  const userToken = await AsyncStorage.getItem("userToken");
-  const authLink = createAuthLink(userToken || "");
+  const tokenData = await AsyncStorage.getItem("userToken");
+  let userToken = "";
+
+  if (tokenData) {
+    const { token, expiration } = JSON.parse(tokenData);
+    const currentTime = new Date().getTime();
+
+    if (currentTime < expiration) {
+      userToken = token;
+    } else {
+      // Token has expired, handle accordingly (i.e., redirect to login)
+      await AsyncStorage.removeItem("userToken");
+      router.replace("/(auth)/Login" as Href<string>);
+    }
+  }
+
+  const authLink = createAuthLink(userToken);
 
   const cache = new InMemoryCache();
   const defaultOptions: DefaultOptions = {
     watchQuery: {
-      fetchPolicy: "cache-and-network",
+      fetchPolicy: "network-only",
     },
   };
 

@@ -9,30 +9,32 @@ export const LOGIN_MUTATION = gql`
 `;
 
 export const SIGNUP_MUTATION = gql`
-  mutation signup($email: String!, $password: String!) {
-    signup(email: $email, password: $password) {
+  mutation CreateUser($data: UserCreateInput!) {
+    registerUser(data: $data) {
+      firstName
+      lastName
+      id
       token
+      assignedTo
+      email
     }
   }
 `;
 
-export const FORGOT_PASSWORD_MUTATION = gql`
-  mutation forgotPassword($email: String!) {
-    forgotPassword(email: $email)
+export const VERIFY_OTP_MUTATION = gql`
+  mutation VerifyOtp($email: String!, $otp: String!) {
+    verifyOtp(email: $email, otp: $otp)
   }
 `;
 
-export const RESET_PASSWORD_MUTATION = gql`
-  mutation resetPassword($email: String!, $password: String!, $token: String!) {
-    resetPassword(email: $email, password: $password, token: $token)
+export const RESEND_EMAIL_OTP_MUTATION = gql`
+  mutation GenerateOtp($email: String!) {
+    generateOtp(where: { email: $email }, data: {}) {
+      verificationOtp
+    }
   }
 `;
 
-export const UPDATE_PASSWORD_MUTATION = gql`
-  mutation updatePassword($password: String!) {
-    updatePassword(password: $password)
-  }
-`;
 
 export const UPDATE_USER_MUTATION = gql`
   mutation UpdateUser($where: UserWhereUniqueInput!, $data: UserUpdateInput!) {

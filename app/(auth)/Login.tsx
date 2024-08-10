@@ -28,22 +28,21 @@ const Login = () => {
     password: "",
   });
 
-  const [errorMessage, setErrorMessage] = useState("");
+
 
   const validateForm = () => {
     const { email, password } = form;
     if (!email || !password) {
-      setErrorMessage("All fields are required.");
+      showToast("error", "All fields are required.");
       return false;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      setErrorMessage("Please enter a valid email address.");
+      showToast("error", "Please enter a valid email address.");
       return false;
     }
 
-    setErrorMessage("");
     return true;
   };
 
@@ -55,7 +54,15 @@ const Login = () => {
       if (data.login.token) {
         showToast("success", "Login Successful");
         // Store token in AsyncStorage
-        await AsyncStorage.setItem("userToken", data.login.token);
+        // Calculate expiration time (current time + 72 hours)
+        const expirationTime = new Date().getTime() + 72 * 60 * 60 * 1000;
+        const tokenData = JSON.stringify({
+          token: data.login.token,
+          expiration: expirationTime,
+        });
+
+        // Store token and expiration time in AsyncStorage
+        await AsyncStorage.setItem("userToken", tokenData);
         // Handle successful login, e.g., store token, navigate to another screen
 
         router.push("/(tabs)" as Href<string>);
@@ -73,15 +80,6 @@ const Login = () => {
     }
   };
 
-  useEffect(() => {
-    if (errorMessage) {
-      const timer = setTimeout(() => {
-        setErrorMessage("");
-      }, 3000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [errorMessage]);
 
   return (
     <SafeAreaView className="bg-white h-full">

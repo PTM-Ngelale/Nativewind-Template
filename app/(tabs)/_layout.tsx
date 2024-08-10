@@ -5,14 +5,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Href, router, Tabs } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, View } from "react-native";
 
 interface TabIconProps {
   icon: keyof typeof Ionicons.glyphMap;
   color: string;
   name: string;
   focused: boolean;
-  onPress: () => void;
 }
 
 const TabIcon: React.FC<TabIconProps> = ({
@@ -20,7 +19,6 @@ const TabIcon: React.FC<TabIconProps> = ({
   color,
   name,
   focused,
-  onPress,
 }) => {
   const [isLoading, setIsLoading] = useState(true);
 
@@ -31,6 +29,7 @@ const TabIcon: React.FC<TabIconProps> = ({
         router.replace("/(auth)/Login" as Href<string>);
       }
       setIsLoading(false);
+      console.log(token)
     };
     fetchToken();
   }, []);
@@ -38,7 +37,6 @@ const TabIcon: React.FC<TabIconProps> = ({
   if (isLoading) return <Loading />;
 
   return (
-    <TouchableOpacity onPress={onPress}>
       <View className="items-center justify-center gap-2">
         <View
           className={`${focused ? "" : "opacity-0"} w-[36px] bg-[#0090FA] h-1`}
@@ -51,7 +49,6 @@ const TabIcon: React.FC<TabIconProps> = ({
           {name}
         </Text>
       </View>
-    </TouchableOpacity>
   );
 };
 
@@ -81,7 +78,7 @@ export default function TabLayout() {
                 color={color}
                 name="Home"
                 focused={focused}
-                onPress={() => router.replace("/(tabs)")}
+
               />
             ),
           }}
@@ -97,7 +94,7 @@ export default function TabLayout() {
                 color={color}
                 name="Notifications"
                 focused={focused}
-                onPress={() => router.replace("/notifications")}
+                // onPress={() => router.replace("/notifications")}
               />
             ),
           }}
@@ -112,7 +109,7 @@ export default function TabLayout() {
                 color={color}
                 name="Menu"
                 focused={focused}
-                onPress={() => router.replace("/(menu)")}
+                // onPress={() => router.replace("/(menu)")}
               />
             ),
           }}

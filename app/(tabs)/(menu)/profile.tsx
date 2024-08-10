@@ -1,10 +1,16 @@
-import { View, Text, ScrollView, KeyboardAvoidingView, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  KeyboardAvoidingView,
+  ActivityIndicator,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BackArrow from "@/components/ui/BackArrow";
 import CustomTextInput from "@/components/ui/CustomInput";
 import CustomButton from "@/components/ui/CustomButton";
 import ImageUpload from "@/components/ui/ImageUpload";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import { GetUserBasicInfoQuery } from "@/graphql/query";
 import Loading from "@/components/Loading";
@@ -33,13 +39,20 @@ const Profile: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<ImagePickerResult | null>(
     null
   );
-  const [isUploading, setIsUploading] = useState<boolean>(false); // Add state for upload status
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+
+  useEffect(() => {
+    setFirstName(initialFirstName || "");
+    setLastName(initialLastName || "");
+  }, [initialFirstName, initialLastName]);
+
+  console.log(firstName, lastName);
 
   const handleImageUpload = async (
     image: ImagePickerResult
   ): Promise<string> => {
     try {
-      setIsUploading(true); 
+      setIsUploading(true);
       const asset: ImagePickerAsset | undefined = image.assets
         ? image.assets[0]
         : undefined;
@@ -55,7 +68,7 @@ const Profile: React.FC = () => {
       } as any); // Type assertion to satisfy FormData.append
 
       const response = await axios.post(
-        "https://519a-102-215-57-136.ngrok-free.app/upload",
+        "https://alarm-saas-backend-y2v2v.ondigitalocean.app/upload",
         formData,
         {
           headers: {
@@ -99,7 +112,9 @@ const Profile: React.FC = () => {
   };
 
   if (loading) return <Loading />;
-  if (error || userUpdateError) console.log(error);
+  if (error || userUpdateError) {
+    showToast("error", error?.message || "An unknown error occurred");
+  }
 
   return (
     <KeyboardAvoidingView
