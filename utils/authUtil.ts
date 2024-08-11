@@ -28,13 +28,18 @@ export const createApolloClient = async () => {
   let userToken = "";
 
   if (tokenData) {
-    const { token, expiration } = JSON.parse(tokenData);
-    const currentTime = new Date().getTime();
+    try {
+      const { token, expiration } = JSON.parse(tokenData);
+      const currentTime = new Date().getTime();
 
-    if (currentTime < expiration) {
-      userToken = token;
-    } else {
-      // Token has expired, handle accordingly (i.e., redirect to login)
+      if (currentTime < expiration) {
+        userToken = token;
+      } else {
+        // Token has expired, handle accordingly (i.e., redirect to login)
+        await AsyncStorage.removeItem("userToken");
+        router.replace("/(auth)/Login" as Href<string>);
+      }
+    } catch (error) {
       await AsyncStorage.removeItem("userToken");
       router.replace("/(auth)/Login" as Href<string>);
     }

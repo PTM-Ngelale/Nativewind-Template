@@ -12,6 +12,7 @@ import React from "react";
 import { Href, router } from "expo-router";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-toast-message";
 
 const MenuNavigation: {
   name: string;
@@ -23,14 +24,14 @@ const MenuNavigation: {
     link: "/profile",
     icon: <TabBarIcon name={"person"} color={"#192655"} />,
   },
-  // {
-  //   name: "Settings",
-  //   link: "/settings",
-  //   icon: <TabBarIcon name={"settings"} color={"#192655"} />,
-  // },
+  {
+    name: "Settings",
+    link: "/test",
+    icon: <TabBarIcon name={"settings"} color={"#192655"} />,
+  },
   {
     name: "Logout",
-    link: "/(tokenValidation)",
+    link: "/(auth)/Login",
     icon: <TabBarIcon name={"log-out"} color={"#192655"} />,
   },
 ];
@@ -57,7 +58,8 @@ const Menu = () => {
                 onPress={async () => {
                   if (item.name === "Logout") {
                     await AsyncStorage.removeItem("userToken");
-                    router.push("/" as Href<string>);
+                    router.replace("/(auth)/Login" as Href<string>);
+                    Toast.show({ type: "success", text1: "Logout Successful" });
                   } else {
                     router.push(item.link as Href<string>);
                   }

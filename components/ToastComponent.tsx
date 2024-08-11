@@ -1,9 +1,4 @@
-import React from "react";
 import Toast from "react-native-toast-message";
-
-const ToastComponent = () => {
-  return <Toast />;
-};
 
 export const showToast = (
   type: "success" | "error" | "info",
@@ -17,4 +12,3 @@ export const showToast = (
   });
 };
 
-export default ToastComponent;

@@ -6,10 +6,15 @@ import {
   SetStateAction,
   useContext,
   useState,
+  useEffect,
+  useRef,
 } from "react";
 
 import * as Location from "expo-location";
-import { Alert } from "react-native";
+import * as Notifications from "expo-notifications";
+import * as Device from "expo-device";
+import Constants from "expo-constants";
+import { Alert, Platform } from "react-native";
 
 type userContextType = {
   displayCurrentAddress: string;
@@ -33,6 +38,12 @@ type userContextType = {
   getCurrentLocation: () => void;
   checkIfLocationEnabled: () => void;
   requestPermissionAgain: () => void;
+  expoPushToken: string;
+  deviceInfo: {
+    deviceId: string;
+    deviceName: string;
+    deviceModel: string;
+  };
 };
 
 const UserContext = createContext<userContextType | undefined>(undefined);
@@ -56,9 +67,47 @@ const UserProvider = (props: { children: ReactNode }): ReactElement => {
     latitudeDelta: 0,
     longitudeDelta: 0,
   });
+  const [expoPushToken, setExpoPushToken] = useState("");
+  const [deviceInfo, setDeviceInfo] = useState({
+    deviceId: "",
+    deviceName: "",
+    deviceModel: "",
+  });
+  const notificationListener = useRef<Notifications.Subscription>();
+  const responseListener = useRef<Notifications.Subscription>();
+
+  useEffect(() => {
+    registerForPushNotificationsAsync()
+      .then((token) => setExpoPushToken(token ?? ""))
+      .catch((error: any) => setExpoPushToken(`${error}`));
+
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        console.log(notification);
+      });
+
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        console.log(response);
+      });
+
+    return () => {
+      notificationListener.current &&
+        Notifications.removeNotificationSubscription(
+          notificationListener.current
+        );
+      responseListener.current &&
+        Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    checkIfLocationEnabled();
+    getDeviceInfo();
+  }, []);
 
   const checkIfLocationEnabled = async () => {
-    let enabled = await Location.hasServicesEnabledAsync();
+    const enabled = await Location.hasServicesEnabledAsync();
     if (!enabled) {
       Alert.alert("Location not enabled", "Please enable your Location", [
         {
@@ -74,7 +123,7 @@ const UserProvider = (props: { children: ReactNode }): ReactElement => {
   };
 
   const getCurrentLocation = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync();
+    const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
       Alert.alert(
         "Permission denied",
@@ -94,31 +143,111 @@ const UserProvider = (props: { children: ReactNode }): ReactElement => {
     if (coords) {
       const { latitude, longitude } = coords;
 
-      setInitialRegion({
-        latitude,
-        longitude,
-        latitudeDelta: 0.004757,
-        longitudeDelta: 0.006866,
+      setInitialRegion((prevRegion) => {
+        if (
+          prevRegion.latitude === latitude &&
+          prevRegion.longitude === longitude
+        ) {
+          return prevRegion;
+        }
+        return {
+          latitude,
+          longitude,
+          latitudeDelta: 0.004757,
+          longitudeDelta: 0.006866,
+        };
       });
 
-      let response = await Location.reverseGeocodeAsync({
+      const response = await Location.reverseGeocodeAsync({
         latitude,
         longitude,
       });
 
-      for (let item of response) {
-        let address = `${item.name} ${item.region} ${item.country}`;
-        setDisplayCurrentAddress(address);
+      if (response.length > 0) {
+        const { name, region, country } = response[0];
+        const address = `${name} ${region} ${country}`;
+        setDisplayCurrentAddress((prevAddress) => {
+          if (prevAddress === address) {
+            return prevAddress;
+          }
+          return address;
+        });
       }
     }
   };
 
   const requestPermissionAgain = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync();
+    const { status } = await Location.requestForegroundPermissionsAsync();
     if (status === "granted") {
       getCurrentLocation();
     }
   };
+
+  const handleRegistrationError = (errorMessage: string) => {
+    alert(errorMessage);
+    throw new Error(errorMessage);
+  };
+
+  const registerForPushNotificationsAsync = async () => {
+    if (Platform.OS === "android") {
+      Notifications.setNotificationChannelAsync("default", {
+        name: "default",
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: "#FF231F7C",
+      });
+    }
+
+    if (Device.isDevice) {
+      const { status: existingStatus } =
+        await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== "granted") {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== "granted") {
+        handleRegistrationError(
+          "Permission not granted to get push token for push notification!"
+        );
+        return;
+      }
+      const projectId =
+        Constants?.expoConfig?.extra?.eas?.projectId ??
+        Constants?.easConfig?.projectId;
+      if (!projectId) {
+        handleRegistrationError("Project ID not found");
+      }
+      try {
+        const pushTokenString = (
+          await Notifications.getExpoPushTokenAsync({
+            projectId,
+          })
+        ).data;
+        console.log(pushTokenString);
+        return pushTokenString;
+      } catch (e: unknown) {
+        handleRegistrationError(`${e}`);
+      }
+    } else {
+      handleRegistrationError(
+        "Must use physical device for push notifications"
+      );
+    }
+  };
+
+  const getDeviceInfo = async () => {
+    const deviceId = Device.osBuildId || "unknown";
+    const deviceName = Device.manufacturer || "unknown";
+    const deviceModel = Device.modelName || "unknown";
+
+    setDeviceInfo({
+      deviceId,
+      deviceName,
+      deviceModel,
+    });
+  };
+
 
   return (
     <UserContext.Provider
@@ -133,6 +262,8 @@ const UserProvider = (props: { children: ReactNode }): ReactElement => {
         checkIfLocationEnabled,
         getCurrentLocation,
         requestPermissionAgain,
+        expoPushToken,
+        deviceInfo,
       }}
     />
   );

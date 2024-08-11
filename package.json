@@ -9,7 +9,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "generate": "graphql-codegen --config codegen.ts"
   },
   "jest": {
     "preset": "jest-expo"
@@ -17,19 +18,26 @@
   "dependencies": {
     "@apollo/client": "^3.11.2",
     "@expo/vector-icons": "^14.0.2",
+    "@graphql-codegen/cli": "^5.0.2",
+    "@graphql-codegen/typescript": "^4.0.9",
+    "@graphql-codegen/typescript-operations": "^4.2.3",
+    "@graphql-codegen/typescript-react-apollo": "^4.3.0",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/async-storage": "^1.12.1",
     "@react-native-community/geolocation": "^3.3.0",
     "@react-native-picker/picker": "2.7.5",
     "@react-navigation/native": "^6.0.2",
+    "@react-navigation/stack": "^6.4.1",
     "apollo3-cache-persist": "^0.15.0",
     "axios": "^1.7.3",
     "expo": "~51.0.26",
     "expo-constants": "~16.0.2",
+    "expo-device": "~6.0.2",
     "expo-font": "~12.0.9",
     "expo-image-picker": "^15.0.7",
     "expo-linking": "~6.3.1",
     "expo-location": "~17.0.1",
+    "expo-notifications": "~0.28.15",
     "expo-router": "~3.5.21",
     "expo-splash-screen": "~0.27.5",
     "expo-status-bar": "~1.12.1",

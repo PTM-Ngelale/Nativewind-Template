@@ -1,45 +1,70 @@
 import CustomButton from "@/components/ui/CustomButton";
+import CustomTextInput from "@/components/ui/CustomInput";
+import { useUser } from "@/context/userContext";
+import { useLoginUserMutation } from "@/generated/graphql";
+import { ApolloError } from "@apollo/client";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Href, useRouter } from "expo-router";
+import { useState } from "react";
 import {
-  SafeAreaView,
-  ScrollView,
-  View,
-  Text,
   Image,
   KeyboardAvoidingView,
+  SafeAreaView,
+  ScrollView,
+  Text,
   TouchableOpacity,
+  View,
 } from "react-native";
-import CustomTextInput from "@/components/ui/CustomInput";
-import { useState, useEffect } from "react";
-import { useRouter, Href } from "expo-router";
-import { LOGIN_MUTATION } from "@/graphql/mutations";
-import { useMutation } from "@apollo/client";
-import { showToast } from "@/components/ToastComponent";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-toast-message";
 
 const Login = () => {
   const router = useRouter();
-  const [login, { loading, error }] = useMutation(LOGIN_MUTATION);
+  const { expoPushToken, deviceInfo } = useUser();
+  const [loginUser, { loading }] = useLoginUserMutation({
+    onCompleted: async (data) => {
+      if (data.loginUser.token) {
+        Toast.show({ type: "success", text1: "Welcome back." });
+        // Store token in AsyncStorage
+        // Calculate expiration time (current time + 72 hours)
+        const expirationTime = new Date().getTime() + 72 * 60 * 60 * 1000;
+        const tokenData = JSON.stringify({
+          token: data.loginUser.token,
+          expiration: expirationTime,
+        });
+
+        // Store token and expiration time in AsyncStorage
+        await AsyncStorage.setItem("userToken", tokenData);
+
+        router.push("/(tabs)" as Href<string>);
+      }
+    },
+    onError: (error: ApolloError) => {
+      Toast.show({ type: "error", text1: error.message });
+    },
+  });
+
   const handleBack = () => {
-    router.back();
-    // router.push(/(tokenValidation));
+    router.replace("/");
   };
+
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
 
-
-
   const validateForm = () => {
     const { email, password } = form;
     if (!email || !password) {
-      showToast("error", "All fields are required.");
+      Toast.show({ type: "error", text1: "All fields are required." });
       return false;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      showToast("error", "Please enter a valid email address.");
+      Toast.show({
+        type: "error",
+        text1: "Please enter a valid email address.",
+      });
       return false;
     }
 
@@ -48,38 +73,17 @@ const Login = () => {
 
   const handleContinue = async () => {
     if (validateForm()) {
-      const { data } = await login({
-        variables: { email: form.email, password: form.password },
+      await loginUser({
+        variables: {
+          email: form.email,
+          password: form.password,
+          deviceName: deviceInfo.deviceName,
+          deviceModel: deviceInfo.deviceModel,
+          expoPushToken,
+        },
       });
-      if (data.login.token) {
-        showToast("success", "Login Successful");
-        // Store token in AsyncStorage
-        // Calculate expiration time (current time + 72 hours)
-        const expirationTime = new Date().getTime() + 72 * 60 * 60 * 1000;
-        const tokenData = JSON.stringify({
-          token: data.login.token,
-          expiration: expirationTime,
-        });
-
-        // Store token and expiration time in AsyncStorage
-        await AsyncStorage.setItem("userToken", tokenData);
-        // Handle successful login, e.g., store token, navigate to another screen
-
-        router.push("/(tabs)" as Href<string>);
-      }
-
-      // Check for GraphQL errors from the useMutation hook
-      if (error) {
-        const graphQLErrors = error.graphQLErrors;
-        if (graphQLErrors && graphQLErrors.length > 0) {
-          showToast("error", graphQLErrors[0].message);
-        } else {
-          showToast("error", "Login failed. Please try again.");
-        }
-      }
     }
   };
-
 
   return (
     <SafeAreaView className="bg-white h-full">

@@ -1,27 +1,47 @@
-import {
-  ScrollView,
-  SafeAreaView,
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
 import CustomButton from "@/components/ui/CustomButton";
-import OTPTextView from "react-native-otp-textinput";
-import { useState } from "react";
+import { ApolloError } from "@apollo/client";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useMutation } from "@apollo/client";
-import { VERIFY_OTP_MUTATION } from "@/graphql/mutations";
+import { useState } from "react";
+import {
+  Image,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import OTPTextView from "react-native-otp-textinput";
 import { showToast } from "@/components/ToastComponent";
+import {
+  useGenerateOtpMutation,
+  useVerifyUserAccountOtpMutation,
+} from "@/generated/graphql";
+import Toast from "react-native-toast-message";
 
 const Validation = () => {
   const router = useRouter();
-  const [verifyOtp, { loading, error }] = useMutation(VERIFY_OTP_MUTATION);
+  const [verifyUserAccountOtp, { loading }] = useVerifyUserAccountOtpMutation({
+    onCompleted: async () => {
+      router.push("/(auth)/Login");
+      showToast("success", "OTP verified successfully");
+    },
+
+    onError: (error: ApolloError) => {
+      Toast.show({ type: "error", text1: error.message });
+    },
+  });
+  const [generateOtp, { loading: resendLoading }] = useGenerateOtpMutation({
+    onCompleted: async () => {
+      showToast("success", "OTP resent successfully.");
+    },
+
+    onError: (error: ApolloError) => {
+      Toast.show({ type: "error", text1: error.message });
+    },
+  });
   const params = useLocalSearchParams();
   const { email } = params;
-
-  console.log(email);
+  const emailString = Array.isArray(email) ? email[0] : email;
   const handleBack = () => {
     router.back();
   };
@@ -32,30 +52,22 @@ const Validation = () => {
     setOtp(otp);
   };
 
-  const handleValidation = async () => {
-    try {
-      const { data } = await verifyOtp({
-        variables: {
-          email: email,
-          otp: otp,
-        },
-      });
-
-      if (data.verifyOtp) {
-        router.push("/(tabs)");
-      } else {
-        showToast("error", "Invalid OTP. Please try again.");
-      }
-    } catch (e: any) {
-      if (e.graphQLErrors && e.graphQLErrors.length > 0) {
-        showToast("error", e.graphQLErrors[0].message);
-      } else {
-        showToast("error", e.message || "Validation failed. Please try again.");
-      }
-    }
+  const handleResendCode = async () => {
+    await generateOtp({
+      variables: {
+        email: emailString,
+      },
+    });
   };
 
-
+  const handleValidation = async () => {
+    await verifyUserAccountOtp({
+      variables: {
+        email: emailString,
+        otp,
+      },
+    });
+  };
 
   return (
     <SafeAreaView className="h-full bg-white">
@@ -71,7 +83,8 @@ const Validation = () => {
                   Validation
                 </Text>
                 <Text className="text-[14px]">
-                  An OTP was sent to {email}, please enter the code sent
+                  An OTP was sent to <Text className="font-bold">{email}</Text>,
+                  please enter the code sent
                 </Text>
               </View>
             </View>
@@ -83,12 +96,16 @@ const Validation = () => {
                 offTintColor="#787878"
                 containerStyle={{ justifyContent: "space-between" }}
                 inputCellLength={1}
-
                 handleTextChange={handleOtpChange}
               />
               <Text>
                 Code not sent?{" "}
-                <Text className="text-[#192655] font-bold">Resend Code</Text>
+                <Text
+                  className="text-[#192655] font-bold"
+                  onPress={handleResendCode}
+                >
+                  Resend Code
+                </Text>
               </Text>
             </View>
             <View className="mt-[300px]">
@@ -96,7 +113,7 @@ const Validation = () => {
                 onPress={handleValidation}
                 title="Validate"
                 customStyle="bg-[#192655]"
-                isLoading={loading}
+                isLoading={loading || resendLoading}
                 textStyle="text-white"
               />
             </View>

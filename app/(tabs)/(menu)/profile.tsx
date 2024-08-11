@@ -30,12 +30,18 @@ const Profile: React.FC = () => {
     lastName: initialLastName,
     id,
     profilePhoto,
+    nextOfKinName: initialNextOfKinName,
+    nextOfKinContact: initalNextOfKinContact,
   } = data?.getCurrentUser || {};
 
   const [firstName, setFirstName] = useState<string>(initialFirstName || "");
   const [lastName, setLastName] = useState<string>(initialLastName || "");
-  const [nextOfKinName, setNextOfKinName] = useState<string>("");
-  const [nextOfKinContact, setNextOfKinContact] = useState<string>("");
+  const [nextOfKinName, setNextOfKinName] = useState<string>(
+    initialNextOfKinName || ""
+  );
+  const [nextOfKinContact, setNextOfKinContact] = useState<string>(
+    initalNextOfKinContact || ""
+  );
   const [selectedImage, setSelectedImage] = useState<ImagePickerResult | null>(
     null
   );
@@ -44,9 +50,14 @@ const Profile: React.FC = () => {
   useEffect(() => {
     setFirstName(initialFirstName || "");
     setLastName(initialLastName || "");
-  }, [initialFirstName, initialLastName]);
-
-  console.log(firstName, lastName);
+    setNextOfKinName(initialNextOfKinName || "");
+    setNextOfKinContact(initalNextOfKinContact || "");
+  }, [
+    initialFirstName,
+    initialLastName,
+    initalNextOfKinContact,
+    initialNextOfKinName,
+  ]);
 
   const handleImageUpload = async (
     image: ImagePickerResult
@@ -82,7 +93,7 @@ const Profile: React.FC = () => {
       showToast("error", "Error uploading image");
       throw error;
     } finally {
-      setIsUploading(false); // Set uploading status to false
+      setIsUploading(false);
     }
   };
 
@@ -102,6 +113,8 @@ const Profile: React.FC = () => {
             firstName: { set: firstName },
             lastName: { set: lastName },
             profilePhoto: { set: profilePhotoUrl },
+            nextOfKinName: { set: nextOfKinName },
+            nextOfKinContact: { set: nextOfKinContact },
           },
         },
       });

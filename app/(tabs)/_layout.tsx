@@ -14,12 +14,7 @@ interface TabIconProps {
   focused: boolean;
 }
 
-const TabIcon: React.FC<TabIconProps> = ({
-  icon,
-  color,
-  name,
-  focused,
-}) => {
+const TabIcon: React.FC<TabIconProps> = ({ icon, color, name, focused }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -29,26 +24,27 @@ const TabIcon: React.FC<TabIconProps> = ({
         router.replace("/(auth)/Login" as Href<string>);
       }
       setIsLoading(false);
-      console.log(token)
     };
     fetchToken();
   }, []);
 
   if (isLoading) return <Loading />;
 
+
+
   return (
-      <View className="items-center justify-center gap-2">
-        <View
-          className={`${focused ? "" : "opacity-0"} w-[36px] bg-[#0090FA] h-1`}
-        />
-        <TabBarIcon name={icon} color={color} />
-        <Text
-          style={{ color: color }}
-          className={`${focused ? "font-bold" : "font-normal"} text-xs`}
-        >
-          {name}
-        </Text>
-      </View>
+    <View className="items-center justify-center gap-2">
+      <View
+        className={`${focused ? "" : "opacity-0"} w-[36px] bg-[#0090FA] h-1`}
+      />
+      <TabBarIcon name={icon} color={color} />
+      <Text
+        style={{ color: color }}
+        className={`${focused ? "font-bold" : "font-normal"} text-xs`}
+      >
+        {name}
+      </Text>
+    </View>
   );
 };
 
@@ -78,7 +74,6 @@ export default function TabLayout() {
                 color={color}
                 name="Home"
                 focused={focused}
-
               />
             ),
           }}

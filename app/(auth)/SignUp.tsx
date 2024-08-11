@@ -1,8 +1,8 @@
-import { showToast } from "@/components/ToastComponent";
 import CustomButton from "@/components/ui/CustomButton";
 import CustomTextInput from "@/components/ui/CustomInput";
-import { SIGNUP_MUTATION } from "@/graphql/mutations";
-import { useMutation } from "@apollo/client";
+import { useCreateUserMutation, RoleType } from "@/generated/graphql";
+import { ApolloError } from "@apollo/client";
+
 import { Href, Link, useRouter } from "expo-router";
 import { useState } from "react";
 import {
@@ -14,10 +14,29 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import Toast from "react-native-toast-message";
 
 const SignUp = () => {
   const router = useRouter();
-  const [registerUser, { loading, error }] = useMutation(SIGNUP_MUTATION);
+  const [registerUser, { loading}] = useCreateUserMutation({
+    onCompleted: async (data) => {
+      if (data.registerUser.token) {
+        Toast.show({
+          type: "success",
+          text1: "Please check your mail to confirm account.",
+        });
+        router.push({
+          pathname: "/(auth)/Validation",
+          params: { email: data.registerUser.email },
+        } as Href<string>);
+      }
+    },
+
+    onError: (error: ApolloError) => {
+      Toast.show({ type: "error", text1: error.message });
+    },
+  });
+
   const handleBack = () => {
     router.back();
     // router.push("/(tokenValidation)");
@@ -31,48 +50,34 @@ const SignUp = () => {
   const validateForm = () => {
     const { email, password, token } = form;
     if (!email || !password || !token) {
-      showToast("error", "All fields are required.");
+      Toast.show({ type: "error", text1: "All fields are required." });
       return false;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      showToast("error", "Please enter a valid email address.");
+      Toast.show({
+        type: "error",
+        text1: "Please enter a valid email address.",
+      });
       return false;
     }
 
-    showToast("error", "");
     return true;
   };
 
   const handleSignup = async () => {
     if (validateForm()) {
-      try {
-        const { data } = await registerUser({
-          variables: {
-            data: {
-              email: form.email,
-              password: form.password,
-              token: form.token,
-              role: "User",
-            },
+      await registerUser({
+        variables: {
+          data: {
+            email: form.email,
+            password: form.password,
+            token: form.token,
+            role: RoleType.User,
           },
-        });
-        if (data.registerUser.id) {
-          showToast("success", "Sign Up Successful");
-          router.push({
-            pathname: "/(auth)/Validation",
-            params: { email: data.registerUser.email },
-          } as Href<string>);
-        }
-      } catch (e: any) {
-        console.log(e.message);
-        if (e.graphQLErrors && e.graphQLErrors.length > 0) {
-          showToast("error", e.graphQLErrors[0].message);
-        } else {
-          showToast("error", e.message || "Sign up failed. Please try again.");
-        }
-      }
+        },
+      });
     }
   };
 

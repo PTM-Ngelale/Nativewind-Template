@@ -11,13 +11,12 @@ const OnBoarding = () => {
   const { isLoading, userToken } = useAuth();
 
   useEffect(() => {
-    if (!isLoading) {
       if (userToken) {
         router.push("/(tabs)");
       } else {
         checkIfLocationEnabled();
       }
-    }
+    
   }, [isLoading, userToken, checkIfLocationEnabled]);
 
   if (isLoading) {
