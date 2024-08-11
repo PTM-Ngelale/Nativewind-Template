@@ -5474,6 +5474,13 @@ export type UpdateUserMutationVariables = Exact<{
 
 export type UpdateUserMutation = { __typename?: 'Mutation', updateUser?: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, profilePhoto?: string | null } | null };
 
+export type CreateAlertMutationVariables = Exact<{
+  data: AlertCreateInput;
+}>;
+
+
+export type CreateAlertMutation = { __typename?: 'Mutation', createAlert?: { __typename?: 'Alert', id: string, emergency: string, latitude: number, longitude: number } | null };
+
 export type GetUserBasicInfoQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -5482,7 +5489,7 @@ export type GetUserBasicInfoQuery = { __typename?: 'Query', getCurrentUser: { __
 export type GetUserEmailQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUserEmailQuery = { __typename?: 'Query', getCurrentUser: { __typename?: 'User', email: string } };
+export type GetUserEmailQuery = { __typename?: 'Query', getCurrentUser: { __typename?: 'User', email: string, id: string } };
 
 export type GetUserFullInfoQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -5676,6 +5683,42 @@ export function useUpdateUserMutation(baseOptions?: Apollo.MutationHookOptions<U
 export type UpdateUserMutationHookResult = ReturnType<typeof useUpdateUserMutation>;
 export type UpdateUserMutationResult = Apollo.MutationResult<UpdateUserMutation>;
 export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<UpdateUserMutation, UpdateUserMutationVariables>;
+export const CreateAlertDocument = gql`
+    mutation CreateAlert($data: AlertCreateInput!) {
+  createAlert(data: $data) {
+    id
+    emergency
+    latitude
+    longitude
+  }
+}
+    `;
+export type CreateAlertMutationFn = Apollo.MutationFunction<CreateAlertMutation, CreateAlertMutationVariables>;
+
+/**
+ * __useCreateAlertMutation__
+ *
+ * To run a mutation, you first call `useCreateAlertMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateAlertMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createAlertMutation, { data, loading, error }] = useCreateAlertMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useCreateAlertMutation(baseOptions?: Apollo.MutationHookOptions<CreateAlertMutation, CreateAlertMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateAlertMutation, CreateAlertMutationVariables>(CreateAlertDocument, options);
+      }
+export type CreateAlertMutationHookResult = ReturnType<typeof useCreateAlertMutation>;
+export type CreateAlertMutationResult = Apollo.MutationResult<CreateAlertMutation>;
+export type CreateAlertMutationOptions = Apollo.BaseMutationOptions<CreateAlertMutation, CreateAlertMutationVariables>;
 export const GetUserBasicInfoDocument = gql`
     query GetUserBasicInfo {
   getCurrentUser {
@@ -5724,6 +5767,7 @@ export const GetUserEmailDocument = gql`
     query GetUserEmail {
   getCurrentUser {
     email
+    id
   }
 }
     `;

@@ -1,3 +1,9 @@
+import { useUser } from "@/context/userContext";
+import {
+  GetUserEmailDocument,
+  useCreateAlertMutation,
+} from "@/generated/graphql";
+import { ApolloError, useQuery } from "@apollo/client";
 import React, { Dispatch, SetStateAction } from "react";
 import {
   Modal,
@@ -7,11 +13,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import {
-  PanGestureHandlerGestureEvent,
-  State,
-} from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 
 interface Props {
   emergencyModal: boolean;
@@ -29,6 +32,25 @@ const ReportModal = ({
   reportModal,
   setReportModal,
 }: Props) => {
+  const { data, loading: loadingUser, error } = useQuery(GetUserEmailDocument);
+  const { getCurrentLocation, initialRegion, deviceInfo } = useUser();
+
+  const userData = data?.getCurrentUser;
+
+  console.log(userData.id);
+  const [createAlert, { loading }] = useCreateAlertMutation({
+    onCompleted: () => {
+      setReportModal(false);
+      setEmergencyModal(true);
+      setSelectedEmergency("");
+      Toast.show({ type: "success", text1: "Report Created" });
+    },
+
+    onError: (error: ApolloError) => {
+      Toast.show({ type: "error", text1: error.message });
+    },
+  });
+
   const emergencies = [
     {
       id: 0,
@@ -67,10 +89,33 @@ const ReportModal = ({
       name: "Others",
     },
   ];
-  const handleClick = () => {
+  const handleClick = async () => {
     if (selectedEmergency && selectedEmergency.length > 0) {
-      setReportModal(false);
-      setEmergencyModal(true);
+      try {
+        // Ensure the current location is up-to-date
+        getCurrentLocation();
+
+        await createAlert({
+          variables: {
+            data: {
+              emergency: selectedEmergency,
+              latitude: initialRegion.latitude,
+              longitude: initialRegion.longitude,
+              creator: {
+                connect: {
+                  id: userData.id,
+                },
+              },
+            },
+          },
+        });
+
+        setReportModal(false);
+        setEmergencyModal(true);
+      } catch (error) {
+        console.error("Error creating alert:", error);
+        // Handle error (e.g., show a toast or alert)
+      }
     }
   };
 

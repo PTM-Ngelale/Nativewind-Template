@@ -39,6 +39,7 @@ const Login = () => {
       }
     },
     onError: (error: ApolloError) => {
+      console.log(error.message)
       Toast.show({ type: "error", text1: error.message });
     },
   });

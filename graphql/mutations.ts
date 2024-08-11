@@ -60,3 +60,15 @@ export const UPDATE_USER_MUTATION = gql`
     }
   }
 `;
+
+//Alerts
+export const CREATE_ALERT_MUTATION = gql`
+  mutation CreateAlert($data: AlertCreateInput!) {
+    createAlert(data: $data) {
+      id
+      emergency
+      latitude
+      longitude
+    }
+  }
+`;

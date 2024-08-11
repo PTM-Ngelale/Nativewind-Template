@@ -1,29 +1,36 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  KeyboardAvoidingView,
-  ActivityIndicator,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import BackArrow from "@/components/ui/BackArrow";
-import CustomTextInput from "@/components/ui/CustomInput";
-import CustomButton from "@/components/ui/CustomButton";
-import ImageUpload from "@/components/ui/ImageUpload";
-import React, { useEffect, useState } from "react";
-import { useMutation, useQuery } from "@apollo/client";
-import { GetUserBasicInfoQuery } from "@/graphql/query";
 import Loading from "@/components/Loading";
-import { UPDATE_USER_MUTATION } from "@/graphql/mutations";
 import { showToast } from "@/components/ToastComponent";
+import BackArrow from "@/components/ui/BackArrow";
+import CustomButton from "@/components/ui/CustomButton";
+import CustomTextInput from "@/components/ui/CustomInput";
+import ImageUpload from "@/components/ui/ImageUpload";
+import { useUpdateUserMutation } from "@/generated/graphql";
+import { GetUserBasicInfoQuery } from "@/graphql/query";
+import { ApolloError, useQuery } from "@apollo/client";
 import axios from "axios";
 import { ImagePickerAsset, ImagePickerResult } from "expo-image-picker";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Profile: React.FC = () => {
   const { data, loading, error } = useQuery(GetUserBasicInfoQuery);
 
   const [updateUser, { loading: userUpdating, error: userUpdateError }] =
-    useMutation(UPDATE_USER_MUTATION);
+    useUpdateUserMutation({
+      onCompleted: () => {
+        showToast("success", "Profile updated successfully");
+      },
+      onError: (err: ApolloError) => {
+        showToast("error", err.message || "Error updating profile");
+      },
+    });
 
   const {
     firstName: initialFirstName,
@@ -118,7 +125,6 @@ const Profile: React.FC = () => {
           },
         },
       });
-      showToast("success", "Profile updated successfully");
     } catch (err) {
       showToast("error", "Error updating profile");
     }

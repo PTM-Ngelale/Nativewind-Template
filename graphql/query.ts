@@ -19,6 +19,7 @@ export const GetUserEmailQuery = gql`
   query GetUserEmail {
     getCurrentUser {
       email
+      id
     }
   }
 `;
