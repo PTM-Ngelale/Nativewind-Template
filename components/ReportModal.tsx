@@ -37,7 +37,7 @@ const ReportModal = ({
 
   const userData = data?.getCurrentUser;
 
-  console.log(userData.id);
+  console.log(userData?.id);
   const [createAlert, { loading }] = useCreateAlertMutation({
     onCompleted: () => {
       setReportModal(false);

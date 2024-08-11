@@ -20,7 +20,9 @@ const SignUp = () => {
   const router = useRouter();
   const [registerUser, { loading}] = useCreateUserMutation({
     onCompleted: async (data) => {
-      if (data.registerUser.token) {
+
+      console.log(data)
+      if (data.registerUser) {
         Toast.show({
           type: "success",
           text1: "Please check your mail to confirm account.",
