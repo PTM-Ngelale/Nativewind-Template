@@ -15,6 +15,8 @@ interface Props {
   getDirection: () => void;
   emergencyModal: boolean;
   setEmergencyModal: Dispatch<SetStateAction<boolean>>;
+  direction: boolean;
+  setDirection: Dispatch<SetStateAction<boolean>>;
 }
 
 const EmergencyModal = ({
@@ -22,6 +24,8 @@ const EmergencyModal = ({
   emergencyModal,
   setEmergencyModal,
   getDirection,
+  direction,
+  setDirection,
 }: Props) => {
   const onClick = () => {};
 
@@ -73,13 +77,23 @@ const EmergencyModal = ({
                 >
                   <Text className="text-white">Join Group</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  onPress={getDirection}
-                  className="border border-[#192655] px-4 py-[10px] rounded-xl"
-                >
-                  <Text>Get Directions</Text>
-                </TouchableOpacity>
+                {direction ? (
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    onPress={() => setDirection(false)}
+                    className="border border-[#192655] px-4 py-[10px] rounded-xl"
+                  >
+                    <Text>No Direction</Text>
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    onPress={getDirection}
+                    className="border border-[#192655] px-4 py-[10px] rounded-xl"
+                  >
+                    <Text>Get Direction</Text>
+                  </TouchableOpacity>
+                )}
               </View>
             </View>
             <TouchableOpacity

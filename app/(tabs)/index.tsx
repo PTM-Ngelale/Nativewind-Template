@@ -147,7 +147,7 @@ export default function HomeScreen() {
       <MapView
         region={initialRegion}
         showsUserLocation={true}
-        followsUserLocation={true}
+        // followsUserLocation={true}
         style={styles.map}
         initialRegion={initialRegion}
         provider={PROVIDER_DEFAULT}>
@@ -214,6 +214,8 @@ export default function HomeScreen() {
         <EmergencyModal
           selectedEmergency={selectedEmergency}
           getDirection={getDirection}
+          direction={direction}
+          setDirection={setDirection}
           emergencyModal={emergencyModal}
           setEmergencyModal={setEmergencyModal}
         />

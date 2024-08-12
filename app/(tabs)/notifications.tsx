@@ -26,6 +26,14 @@ const notifications = () => {
     setActiveTab(tab);
   };
   const alertsToDisplay = activeTab === "all" ? allAlerts : myAlerts;
+
+  if (!alertsToDisplay || alertsToDisplay.length === 0) {
+    return (
+      <View className="flex-1 bg-white items-center justify-center">
+        <Text>No Alerts</Text>
+      </View>
+    );
+  }
   return (
     <SafeAreaView className="h-full w-full bg-slate-100 ">
       <ScrollView>
@@ -80,7 +88,7 @@ const notifications = () => {
                     <TouchableOpacity
                       activeOpacity={0.9}
                       onPress={() =>
-                        router.push(`/emergency-group/${alert.emergency}`)
+                        router.push(`/emergency-group/${alert.id}`)
                       }
                       key={index}
                       className="flex items-center flex-row mt-4 bg-white p-3 border border-[#192655] border-opacity-50 rounded-xl"

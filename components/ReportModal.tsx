@@ -6,6 +6,7 @@ import {
 import { ApolloError, useQuery } from "@apollo/client";
 import React, { Dispatch, SetStateAction } from "react";
 import {
+  Image,
   Modal,
   ScrollView,
   StyleSheet,
@@ -32,10 +33,10 @@ const ReportModal = ({
   setSelectedEmergency,
   reportModal,
   setReportModal,
-  displayCurrentAddress
+  displayCurrentAddress,
 }: Props) => {
-  const { data,  } = useQuery(GetUserEmailDocument);
-  const { getCurrentLocation, initialRegion} = useUser();
+  const { data } = useQuery(GetUserEmailDocument);
+  const { getCurrentLocation, initialRegion } = useUser();
 
   const userData = data?.getCurrentUser;
 
@@ -135,7 +136,17 @@ const ReportModal = ({
           <View className="mt-10">
             <ScrollView className="h-full w-full bg-white">
               <View className="w-full px-6">
-                <View className="mt-10">
+                <View className="mt-4">
+                  <TouchableOpacity
+                    onPress={() => setReportModal(!reportModal)}
+                    className="w-full items-end"
+                  >
+                    <Image
+                      source={require("../assets/images/Close.png")}
+                      className="w-7 h-7"
+                      resizeMode="contain"
+                    />
+                  </TouchableOpacity>
                   <Text className="text-[#192655] font-bold text-base">
                     What Kind of Emergency?
                   </Text>

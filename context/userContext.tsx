@@ -165,7 +165,7 @@ const UserProvider = (props: { children: ReactNode }): ReactElement => {
 
       if (response.length > 0) {
         const { name, region, country } = response[0];
-        console.log(response[0]);
+        
         const address = `${name} ${region} ${country}`;
         setDisplayCurrentAddress((prevAddress) => {
           if (prevAddress === address) {
@@ -174,6 +174,7 @@ const UserProvider = (props: { children: ReactNode }): ReactElement => {
           return address;
         });
       }
+      console.log('Address', response[0].formattedAddress)
     }
   };
 
@@ -248,6 +249,7 @@ const UserProvider = (props: { children: ReactNode }): ReactElement => {
       deviceModel,
     });
   };
+
 
   return (
     <UserContext.Provider
