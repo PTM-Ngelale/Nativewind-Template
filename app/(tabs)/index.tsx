@@ -46,7 +46,7 @@ export default function HomeScreen() {
   const [selectedEmergency, setSelectedEmergency] = useState("");
   const [reportModal, setReportModal] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [modalDetails, setModalDetails] = useState(0.0000);
+  const [modalDetails, setModalDetails] = useState(0.0);
 
   const { data } = useQuery(GetUserEmailDocument);
   const userData = data?.getCurrentUser;
@@ -190,8 +190,11 @@ export default function HomeScreen() {
             image={require("../../assets/images/alert-triangle.png")}
             tappable
             onPress={() =>
-              // console.log(marker.id)
-              setMarkerDirection(marker.latitude, marker.longitude, marker.latitude)
+              setMarkerDirection(
+                marker.latitude,
+                marker.longitude,
+                marker.latitude
+              )
             }
           />
         ))}
