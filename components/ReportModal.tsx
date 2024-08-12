@@ -23,6 +23,7 @@ interface Props {
   setSelectedEmergency: Dispatch<SetStateAction<string>>;
   reportModal: boolean;
   setReportModal: Dispatch<SetStateAction<boolean>>;
+  displayCurrentAddress: string;
 }
 
 const ReportModal = ({
@@ -31,19 +32,19 @@ const ReportModal = ({
   setSelectedEmergency,
   reportModal,
   setReportModal,
+  displayCurrentAddress
 }: Props) => {
-  const { data, loading: loadingUser, error } = useQuery(GetUserEmailDocument);
-  const { getCurrentLocation, initialRegion, deviceInfo } = useUser();
+  const { data,  } = useQuery(GetUserEmailDocument);
+  const { getCurrentLocation, initialRegion} = useUser();
 
   const userData = data?.getCurrentUser;
 
-  console.log(userData?.id);
   const [createAlert, { loading }] = useCreateAlertMutation({
     onCompleted: () => {
       setReportModal(false);
       setEmergencyModal(true);
       setSelectedEmergency("");
-      Toast.show({ type: "success", text1: "Report Created" });
+      Toast.show({ type: "success", text1: "Report has been escalated!" });
     },
 
     onError: (error: ApolloError) => {
@@ -101,6 +102,7 @@ const ReportModal = ({
               emergency: selectedEmergency,
               latitude: initialRegion.latitude,
               longitude: initialRegion.longitude,
+              address: displayCurrentAddress,
               creator: {
                 connect: {
                   id: userData.id,

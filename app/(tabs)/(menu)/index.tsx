@@ -4,7 +4,7 @@ import {
   ScrollView,
   Image,
   FlatList,
-  TouchableOpacity,
+  TouchableOpacity
 } from "react-native";
 import CustomButton from "@/components/ui/CustomButton";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -22,18 +22,18 @@ const MenuNavigation: {
   {
     name: "My Profile",
     link: "/profile",
-    icon: <TabBarIcon name={"person"} color={"#192655"} />,
+    icon: <TabBarIcon name={"person"} color={"#192655"} />
   },
   {
     name: "Settings",
     link: "/test",
-    icon: <TabBarIcon name={"settings"} color={"#192655"} />,
+    icon: <TabBarIcon name={"settings"} color={"#192655"} />
   },
   {
     name: "Logout",
     link: "/(auth)/Login",
-    icon: <TabBarIcon name={"log-out"} color={"#192655"} />,
-  },
+    icon: <TabBarIcon name={"log-out"} color={"#192655"} />
+  }
 ];
 
 const Menu = () => {
@@ -50,10 +50,10 @@ const Menu = () => {
         <View className="px-4">
           <FlatList
             data={MenuNavigation}
-            keyExtractor={(item) => item.name}
+            keyExtractor={item => item.name}
             contentContainerStyle={{ height: "100%" }}
             scrollEnabled={false}
-            renderItem={({ item }) => (
+            renderItem={({ item }) =>
               <TouchableOpacity
                 onPress={async () => {
                   if (item.name === "Logout") {
@@ -64,12 +64,12 @@ const Menu = () => {
                     router.push(item.link as Href<string>);
                   }
                 }}
-                className="py-4 last:border-b-none border-b border-b-[#D9D9D9] flex flex-row items-center space-x-4"
-              >
+                className="py-4 last:border-b-none border-b border-b-[#D9D9D9] flex flex-row items-center space-x-4">
                 {item.icon}
-                <Text>{item.name}</Text>
-              </TouchableOpacity>
-            )}
+                <Text>
+                  {item.name}
+                </Text>
+              </TouchableOpacity>}
           />
         </View>
         <View className="w-full absolute bottom-[-450px] px-4 ">

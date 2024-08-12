@@ -67,6 +67,7 @@ export type AggregateUser = {
 export type Alert = {
   __typename?: 'Alert';
   _count: AlertCount;
+  address?: Maybe<Scalars['String']['output']>;
   chats?: Maybe<Array<Chat>>;
   createdAt: Scalars['DateTime']['output'];
   createdBy: Scalars['String']['output'];
@@ -77,6 +78,7 @@ export type Alert = {
   id: Scalars['ID']['output'];
   latitude: Scalars['Float']['output'];
   longitude: Scalars['Float']['output'];
+  type: AlertType;
   updatedAt: Scalars['DateTime']['output'];
   users?: Maybe<Array<User>>;
 };
@@ -106,6 +108,7 @@ export type AlertCount = {
 export type AlertCountAggregate = {
   __typename?: 'AlertCountAggregate';
   _all: Scalars['Int']['output'];
+  address: Scalars['Int']['output'];
   createdAt: Scalars['Int']['output'];
   createdBy: Scalars['Int']['output'];
   emergency: Scalars['Int']['output'];
@@ -113,11 +116,13 @@ export type AlertCountAggregate = {
   id: Scalars['Int']['output'];
   latitude: Scalars['Int']['output'];
   longitude: Scalars['Int']['output'];
+  type: Scalars['Int']['output'];
   updatedAt: Scalars['Int']['output'];
 };
 
 export type AlertCountAggregateInput = {
   _all?: InputMaybe<Scalars['Boolean']['input']>;
+  address?: InputMaybe<Scalars['Boolean']['input']>;
   createdAt?: InputMaybe<Scalars['Boolean']['input']>;
   createdBy?: InputMaybe<Scalars['Boolean']['input']>;
   emergency?: InputMaybe<Scalars['Boolean']['input']>;
@@ -125,10 +130,12 @@ export type AlertCountAggregateInput = {
   id?: InputMaybe<Scalars['Boolean']['input']>;
   latitude?: InputMaybe<Scalars['Boolean']['input']>;
   longitude?: InputMaybe<Scalars['Boolean']['input']>;
+  type?: InputMaybe<Scalars['Boolean']['input']>;
   updatedAt?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type AlertCountOrderByAggregateInput = {
+  address?: InputMaybe<SortOrder>;
   createdAt?: InputMaybe<SortOrder>;
   createdBy?: InputMaybe<SortOrder>;
   emergency?: InputMaybe<SortOrder>;
@@ -136,10 +143,12 @@ export type AlertCountOrderByAggregateInput = {
   id?: InputMaybe<SortOrder>;
   latitude?: InputMaybe<SortOrder>;
   longitude?: InputMaybe<SortOrder>;
+  type?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
 };
 
 export type AlertCreateInput = {
+  address?: InputMaybe<Scalars['String']['input']>;
   chats?: InputMaybe<ChatCreateNestedManyWithoutAlertInput>;
   createdAt?: InputMaybe<Scalars['DateTime']['input']>;
   creator: UserCreateNestedOneWithoutCreatedAlertsInput;
@@ -148,17 +157,20 @@ export type AlertCreateInput = {
   id?: InputMaybe<Scalars['String']['input']>;
   latitude: Scalars['Float']['input'];
   longitude: Scalars['Float']['input'];
+  type?: InputMaybe<AlertType>;
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>;
   users?: InputMaybe<UserCreateNestedManyWithoutAlertsInput>;
 };
 
 export type AlertCreateManyCreatorInput = {
+  address?: InputMaybe<Scalars['String']['input']>;
   createdAt?: InputMaybe<Scalars['DateTime']['input']>;
   emergency: Scalars['String']['input'];
   groupId?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['String']['input']>;
   latitude: Scalars['Float']['input'];
   longitude: Scalars['Float']['input'];
+  type?: InputMaybe<AlertType>;
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
@@ -168,12 +180,14 @@ export type AlertCreateManyCreatorInputEnvelope = {
 };
 
 export type AlertCreateManyGroupInput = {
+  address?: InputMaybe<Scalars['String']['input']>;
   createdAt?: InputMaybe<Scalars['DateTime']['input']>;
   createdBy: Scalars['String']['input'];
   emergency: Scalars['String']['input'];
   id?: InputMaybe<Scalars['String']['input']>;
   latitude: Scalars['Float']['input'];
   longitude: Scalars['Float']['input'];
+  type?: InputMaybe<AlertType>;
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
@@ -183,6 +197,7 @@ export type AlertCreateManyGroupInputEnvelope = {
 };
 
 export type AlertCreateManyInput = {
+  address?: InputMaybe<Scalars['String']['input']>;
   createdAt?: InputMaybe<Scalars['DateTime']['input']>;
   createdBy: Scalars['String']['input'];
   emergency: Scalars['String']['input'];
@@ -190,6 +205,7 @@ export type AlertCreateManyInput = {
   id?: InputMaybe<Scalars['String']['input']>;
   latitude: Scalars['Float']['input'];
   longitude: Scalars['Float']['input'];
+  type?: InputMaybe<AlertType>;
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
@@ -240,6 +256,7 @@ export type AlertCreateOrConnectWithoutUsersInput = {
 };
 
 export type AlertCreateWithoutChatsInput = {
+  address?: InputMaybe<Scalars['String']['input']>;
   createdAt?: InputMaybe<Scalars['DateTime']['input']>;
   creator: UserCreateNestedOneWithoutCreatedAlertsInput;
   emergency: Scalars['String']['input'];
@@ -247,11 +264,13 @@ export type AlertCreateWithoutChatsInput = {
   id?: InputMaybe<Scalars['String']['input']>;
   latitude: Scalars['Float']['input'];
   longitude: Scalars['Float']['input'];
+  type?: InputMaybe<AlertType>;
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>;
   users?: InputMaybe<UserCreateNestedManyWithoutAlertsInput>;
 };
 
 export type AlertCreateWithoutCreatorInput = {
+  address?: InputMaybe<Scalars['String']['input']>;
   chats?: InputMaybe<ChatCreateNestedManyWithoutAlertInput>;
   createdAt?: InputMaybe<Scalars['DateTime']['input']>;
   emergency: Scalars['String']['input'];
@@ -259,11 +278,13 @@ export type AlertCreateWithoutCreatorInput = {
   id?: InputMaybe<Scalars['String']['input']>;
   latitude: Scalars['Float']['input'];
   longitude: Scalars['Float']['input'];
+  type?: InputMaybe<AlertType>;
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>;
   users?: InputMaybe<UserCreateNestedManyWithoutAlertsInput>;
 };
 
 export type AlertCreateWithoutGroupInput = {
+  address?: InputMaybe<Scalars['String']['input']>;
   chats?: InputMaybe<ChatCreateNestedManyWithoutAlertInput>;
   createdAt?: InputMaybe<Scalars['DateTime']['input']>;
   creator: UserCreateNestedOneWithoutCreatedAlertsInput;
@@ -271,11 +292,13 @@ export type AlertCreateWithoutGroupInput = {
   id?: InputMaybe<Scalars['String']['input']>;
   latitude: Scalars['Float']['input'];
   longitude: Scalars['Float']['input'];
+  type?: InputMaybe<AlertType>;
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>;
   users?: InputMaybe<UserCreateNestedManyWithoutAlertsInput>;
 };
 
 export type AlertCreateWithoutUsersInput = {
+  address?: InputMaybe<Scalars['String']['input']>;
   chats?: InputMaybe<ChatCreateNestedManyWithoutAlertInput>;
   createdAt?: InputMaybe<Scalars['DateTime']['input']>;
   creator: UserCreateNestedOneWithoutCreatedAlertsInput;
@@ -284,6 +307,7 @@ export type AlertCreateWithoutUsersInput = {
   id?: InputMaybe<Scalars['String']['input']>;
   latitude: Scalars['Float']['input'];
   longitude: Scalars['Float']['input'];
+  type?: InputMaybe<AlertType>;
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
@@ -294,6 +318,7 @@ export type AlertGroupBy = {
   _max?: Maybe<AlertMaxAggregate>;
   _min?: Maybe<AlertMinAggregate>;
   _sum?: Maybe<AlertSumAggregate>;
+  address?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
   createdBy: Scalars['String']['output'];
   emergency: Scalars['String']['output'];
@@ -301,6 +326,7 @@ export type AlertGroupBy = {
   id: Scalars['String']['output'];
   latitude: Scalars['Float']['output'];
   longitude: Scalars['Float']['output'];
+  type: AlertType;
   updatedAt: Scalars['DateTime']['output'];
 };
 
@@ -312,6 +338,7 @@ export type AlertListRelationFilter = {
 
 export type AlertMaxAggregate = {
   __typename?: 'AlertMaxAggregate';
+  address?: Maybe<Scalars['String']['output']>;
   createdAt?: Maybe<Scalars['DateTime']['output']>;
   createdBy?: Maybe<Scalars['String']['output']>;
   emergency?: Maybe<Scalars['String']['output']>;
@@ -319,10 +346,12 @@ export type AlertMaxAggregate = {
   id?: Maybe<Scalars['String']['output']>;
   latitude?: Maybe<Scalars['Float']['output']>;
   longitude?: Maybe<Scalars['Float']['output']>;
+  type?: Maybe<AlertType>;
   updatedAt?: Maybe<Scalars['DateTime']['output']>;
 };
 
 export type AlertMaxAggregateInput = {
+  address?: InputMaybe<Scalars['Boolean']['input']>;
   createdAt?: InputMaybe<Scalars['Boolean']['input']>;
   createdBy?: InputMaybe<Scalars['Boolean']['input']>;
   emergency?: InputMaybe<Scalars['Boolean']['input']>;
@@ -330,10 +359,12 @@ export type AlertMaxAggregateInput = {
   id?: InputMaybe<Scalars['Boolean']['input']>;
   latitude?: InputMaybe<Scalars['Boolean']['input']>;
   longitude?: InputMaybe<Scalars['Boolean']['input']>;
+  type?: InputMaybe<Scalars['Boolean']['input']>;
   updatedAt?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type AlertMaxOrderByAggregateInput = {
+  address?: InputMaybe<SortOrder>;
   createdAt?: InputMaybe<SortOrder>;
   createdBy?: InputMaybe<SortOrder>;
   emergency?: InputMaybe<SortOrder>;
@@ -341,11 +372,13 @@ export type AlertMaxOrderByAggregateInput = {
   id?: InputMaybe<SortOrder>;
   latitude?: InputMaybe<SortOrder>;
   longitude?: InputMaybe<SortOrder>;
+  type?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
 };
 
 export type AlertMinAggregate = {
   __typename?: 'AlertMinAggregate';
+  address?: Maybe<Scalars['String']['output']>;
   createdAt?: Maybe<Scalars['DateTime']['output']>;
   createdBy?: Maybe<Scalars['String']['output']>;
   emergency?: Maybe<Scalars['String']['output']>;
@@ -353,10 +386,12 @@ export type AlertMinAggregate = {
   id?: Maybe<Scalars['String']['output']>;
   latitude?: Maybe<Scalars['Float']['output']>;
   longitude?: Maybe<Scalars['Float']['output']>;
+  type?: Maybe<AlertType>;
   updatedAt?: Maybe<Scalars['DateTime']['output']>;
 };
 
 export type AlertMinAggregateInput = {
+  address?: InputMaybe<Scalars['Boolean']['input']>;
   createdAt?: InputMaybe<Scalars['Boolean']['input']>;
   createdBy?: InputMaybe<Scalars['Boolean']['input']>;
   emergency?: InputMaybe<Scalars['Boolean']['input']>;
@@ -364,10 +399,12 @@ export type AlertMinAggregateInput = {
   id?: InputMaybe<Scalars['Boolean']['input']>;
   latitude?: InputMaybe<Scalars['Boolean']['input']>;
   longitude?: InputMaybe<Scalars['Boolean']['input']>;
+  type?: InputMaybe<Scalars['Boolean']['input']>;
   updatedAt?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type AlertMinOrderByAggregateInput = {
+  address?: InputMaybe<SortOrder>;
   createdAt?: InputMaybe<SortOrder>;
   createdBy?: InputMaybe<SortOrder>;
   emergency?: InputMaybe<SortOrder>;
@@ -375,6 +412,7 @@ export type AlertMinOrderByAggregateInput = {
   id?: InputMaybe<SortOrder>;
   latitude?: InputMaybe<SortOrder>;
   longitude?: InputMaybe<SortOrder>;
+  type?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
 };
 
@@ -388,6 +426,7 @@ export type AlertOrderByWithAggregationInput = {
   _max?: InputMaybe<AlertMaxOrderByAggregateInput>;
   _min?: InputMaybe<AlertMinOrderByAggregateInput>;
   _sum?: InputMaybe<AlertSumOrderByAggregateInput>;
+  address?: InputMaybe<SortOrderInput>;
   createdAt?: InputMaybe<SortOrder>;
   createdBy?: InputMaybe<SortOrder>;
   emergency?: InputMaybe<SortOrder>;
@@ -395,10 +434,12 @@ export type AlertOrderByWithAggregationInput = {
   id?: InputMaybe<SortOrder>;
   latitude?: InputMaybe<SortOrder>;
   longitude?: InputMaybe<SortOrder>;
+  type?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
 };
 
 export type AlertOrderByWithRelationInput = {
+  address?: InputMaybe<SortOrderInput>;
   chats?: InputMaybe<ChatOrderByRelationAggregateInput>;
   createdAt?: InputMaybe<SortOrder>;
   createdBy?: InputMaybe<SortOrder>;
@@ -409,6 +450,7 @@ export type AlertOrderByWithRelationInput = {
   id?: InputMaybe<SortOrder>;
   latitude?: InputMaybe<SortOrder>;
   longitude?: InputMaybe<SortOrder>;
+  type?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
   users?: InputMaybe<UserOrderByRelationAggregateInput>;
 };
@@ -419,6 +461,7 @@ export type AlertRelationFilter = {
 };
 
 export enum AlertScalarFieldEnum {
+  Address = 'address',
   CreatedAt = 'createdAt',
   CreatedBy = 'createdBy',
   Emergency = 'emergency',
@@ -426,6 +469,7 @@ export enum AlertScalarFieldEnum {
   Id = 'id',
   Latitude = 'latitude',
   Longitude = 'longitude',
+  Type = 'type',
   UpdatedAt = 'updatedAt'
 }
 
@@ -433,6 +477,7 @@ export type AlertScalarWhereInput = {
   AND?: InputMaybe<Array<AlertScalarWhereInput>>;
   NOT?: InputMaybe<Array<AlertScalarWhereInput>>;
   OR?: InputMaybe<Array<AlertScalarWhereInput>>;
+  address?: InputMaybe<StringNullableFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
   createdBy?: InputMaybe<StringFilter>;
   emergency?: InputMaybe<StringFilter>;
@@ -440,6 +485,7 @@ export type AlertScalarWhereInput = {
   id?: InputMaybe<StringFilter>;
   latitude?: InputMaybe<FloatFilter>;
   longitude?: InputMaybe<FloatFilter>;
+  type?: InputMaybe<EnumAlertTypeFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
 };
 
@@ -447,6 +493,7 @@ export type AlertScalarWhereWithAggregatesInput = {
   AND?: InputMaybe<Array<AlertScalarWhereWithAggregatesInput>>;
   NOT?: InputMaybe<Array<AlertScalarWhereWithAggregatesInput>>;
   OR?: InputMaybe<Array<AlertScalarWhereWithAggregatesInput>>;
+  address?: InputMaybe<StringNullableWithAggregatesFilter>;
   createdAt?: InputMaybe<DateTimeWithAggregatesFilter>;
   createdBy?: InputMaybe<StringWithAggregatesFilter>;
   emergency?: InputMaybe<StringWithAggregatesFilter>;
@@ -454,6 +501,7 @@ export type AlertScalarWhereWithAggregatesInput = {
   id?: InputMaybe<StringWithAggregatesFilter>;
   latitude?: InputMaybe<FloatWithAggregatesFilter>;
   longitude?: InputMaybe<FloatWithAggregatesFilter>;
+  type?: InputMaybe<EnumAlertTypeWithAggregatesFilter>;
   updatedAt?: InputMaybe<DateTimeWithAggregatesFilter>;
 };
 
@@ -473,7 +521,13 @@ export type AlertSumOrderByAggregateInput = {
   longitude?: InputMaybe<SortOrder>;
 };
 
+export enum AlertType {
+  Report = 'Report',
+  Sos = 'SOS'
+}
+
 export type AlertUpdateInput = {
+  address?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   chats?: InputMaybe<ChatUpdateManyWithoutAlertNestedInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
   creator?: InputMaybe<UserUpdateOneRequiredWithoutCreatedAlertsNestedInput>;
@@ -482,16 +536,19 @@ export type AlertUpdateInput = {
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   latitude?: InputMaybe<FloatFieldUpdateOperationsInput>;
   longitude?: InputMaybe<FloatFieldUpdateOperationsInput>;
+  type?: InputMaybe<EnumAlertTypeFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
   users?: InputMaybe<UserUpdateManyWithoutAlertsNestedInput>;
 };
 
 export type AlertUpdateManyMutationInput = {
+  address?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
   emergency?: InputMaybe<StringFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   latitude?: InputMaybe<FloatFieldUpdateOperationsInput>;
   longitude?: InputMaybe<FloatFieldUpdateOperationsInput>;
+  type?: InputMaybe<EnumAlertTypeFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
 
@@ -580,6 +637,7 @@ export type AlertUpdateWithWhereUniqueWithoutUsersInput = {
 };
 
 export type AlertUpdateWithoutChatsInput = {
+  address?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
   creator?: InputMaybe<UserUpdateOneRequiredWithoutCreatedAlertsNestedInput>;
   emergency?: InputMaybe<StringFieldUpdateOperationsInput>;
@@ -587,11 +645,13 @@ export type AlertUpdateWithoutChatsInput = {
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   latitude?: InputMaybe<FloatFieldUpdateOperationsInput>;
   longitude?: InputMaybe<FloatFieldUpdateOperationsInput>;
+  type?: InputMaybe<EnumAlertTypeFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
   users?: InputMaybe<UserUpdateManyWithoutAlertsNestedInput>;
 };
 
 export type AlertUpdateWithoutCreatorInput = {
+  address?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   chats?: InputMaybe<ChatUpdateManyWithoutAlertNestedInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
   emergency?: InputMaybe<StringFieldUpdateOperationsInput>;
@@ -599,11 +659,13 @@ export type AlertUpdateWithoutCreatorInput = {
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   latitude?: InputMaybe<FloatFieldUpdateOperationsInput>;
   longitude?: InputMaybe<FloatFieldUpdateOperationsInput>;
+  type?: InputMaybe<EnumAlertTypeFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
   users?: InputMaybe<UserUpdateManyWithoutAlertsNestedInput>;
 };
 
 export type AlertUpdateWithoutGroupInput = {
+  address?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   chats?: InputMaybe<ChatUpdateManyWithoutAlertNestedInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
   creator?: InputMaybe<UserUpdateOneRequiredWithoutCreatedAlertsNestedInput>;
@@ -611,11 +673,13 @@ export type AlertUpdateWithoutGroupInput = {
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   latitude?: InputMaybe<FloatFieldUpdateOperationsInput>;
   longitude?: InputMaybe<FloatFieldUpdateOperationsInput>;
+  type?: InputMaybe<EnumAlertTypeFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
   users?: InputMaybe<UserUpdateManyWithoutAlertsNestedInput>;
 };
 
 export type AlertUpdateWithoutUsersInput = {
+  address?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   chats?: InputMaybe<ChatUpdateManyWithoutAlertNestedInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
   creator?: InputMaybe<UserUpdateOneRequiredWithoutCreatedAlertsNestedInput>;
@@ -624,6 +688,7 @@ export type AlertUpdateWithoutUsersInput = {
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   latitude?: InputMaybe<FloatFieldUpdateOperationsInput>;
   longitude?: InputMaybe<FloatFieldUpdateOperationsInput>;
+  type?: InputMaybe<EnumAlertTypeFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
 
@@ -655,6 +720,7 @@ export type AlertWhereInput = {
   AND?: InputMaybe<Array<AlertWhereInput>>;
   NOT?: InputMaybe<Array<AlertWhereInput>>;
   OR?: InputMaybe<Array<AlertWhereInput>>;
+  address?: InputMaybe<StringNullableFilter>;
   chats?: InputMaybe<ChatListRelationFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
   createdBy?: InputMaybe<StringFilter>;
@@ -665,6 +731,7 @@ export type AlertWhereInput = {
   id?: InputMaybe<StringFilter>;
   latitude?: InputMaybe<FloatFilter>;
   longitude?: InputMaybe<FloatFilter>;
+  type?: InputMaybe<EnumAlertTypeFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
   users?: InputMaybe<UserListRelationFilter>;
 };
@@ -673,6 +740,7 @@ export type AlertWhereUniqueInput = {
   AND?: InputMaybe<Array<AlertWhereInput>>;
   NOT?: InputMaybe<Array<AlertWhereInput>>;
   OR?: InputMaybe<Array<AlertWhereInput>>;
+  address?: InputMaybe<StringNullableFilter>;
   chats?: InputMaybe<ChatListRelationFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
   createdBy?: InputMaybe<StringFilter>;
@@ -683,6 +751,7 @@ export type AlertWhereUniqueInput = {
   id?: InputMaybe<Scalars['String']['input']>;
   latitude?: InputMaybe<FloatFilter>;
   longitude?: InputMaybe<FloatFilter>;
+  type?: InputMaybe<EnumAlertTypeFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
   users?: InputMaybe<UserListRelationFilter>;
 };
@@ -1518,6 +1587,27 @@ export type EmergencyWhereUniqueInput = {
   id?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<StringFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
+};
+
+export type EnumAlertTypeFieldUpdateOperationsInput = {
+  set?: InputMaybe<AlertType>;
+};
+
+export type EnumAlertTypeFilter = {
+  equals?: InputMaybe<AlertType>;
+  in?: InputMaybe<Array<AlertType>>;
+  not?: InputMaybe<NestedEnumAlertTypeFilter>;
+  notIn?: InputMaybe<Array<AlertType>>;
+};
+
+export type EnumAlertTypeWithAggregatesFilter = {
+  _count?: InputMaybe<NestedIntFilter>;
+  _max?: InputMaybe<NestedEnumAlertTypeFilter>;
+  _min?: InputMaybe<NestedEnumAlertTypeFilter>;
+  equals?: InputMaybe<AlertType>;
+  in?: InputMaybe<Array<AlertType>>;
+  not?: InputMaybe<NestedEnumAlertTypeWithAggregatesFilter>;
+  notIn?: InputMaybe<Array<AlertType>>;
 };
 
 export type EnumRoleTypeFieldUpdateOperationsInput = {
@@ -2600,6 +2690,23 @@ export type NestedDateTimeWithAggregatesFilter = {
   notIn?: InputMaybe<Array<Scalars['DateTime']['input']>>;
 };
 
+export type NestedEnumAlertTypeFilter = {
+  equals?: InputMaybe<AlertType>;
+  in?: InputMaybe<Array<AlertType>>;
+  not?: InputMaybe<NestedEnumAlertTypeFilter>;
+  notIn?: InputMaybe<Array<AlertType>>;
+};
+
+export type NestedEnumAlertTypeWithAggregatesFilter = {
+  _count?: InputMaybe<NestedIntFilter>;
+  _max?: InputMaybe<NestedEnumAlertTypeFilter>;
+  _min?: InputMaybe<NestedEnumAlertTypeFilter>;
+  equals?: InputMaybe<AlertType>;
+  in?: InputMaybe<Array<AlertType>>;
+  not?: InputMaybe<NestedEnumAlertTypeWithAggregatesFilter>;
+  notIn?: InputMaybe<Array<AlertType>>;
+};
+
 export type NestedEnumRoleTypeFilter = {
   equals?: InputMaybe<RoleType>;
   in?: InputMaybe<Array<RoleType>>;
@@ -2807,7 +2914,7 @@ export type Query = {
   findUniqueUser: User;
   getCurrentUser: User;
   getSubAdminsOfSuperAdmin: PaginatedGroup;
-  getUsersAndSubAdminsOfSuperAdmin: PaginatedGroup;
+  getUsersAndSubAdminsOfSuperAdmin: PaginatedUser;
   getUsersOfSubAdmin: PaginatedGroup;
   groupByAlert: Array<AlertGroupBy>;
   groupByChat: Array<ChatGroupBy>;
@@ -2970,6 +3077,7 @@ export type QueryGetSubAdminsOfSuperAdminArgs = {
 
 export type QueryGetUsersAndSubAdminsOfSuperAdminArgs = {
   page?: Scalars['Int']['input'];
+  query?: InputMaybe<Scalars['String']['input']>;
 };
 
 
