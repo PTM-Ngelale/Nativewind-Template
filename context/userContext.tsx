@@ -170,6 +170,7 @@ const UserProvider = (props: { children: ReactNode }): ReactElement => {
         const address = response[0].formattedAddress;
         setDisplayCurrentAddress(address as string);
       }
+      console.log('Address', response[0].formattedAddress)
     }
   };
 
@@ -244,6 +245,7 @@ const UserProvider = (props: { children: ReactNode }): ReactElement => {
       deviceModel,
     });
   };
+
 
   return (
     <UserContext.Provider

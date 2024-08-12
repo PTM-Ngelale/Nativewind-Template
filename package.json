@@ -31,6 +31,7 @@
     "@react-navigation/stack": "^6.4.1",
     "apollo3-cache-persist": "^0.15.0",
     "axios": "^1.7.3",
+    "date-fns": "^3.6.0",
     "expo": "~51.0.26",
     "expo-constants": "~16.0.2",
     "expo-device": "~6.0.2",

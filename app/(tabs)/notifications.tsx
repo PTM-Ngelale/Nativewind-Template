@@ -9,23 +9,40 @@ import {
 import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
-import { useListAlertsQuery } from "@/generated/graphql";
+import {
+  useGetUserBasicInfoQuery,
+  useListAlertsQuery,
+  useListUserAlertsQuery,
+} from "@/generated/graphql";
+import { formatDistanceToNow } from 'date-fns'; 
+
 const notifications = () => {
   const [activeTab, setActiveTab] = useState("all");
+
+  const { data: user, loading } = useGetUserBasicInfoQuery();
+
   const {
     data: listAlerts,
     loading: alertLoading,
     error,
   } = useListAlertsQuery();
+
+  const { data: listUserAlerts, loading: UserAlertLoading } =
+    useListUserAlertsQuery({
+      variables: {
+        where: { id: { equals: user?.getCurrentUser.id } },
+      },
+    });
+
   const allAlerts = listAlerts?.listAlerts;
-  const myAlerts: never[] = [];
-  // if (loading) {
-  //   <Loading />;
-  // }
+  const myAlerts = listUserAlerts?.listAlerts;
+
   const toggleTab = (tab: any) => {
     setActiveTab(tab);
   };
+
   const alertsToDisplay = activeTab === "all" ? allAlerts : myAlerts;
+
   return (
     <SafeAreaView className="h-full w-full bg-slate-100 ">
       <ScrollView>
@@ -80,7 +97,7 @@ const notifications = () => {
                     <TouchableOpacity
                       activeOpacity={0.9}
                       onPress={() =>
-                        router.push(`/emergency-group/${alert.emergency}`)
+                        router.push(`/emergency-group/${alert.id}`)
                       }
                       key={index}
                       className="flex items-center flex-row mt-4 bg-white p-3 border border-[#192655] border-opacity-50 rounded-xl"
@@ -90,11 +107,18 @@ const notifications = () => {
                         className="w-[37px] h-[40px]"
                         resizeMode="contain"
                       />
-                      <View className="ml-4">
-                        <Text className="text-sm font-bold">
-                          {alert.emergency}
+                      <View className="relative ml-4 w-[92%]">
+                        <View className="flex-row w-[92%] justify-between">
+                          <Text className="text-md font-extrabold">
+                            Emergency: {alert.emergency}
+                          </Text>
+                          <Text className="absolute right-0 text-xs">
+                            {formatDistanceToNow(new Date(alert.createdAt), { addSuffix: true, includeSeconds: true }).replace('about ', '')}
+                          </Text>
+                        </View>
+                        <Text className="text-sm">
+                          Location: {alert.address}
                         </Text>
-                        <Text className="text-sm">{alert.address}</Text>
                         {/* <Text className="text-sm">{alert.distance}</Text>
                       <Text className="text-sm">{alert.Location}</Text> */}
                       </View>

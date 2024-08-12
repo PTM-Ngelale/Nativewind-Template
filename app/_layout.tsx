@@ -23,7 +23,7 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loadingCache, setLoadingCache] = useState(true);
   const [fontsLoaded] = useFonts({
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    NunitoSans: require("../assets/fonts/nunto-sans.ttf"),
   });
   const [client, setClient] = useState<ApolloClient<any> | null>(null);
 

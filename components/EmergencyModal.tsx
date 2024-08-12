@@ -1,3 +1,4 @@
+import { useListUserAlertsQuery } from "@/generated/graphql";
 import { router } from "expo-router";
 import React, { Dispatch, SetStateAction } from "react";
 import {
@@ -15,6 +16,9 @@ interface Props {
   getDirection: () => void;
   emergencyModal: boolean;
   setEmergencyModal: Dispatch<SetStateAction<boolean>>;
+  direction: boolean;
+  setDirection: Dispatch<SetStateAction<boolean>>;
+  modalDetails: number;
 }
 
 const EmergencyModal = ({
@@ -22,8 +26,21 @@ const EmergencyModal = ({
   emergencyModal,
   setEmergencyModal,
   getDirection,
+  direction,
+  setDirection,
+  modalDetails,
 }: Props) => {
-  const onClick = () => {};
+  const {
+    data: listAlerts,
+    loading: alertLoading,
+    error,
+  } = useListUserAlertsQuery({
+    variables: {
+      where: { latitude: { equals: modalDetails } },
+    },
+  });
+
+  const emergency = listAlerts?.listAlerts[0];
 
   return (
     <View style={styles.centeredView}>
@@ -51,14 +68,14 @@ const EmergencyModal = ({
                   resizeMode="contain"
                 />
                 <Text className="text-white">
-                  {selectedEmergency || "Robbery"}
+                  {emergency?.emergency || "Robbery"}
                 </Text>
               </View>
               <View className="gap-y-1 items-center">
                 <Text className="text-base font-bold">Jane Kameroon</Text>
                 <Text>5km away</Text>
                 <Text className="text-center text-sm text-[#6B7280] max-w-[200px]">
-                  4 Baduchm, Off Nvigue Close, Woji, Port Harcourt.
+                  {emergency?.address}
                 </Text>
               </View>
 
@@ -73,13 +90,23 @@ const EmergencyModal = ({
                 >
                   <Text className="text-white">Join Group</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  onPress={getDirection}
-                  className="border border-[#192655] px-4 py-[10px] rounded-xl"
-                >
-                  <Text>Get Directions</Text>
-                </TouchableOpacity>
+                {direction ? (
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    onPress={() => setDirection(false)}
+                    className="border border-[#192655] px-4 py-[10px] rounded-xl"
+                  >
+                    <Text>No Direction</Text>
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    onPress={getDirection}
+                    className="border border-[#192655] px-4 py-[10px] rounded-xl"
+                  >
+                    <Text>Get Direction</Text>
+                  </TouchableOpacity>
+                )}
               </View>
             </View>
             <TouchableOpacity
