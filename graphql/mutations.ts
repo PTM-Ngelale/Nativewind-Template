@@ -1,36 +1,52 @@
 import { gql } from "@apollo/client";
 
 export const LOGIN_MUTATION = gql`
-  mutation login($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
+  mutation loginUser(
+    $email: String!
+    $password: String!
+    $deviceName: String!
+    $deviceModel: String!
+    $expoPushToken: String!
+  ) {
+    loginUser(
+      email: $email
+      password: $password
+      deviceName: $deviceName
+      deviceModel: $deviceModel
+      pushToken: $expoPushToken
+    ) {
       token
     }
   }
 `;
 
 export const SIGNUP_MUTATION = gql`
-  mutation signup($email: String!, $password: String!) {
-    signup(email: $email, password: $password) {
+  mutation CreateUser($data: UserCreateInput!) {
+    registerUser(data: $data) {
+      firstName
+      lastName
+      id
       token
+      assignedTo
+      email
     }
   }
 `;
 
-export const FORGOT_PASSWORD_MUTATION = gql`
-  mutation forgotPassword($email: String!) {
-    forgotPassword(email: $email)
+export const VERIFY_OTP_MUTATION = gql`
+  mutation VerifyUserAccountOtp($email: String!, $otp: String!) {
+    verifyUserAccountOtp(email: $email, otp: $otp) {
+      email
+      id
+    }
   }
 `;
 
-export const RESET_PASSWORD_MUTATION = gql`
-  mutation resetPassword($email: String!, $password: String!, $token: String!) {
-    resetPassword(email: $email, password: $password, token: $token)
-  }
-`;
-
-export const UPDATE_PASSWORD_MUTATION = gql`
-  mutation updatePassword($password: String!) {
-    updatePassword(password: $password)
+export const RESEND_EMAIL_OTP_MUTATION = gql`
+  mutation GenerateOtp($email: String!) {
+    generateOtp(where: { email: $email }, data: {}) {
+      email
+    }
   }
 `;
 
@@ -41,6 +57,18 @@ export const UPDATE_USER_MUTATION = gql`
       firstName
       lastName
       profilePhoto
+    }
+  }
+`;
+
+//Alerts
+export const CREATE_ALERT_MUTATION = gql`
+  mutation CreateAlert($data: AlertCreateInput!) {
+    createAlert(data: $data) {
+      id
+      emergency
+      latitude
+      longitude
     }
   }
 `;

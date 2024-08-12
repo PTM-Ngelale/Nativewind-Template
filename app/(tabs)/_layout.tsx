@@ -5,23 +5,16 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Href, router, Tabs } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, View } from "react-native";
 
 interface TabIconProps {
   icon: keyof typeof Ionicons.glyphMap;
   color: string;
   name: string;
   focused: boolean;
-  onPress: () => void;
 }
 
-const TabIcon: React.FC<TabIconProps> = ({
-  icon,
-  color,
-  name,
-  focused,
-  onPress,
-}) => {
+const TabIcon: React.FC<TabIconProps> = ({ icon, color, name, focused }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -37,21 +30,21 @@ const TabIcon: React.FC<TabIconProps> = ({
 
   if (isLoading) return <Loading />;
 
+
+
   return (
-    <TouchableOpacity onPress={onPress}>
-      <View className="items-center justify-center gap-2">
-        <View
-          className={`${focused ? "" : "opacity-0"} w-[36px] bg-[#0090FA] h-1`}
-        />
-        <TabBarIcon name={icon} color={color} />
-        <Text
-          style={{ color: color }}
-          className={`${focused ? "font-bold" : "font-normal"} text-xs`}
-        >
-          {name}
-        </Text>
-      </View>
-    </TouchableOpacity>
+    <View className="items-center justify-center gap-2">
+      <View
+        className={`${focused ? "" : "opacity-0"} w-[36px] bg-[#0090FA] h-1`}
+      />
+      <TabBarIcon name={icon} color={color} />
+      <Text
+        style={{ color: color }}
+        className={`${focused ? "font-bold" : "font-normal"} text-xs`}
+      >
+        {name}
+      </Text>
+    </View>
   );
 };
 
@@ -81,7 +74,6 @@ export default function TabLayout() {
                 color={color}
                 name="Home"
                 focused={focused}
-                onPress={() => router.replace("/(tabs)")}
               />
             ),
           }}
@@ -97,7 +89,7 @@ export default function TabLayout() {
                 color={color}
                 name="Notifications"
                 focused={focused}
-                onPress={() => router.replace("/notifications")}
+                // onPress={() => router.replace("/notifications")}
               />
             ),
           }}
@@ -112,7 +104,7 @@ export default function TabLayout() {
                 color={color}
                 name="Menu"
                 focused={focused}
-                onPress={() => router.replace("/(menu)")}
+                // onPress={() => router.replace("/(menu)")}
               />
             ),
           }}

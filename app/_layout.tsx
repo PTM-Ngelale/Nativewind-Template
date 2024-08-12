@@ -1,5 +1,4 @@
 import { UserProvider } from "@/context/userContext";
-import useAuth from "@/hooks/useAuth";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { createApolloClient } from "@/utils/authUtil";
 import { ApolloClient, ApolloProvider } from "@apollo/client";
@@ -11,12 +10,11 @@ import {
 } from "@react-navigation/native";
 import { persistCache } from "apollo3-cache-persist";
 import { useFonts } from "expo-font";
-import { Slot } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import "react-native-reanimated";
 import Toast from "react-native-toast-message";
-
+import { JsStack } from "./layouts/js-stack";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -28,7 +26,6 @@ export default function RootLayout() {
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
   const [client, setClient] = useState<ApolloClient<any> | null>(null);
-  const { isLoading: authLoading, userToken } = useAuth();
 
   useEffect(() => {
     const loadResources = async () => {
@@ -47,17 +44,14 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
-    if (!authLoading && !loadingCache && fontsLoaded) {
-      SplashScreen.hideAsync();
+    if (!loadingCache && fontsLoaded) {
+      SplashScreen.hideAsync().catch((error) => {
+        console.error("Error hiding splash screen:", error);
+      });
     }
-  }, [authLoading, loadingCache, fontsLoaded, userToken]);
+  }, [loadingCache, fontsLoaded]);
 
-  if (
-    authLoading ||
-    !fontsLoaded ||
-    loadingCache ||
-    !client
-  ) {
+  if (!fontsLoaded || loadingCache || !client) {
     return null;
   }
 
@@ -65,7 +59,11 @@ export default function RootLayout() {
     <ApolloProvider client={client}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <UserProvider>
-          <Slot />
+          <JsStack
+            screenOptions={{
+              headerShown: false,
+            }}
+          />
           <Toast />
         </UserProvider>
       </ThemeProvider>

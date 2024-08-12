@@ -1,51 +1,76 @@
-import { View, Text, ScrollView, KeyboardAvoidingView, ActivityIndicator } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import BackArrow from "@/components/ui/BackArrow";
-import CustomTextInput from "@/components/ui/CustomInput";
-import CustomButton from "@/components/ui/CustomButton";
-import ImageUpload from "@/components/ui/ImageUpload";
-import React, { useEffect, useState } from "react";
-import { useMutation, useQuery } from "@apollo/client";
-import { GetUserBasicInfoQuery } from "@/graphql/query";
 import Loading from "@/components/Loading";
-import { UPDATE_USER_MUTATION } from "@/graphql/mutations";
 import { showToast } from "@/components/ToastComponent";
+import BackArrow from "@/components/ui/BackArrow";
+import CustomButton from "@/components/ui/CustomButton";
+import CustomTextInput from "@/components/ui/CustomInput";
+import ImageUpload from "@/components/ui/ImageUpload";
+import { useUpdateUserMutation } from "@/generated/graphql";
+import { GetUserBasicInfoQuery } from "@/graphql/query";
+import { ApolloError, useQuery } from "@apollo/client";
 import axios from "axios";
 import { ImagePickerAsset, ImagePickerResult } from "expo-image-picker";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Profile: React.FC = () => {
   const { data, loading, error } = useQuery(GetUserBasicInfoQuery);
 
   const [updateUser, { loading: userUpdating, error: userUpdateError }] =
-    useMutation(UPDATE_USER_MUTATION);
+    useUpdateUserMutation({
+      onCompleted: () => {
+        showToast("success", "Profile updated successfully");
+      },
+      onError: (err: ApolloError) => {
+        showToast("error", err.message || "Error updating profile");
+      },
+    });
 
   const {
     firstName: initialFirstName,
     lastName: initialLastName,
     id,
     profilePhoto,
+    nextOfKinName: initialNextOfKinName,
+    nextOfKinContact: initalNextOfKinContact,
   } = data?.getCurrentUser || {};
 
   const [firstName, setFirstName] = useState<string>(initialFirstName || "");
   const [lastName, setLastName] = useState<string>(initialLastName || "");
-  const [nextOfKinName, setNextOfKinName] = useState<string>("");
-  const [nextOfKinContact, setNextOfKinContact] = useState<string>("");
+  const [nextOfKinName, setNextOfKinName] = useState<string>(
+    initialNextOfKinName || ""
+  );
+  const [nextOfKinContact, setNextOfKinContact] = useState<string>(
+    initalNextOfKinContact || ""
+  );
   const [selectedImage, setSelectedImage] = useState<ImagePickerResult | null>(
     null
   );
   const [isUploading, setIsUploading] = useState<boolean>(false);
 
-
   useEffect(() => {
     setFirstName(initialFirstName || "");
     setLastName(initialLastName || "");
-  }, [initialFirstName,  initialLastName, loading]);
+    setNextOfKinName(initialNextOfKinName || "");
+    setNextOfKinContact(initalNextOfKinContact || "");
+  }, [
+    initialFirstName,
+    initialLastName,
+    initalNextOfKinContact,
+    initialNextOfKinName,
+  ]);
 
   const handleImageUpload = async (
     image: ImagePickerResult
   ): Promise<string> => {
     try {
-      setIsUploading(true); 
+      setIsUploading(true);
       const asset: ImagePickerAsset | undefined = image.assets
         ? image.assets[0]
         : undefined;
@@ -81,7 +106,7 @@ const Profile: React.FC = () => {
     }
     throw error;
     } finally {
-      setIsUploading(false); // Set uploading status to false
+      setIsUploading(false);
     }
   };
 
@@ -101,17 +126,20 @@ const Profile: React.FC = () => {
             firstName: { set: firstName },
             lastName: { set: lastName },
             profilePhoto: { set: profilePhotoUrl },
+            nextOfKinName: { set: nextOfKinName },
+            nextOfKinContact: { set: nextOfKinContact },
           },
         },
       });
-      showToast("success", "Profile updated successfully");
     } catch (err) {
       showToast("error", "Error updating profile", err);
     }
   };
 
   if (loading) return <Loading />;
-  if (error || userUpdateError) console.log(error);
+  if (error || userUpdateError) {
+    showToast("error", error?.message || "An unknown error occurred");
+  }
 
   return (
     <KeyboardAvoidingView

@@ -1,52 +1,73 @@
-import {
-  ScrollView,
-  SafeAreaView,
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
 import CustomButton from "@/components/ui/CustomButton";
-import OTPTextView from "react-native-otp-textinput";
+import { ApolloError } from "@apollo/client";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
-import { useRouter } from "expo-router";
+import {
+  Image,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import OTPTextView from "react-native-otp-textinput";
+import { showToast } from "@/components/ToastComponent";
+import {
+  useGenerateOtpMutation,
+  useVerifyUserAccountOtpMutation,
+} from "@/generated/graphql";
+import Toast from "react-native-toast-message";
 
 const Validation = () => {
   const router = useRouter();
+  const [verifyUserAccountOtp, { loading }] = useVerifyUserAccountOtpMutation({
+    onCompleted: async () => {
+      router.push("/(auth)/Login");
+      showToast("success", "OTP verified successfully");
+    },
+
+    onError: (error: ApolloError) => {
+      Toast.show({ type: "error", text1: error.message });
+    },
+  });
+  const [generateOtp, { loading: resendLoading }] = useGenerateOtpMutation({
+    onCompleted: async () => {
+      showToast("success", "OTP resent successfully.");
+    },
+
+    onError: (error: ApolloError) => {
+      Toast.show({ type: "error", text1: error.message });
+    },
+  });
+  const params = useLocalSearchParams();
+  const { email } = params;
+  const emailString = Array.isArray(email) ? email[0] : email;
   const handleBack = () => {
     router.back();
   };
 
   const [otp, setOtp] = useState("");
-  const [error, setError] = useState("");
 
   const handleOtpChange = (otp: any) => {
     setOtp(otp);
-    setError("");
   };
 
-  const handleValidation = () => {
-    if (otp !== "00000") {
-      setError("Invalid OTP. Please try again.");
-    } else {
-      router.push("/(tabs)");
-    }
+  const handleResendCode = async () => {
+    await generateOtp({
+      variables: {
+        email: emailString,
+      },
+    });
   };
 
-  const styles = StyleSheet.create({
-    inputCell: {
-      borderWidth: 1,
-
-      borderColor: "#F8F8F8",
-      backgroundColor: "#F8F8F8",
-      width: 55,
-      height: 55,
-      textAlign: "center",
-      borderBottomWidth: 1,
-      borderRadius: 5,
-    },
-  });
+  const handleValidation = async () => {
+    await verifyUserAccountOtp({
+      variables: {
+        email: emailString,
+        otp,
+      },
+    });
+  };
 
   return (
     <SafeAreaView className="h-full bg-white">
@@ -62,27 +83,29 @@ const Validation = () => {
                   Validation
                 </Text>
                 <Text className="text-[14px]">
-                  An OTP was sent, please enter the Email code
+                  An OTP was sent to <Text className="font-bold">{email}</Text>,
+                  please enter the code sent
                 </Text>
               </View>
             </View>
             <View className="mt-[125px] space-y-4">
               <OTPTextView
-                inputCount={5}
+                inputCount={6}
                 autoFocus={true}
                 tintColor="#2196F3"
                 offTintColor="#787878"
                 containerStyle={{ justifyContent: "space-between" }}
                 inputCellLength={1}
-                textInputStyle={styles.inputCell}
                 handleTextChange={handleOtpChange}
               />
-              {error && (
-                <Text className="text-red-500 text-[14px]">{error}</Text>
-              )}
               <Text>
                 Code not sent?{" "}
-                <Text className="text-[#192655] font-bold">Resend Code</Text>
+                <Text
+                  className="text-[#192655] font-bold"
+                  onPress={handleResendCode}
+                >
+                  Resend Code
+                </Text>
               </Text>
             </View>
             <View className="mt-[300px]">
@@ -90,6 +113,7 @@ const Validation = () => {
                 onPress={handleValidation}
                 title="Validate"
                 customStyle="bg-[#192655]"
+                isLoading={loading || resendLoading}
                 textStyle="text-white"
               />
             </View>
