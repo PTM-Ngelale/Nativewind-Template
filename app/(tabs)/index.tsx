@@ -15,7 +15,7 @@ import MapView, {
   PROVIDER_DEFAULT,
   PROVIDER_GOOGLE
 } from "react-native-maps";
-
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import SosModal from "@/components/SosModal";
 import MapViewDirections from "react-native-maps-directions";
 import ReportModal from "@/components/ReportModal";
@@ -23,6 +23,7 @@ import { useUser } from "@/context/userContext";
 import { AlertType, GetUserEmailDocument, RoleType, useCreateAlertMutation } from "@/generated/graphql";
 import Toast from "react-native-toast-message";
 import { ApolloError, useQuery } from "@apollo/client";
+import Loading from "@/components/Loading";
 
 export default function HomeScreen() {
   const [emergencyModal, setEmergencyModal] = useState(false);
@@ -40,8 +41,8 @@ export default function HomeScreen() {
   const [selectedEmergency, setSelectedEmergency] = useState("");
   const [reportModal, setReportModal] = useState(false);
   const [loading, setLoading] = useState(true);
-    const { data,  } = useQuery(GetUserEmailDocument);
-    const userData = data?.getCurrentUser;
+  const { data, } = useQuery(GetUserEmailDocument);
+  const userData = data?.getCurrentUser;
 
   const [createAlert, { loading: loadingAlerts }] = useCreateAlertMutation({
     onCompleted: () => {
@@ -112,136 +113,139 @@ export default function HomeScreen() {
   }
 
 
-    const handleClick = async () => {
-      try {
-        // Ensure the current location is up-to-date
-        getCurrentLocation();
+  const handleClick = async () => {
+    try {
+      // Ensure the current location is up-to-date
+      getCurrentLocation();
 
-        await createAlert({
-          variables: {
-            data: {
-              emergency: "SOS",
-              latitude: initialRegion.latitude,
-              longitude: initialRegion.longitude,
-              type: AlertType.Sos,
-              address: displayCurrentAddress,
-              creator: {
-                connect: {
-                  id: userData.id,
-                },
+      await createAlert({
+        variables: {
+          data: {
+            emergency: "SOS",
+            latitude: initialRegion.latitude,
+            longitude: initialRegion.longitude,
+            type: AlertType.Sos,
+            address: displayCurrentAddress,
+            creator: {
+              connect: {
+                id: userData.id,
               },
             },
           },
-        });
+        },
+      });
 
-        setSosModal(!sosModal)
-      } catch (error) {
-        console.error("Error creating alert:", error);
-        // Handle error (e.g., show a toast or alert)
-      }
-    
+      setSosModal(!sosModal)
+    } catch (error) {
+      console.error("Error creating alert:", error);
+      // Handle error (e.g., show a toast or alert)
+    }
+
   };
 
   return (
-    <View className="h-full w-full bg-white">
-      <MapView
-        region={initialRegion}
-        showsUserLocation={true}
-        followsUserLocation={true}
-        style={styles.map}
-        initialRegion={initialRegion}
-        provider={PROVIDER_DEFAULT}>
-        {circles.map((circle, i) =>
-          <Circle
-            key={i}
-            center={circle.center}
-            radius={150}
-            strokeWidth={1}
-            strokeColor={circle.color}
-            fillColor={circle.color}
+    <SafeAreaProvider>
+      <View className="h-full w-full bg-white">
+        <MapView
+          region={initialRegion}
+          showsUserLocation={true}
+          followsUserLocation={true}
+          style={styles.map}
+          initialRegion={initialRegion}
+          provider={PROVIDER_DEFAULT}>
+          {circles.map((circle, i) =>
+            <Circle
+              key={i}
+              center={circle.center}
+              radius={150}
+              strokeWidth={1}
+              strokeColor={circle.color}
+              fillColor={circle.color}
+            />
+          )}
+
+          <Marker
+            coordinate={{
+              latitude: initialRegion.latitude + 0.00714,
+              longitude: initialRegion.longitude + 0.00075
+            }}
+            title="Location"
+            description={displayCurrentAddress}
+            image={require("../../assets/images/alert-triangle.png")}
+            tappable
+            onPress={() => setEmergencyModal(true)}
           />
-        )}
+          {direction === true &&
+            <MapViewDirections
+              origin={directionOrigin}
+              destination={directionDestination}
+              apikey={GOOGLE_MAPS_APIKEY}
+              strokeWidth={3}
+              strokeColor="hotpink"
+            />}
+        </MapView>
+        <View className="h-[20vh] w-[13%] bg-[#00000040] absolute bottom-5 right-5 rounded-full items-center justify-between">
+          <TouchableOpacity
+            onPress={() => setReportModal(true)}
+            activeOpacity={0.8}
+            className="items-center pt-3 gap-y-2">
+            <Image
+              source={require("../../assets/images/edit.png")}
+              className="w-[40px] h-[40px]"
+              resizeMode="contain"
+            />
+            <Text className="text-xs text-white">Report</Text>
+          </TouchableOpacity>
 
-        <Marker
-          coordinate={{
-            latitude: initialRegion.latitude + 0.00714,
-            longitude: initialRegion.longitude + 0.00075
-          }}
-          title="Location"
-          description={displayCurrentAddress}
-          image={require("../../assets/images/alert-triangle.png")}
-          tappable
-          onPress={() => setEmergencyModal(true)}
-        />
-        {direction === true &&
-          <MapViewDirections
-            origin={directionOrigin}
-            destination={directionDestination}
-            apikey={GOOGLE_MAPS_APIKEY}
-            strokeWidth={3}
-            strokeColor="hotpink"
-          />}
-      </MapView>
-      <View className="h-[20vh] w-[13%] bg-[#00000040] absolute bottom-5 right-5 rounded-full items-center justify-between">
-        <TouchableOpacity
-          onPress={() => setReportModal(true)}
-          activeOpacity={0.8}
-          className="items-center pt-3 gap-y-2">
-          <Image
-            source={require("../../assets/images/edit.png")}
-            className="w-[40px] h-[40px]"
-            resizeMode="contain"
+          <View className="w-full h-[2px] bg-[#FFFFFF80]" />
+
+          <TouchableOpacity
+            onPress={() => handleClick()}
+            activeOpacity={0.8}
+            className="pb-4 items-center gap-y-2">
+            <Image
+              source={require("../../assets/images/Sos.png")}
+              className="w-[40px] h-[40px]"
+              resizeMode="contain"
+            />
+            <Text className="text-xs text-white">SOS</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View>
+          <EmergencyModal
+            selectedEmergency={selectedEmergency}
+            getDirection={getDirection}
+            emergencyModal={emergencyModal}
+            setEmergencyModal={setEmergencyModal}
           />
-          <Text className="text-xs text-white">Report</Text>
-        </TouchableOpacity>
+        </View>
 
-        <View className="w-full h-[2px] bg-[#FFFFFF80]" />
-
-        <TouchableOpacity
-          onPress={() => handleClick()}
-          activeOpacity={0.8}
-          className="pb-4 items-center gap-y-2">
-          <Image
-            source={require("../../assets/images/Sos.png")}
-            className="w-[40px] h-[40px]"
-            resizeMode="contain"
+        <View>
+          <Onboarding
+            onboardingModal={onboardingModal}
+            setOnBoardingModal={setOnBoardingModal}
           />
-          <Text className="text-xs text-white">SOS</Text>
-        </TouchableOpacity>
-      </View>
+        </View>
 
-      <View>
-        <EmergencyModal
-          selectedEmergency={selectedEmergency}
-          getDirection={getDirection}
-          emergencyModal={emergencyModal}
-          setEmergencyModal={setEmergencyModal}
-        />
-      </View>
+        <View>
+          <SosModal sosModal={sosModal} setSosModal={setSosModal} />
+        </View>
 
-      <View>
-        <Onboarding
-          onboardingModal={onboardingModal}
-          setOnBoardingModal={setOnBoardingModal}
-        />
+        <View>
+          <ReportModal
+            emergencyModal={emergencyModal}
+            displayCurrentAddress={displayCurrentAddress}
+            setEmergencyModal={setEmergencyModal}
+            selectedEmergency={selectedEmergency}
+            setSelectedEmergency={setSelectedEmergency}
+            reportModal={reportModal}
+            setReportModal={setReportModal}
+          />
+        </View>
       </View>
+    </SafeAreaProvider>
 
-      <View>
-        <SosModal sosModal={sosModal} setSosModal={setSosModal} />
-      </View>
-
-      <View>
-        <ReportModal
-          emergencyModal={emergencyModal}
-          displayCurrentAddress={displayCurrentAddress}
-          setEmergencyModal={setEmergencyModal}
-          selectedEmergency={selectedEmergency}
-          setSelectedEmergency={setSelectedEmergency}
-          reportModal={reportModal}
-          setReportModal={setReportModal}
-        />
-      </View>
-    </View>
   );
 }
 

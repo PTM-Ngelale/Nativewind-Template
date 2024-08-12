@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
+import CustomButton from "./ui/CustomButton";
 
 interface Props {
   emergencyModal: boolean;
@@ -34,8 +35,9 @@ const ReportModal = ({
   setReportModal,
   displayCurrentAddress
 }: Props) => {
-  const { data,  } = useQuery(GetUserEmailDocument);
-  const { getCurrentLocation, initialRegion} = useUser();
+  const { data, } = useQuery(GetUserEmailDocument);
+  const { getCurrentLocation, initialRegion } = useUser();
+
 
   const userData = data?.getCurrentUser;
 
@@ -150,28 +152,35 @@ const ReportModal = ({
                       onPress={() => setSelectedEmergency(type.name)}
                       activeOpacity={0.8}
                       key={type.id}
-                      className={`border border-[#19265580] p-4 rounded-lg ${
-                        selectedEmergency === type.name && "border-[#0090FA]"
-                      }`}
+                      className={`border border-[#19265580] p-4 rounded-lg ${selectedEmergency === type.name && "border-[#0090FA]"
+                        }`}
                     >
                       <Text
-                        className={`text-[#6B7280] text-sm ${
-                          selectedEmergency === type.name &&
+                        className={`text-[#6B7280] text-sm ${selectedEmergency === type.name &&
                           "text-[#0090FA] font-bold"
-                        }`}
+                          }`}
                       >
                         {type.name}
                       </Text>
                     </TouchableOpacity>
                   ))}
                 </View>
-                <TouchableOpacity
+                <View className="mt-[15%]">
+                  <CustomButton
+                    title="Submit"
+                    textStyle="text-white"
+                    customStyle="bg-[#192655]"
+                    onPress={handleClick}
+                    isLoading={loading}
+                  />
+                </View>
+                {/* <TouchableOpacity
                   onPress={handleClick}
                   activeOpacity={0.8}
                   className="mt-[15%] w-full items-center border bg-[#192655] py-4 rounded-xl "
                 >
                   <Text className="text-white text-sm">Submit</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
             </ScrollView>
           </View>

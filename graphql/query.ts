@@ -35,3 +35,15 @@ export const GetUserFullInfoQuery = gql`
     }
   }
 `;
+
+export const GetAllAlerts = gql`
+  query listAlerts {
+    listAlerts {
+      emergency
+      latitude
+      longitude
+      id
+      address
+    }
+  }
+`;

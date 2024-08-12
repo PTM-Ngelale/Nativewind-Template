@@ -97,8 +97,14 @@ const Profile: React.FC = () => {
 
       return response.data.data;
     } catch (error) {
-      showToast("error", "Error uploading image");
-      throw error;
+     if (axios.isAxiosError(error)) {
+      // If the error is an AxiosError, log the response error
+      showToast("error", error.response?.data?.message || error.message);
+    } else {
+      // For non-Axios errors, log the error message
+      showToast("error", (error as Error).message);
+    }
+    throw error;
     } finally {
       setIsUploading(false);
     }
@@ -125,8 +131,8 @@ const Profile: React.FC = () => {
           },
         },
       });
-    } catch (err) {
-      showToast("error", "Error updating profile");
+    } catch (err: any) {
+      showToast("error", "Error updating profile", err);
     }
   };
 

@@ -163,15 +163,12 @@ const UserProvider = (props: { children: ReactNode }): ReactElement => {
         longitude,
       });
 
+
+
       if (response.length > 0) {
         const { name, region, country } = response[0];
-        const address = `${name} ${region} ${country}`;
-        setDisplayCurrentAddress((prevAddress) => {
-          if (prevAddress === address) {
-            return prevAddress;
-          }
-          return address;
-        });
+        const address = response[0].formattedAddress;
+        setDisplayCurrentAddress(address as string);
       }
     }
   };
@@ -247,7 +244,6 @@ const UserProvider = (props: { children: ReactNode }): ReactElement => {
       deviceModel,
     });
   };
-
 
   return (
     <UserContext.Provider

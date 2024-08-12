@@ -94,8 +94,7 @@ const Login = () => {
             <View className=" relative h-full">
               <TouchableOpacity
                 className="absolute top-5 left-5 z-10"
-                onPress={handleBack}
-              >
+                onPress={handleBack}>
                 <Image source={require("@/assets/images/left-white.png")} />
               </TouchableOpacity>
               <Image
@@ -127,8 +126,7 @@ const Login = () => {
                           placeholderTextColor="#000"
                           value={form.email}
                           onChangeText={(e: any) =>
-                            setForm({ ...form, email: e })
-                          }
+                            setForm({ ...form, email: e })}
                         />
                       </View>
                       <View>
@@ -137,8 +135,7 @@ const Login = () => {
                           placeholderTextColor="#000"
                           value={form.password}
                           onChangeText={(e: any) =>
-                            setForm({ ...form, password: e })
-                          }
+                            setForm({ ...form, password: e })}
                         />
                       </View>
                     </View>
@@ -156,9 +153,7 @@ const Login = () => {
                       <Text>Don't have an account?</Text>
                       <TouchableOpacity
                         onPress={() =>
-                          router.push("/(auth)/SignUp" as Href<string>)
-                        }
-                      >
+                          router.push("/(auth)/SignUp" as Href<string>)}>
                         <Text className="text-[#192655] font-bold">
                           Sign Up
                         </Text>
