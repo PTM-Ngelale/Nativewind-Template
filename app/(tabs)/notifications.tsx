@@ -1,42 +1,34 @@
+import { useListUserAlertsQuery } from "@/generated/graphql";
+import { formatDistanceToNow } from "date-fns";
+import { router } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import React, { useState } from "react";
 import {
-  View,
-  Text,
-  ScrollView,
   Image,
   SafeAreaView,
+  ScrollView,
+  Text,
   TouchableOpacity,
+  View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
-import { StatusBar } from "expo-status-bar";
-import { router } from "expo-router";
-import {
-  useGetUserBasicInfoQuery,
-  useListAlertsQuery,
-  useListUserAlertsQuery,
-} from "@/generated/graphql";
-import { formatDistanceToNow } from 'date-fns'; 
 
 const notifications = () => {
   const [activeTab, setActiveTab] = useState("all");
 
-  const { data: user, loading } = useGetUserBasicInfoQuery();
+  const { data: listAlerts, loading: alertLoading } = useListUserAlertsQuery({
+    skip: activeTab !== "all",
+  });
 
-  const {
-    data: listAlerts,
-    loading: alertLoading,
-    error,
-  } = useListAlertsQuery();
-
-  const { data: listUserAlerts, loading: UserAlertLoading } =
+  const { data: listUserAlerts, loading: userAlertLoading } =
     useListUserAlertsQuery({
       variables: {
-        where: { id: { equals: user?.getCurrentUser.id } },
+        createdByOnly: true,
       },
+      skip: activeTab === "all",
     });
 
   const allAlerts = listAlerts?.listAlerts;
   const myAlerts = listUserAlerts?.listAlerts;
-
   const toggleTab = (tab: any) => {
     setActiveTab(tab);
   };
@@ -79,7 +71,7 @@ const notifications = () => {
               </TouchableOpacity>
             </View>
             <View className="mt-4">
-              {alertLoading
+              {alertLoading || userAlertLoading
                 ? Array.from({ length: 6 }, (_, _i) => (
                     <View key={_i}>
                       <View className="flex items-center flex-row mt-4 bg-white p-3 border border-[#192655] border-opacity-50 rounded-xl">
@@ -113,10 +105,13 @@ const notifications = () => {
                             Emergency: {alert.emergency}
                           </Text>
                           <Text className="absolute right-0 text-xs">
-                            {formatDistanceToNow(new Date(alert.createdAt), { addSuffix: true, includeSeconds: true }).replace('about ', '')}
+                            {formatDistanceToNow(new Date(alert.createdAt), {
+                              addSuffix: true,
+                              includeSeconds: true,
+                            }).replace("about ", "")}
                           </Text>
                         </View>
-                        <Text className="text-sm">
+                        <Text className="text-sm w-full break-words flex-shrink flex-wrap">
                           Location: {alert.address}
                         </Text>
                         {/* <Text className="text-sm">{alert.distance}</Text>

@@ -7,7 +7,8 @@ import {
   AlertType,
   GetUserEmailDocument,
   useCreateAlertMutation,
-  useListAlertsQuery
+  useListAlertsByUserAssociationQuery,
+  useListUserAlertsQuery,
 } from "@/generated/graphql";
 import { ApolloError, useQuery } from "@apollo/client";
 import React, { useEffect, useState } from "react";
@@ -19,11 +20,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import MapView, {
-  Circle,
-  Marker,
-  PROVIDER_DEFAULT
-} from "react-native-maps";
+import MapView, { Circle, Marker, PROVIDER_DEFAULT } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
 import Toast from "react-native-toast-message";
 
@@ -77,7 +74,7 @@ export default function HomeScreen() {
     data: listAlerts,
     loading: alertLoading,
     error,
-  } = useListAlertsQuery();
+  } = useListAlertsByUserAssociationQuery();
 
   const setMarkerDirection = (
     latitude: number,
@@ -158,7 +155,7 @@ export default function HomeScreen() {
           strokeColor="#0090FA33"
           fillColor="#0090FA33"
         />
-        {listAlerts?.listAlerts.map((circle, i) => {
+        {listAlerts?.listAlertsByUserAssociation.map((circle, i) => {
           const center = {
             latitude: circle.latitude,
             longitude: circle.longitude,
@@ -167,7 +164,7 @@ export default function HomeScreen() {
           };
           return (
             <Circle
-               key={`circle-${circle.id}`} 
+              key={`circle-${circle.id}`}
               center={center}
               radius={150}
               strokeWidth={1}
@@ -177,9 +174,9 @@ export default function HomeScreen() {
           );
         })}
 
-        {listAlerts?.listAlerts.map((marker, i) => (
+        {listAlerts?.listAlertsByUserAssociation.map((marker, i) => (
           <Marker
-          key={`marker-${marker.id}`}
+            key={`marker-${marker.id}`}
             coordinate={{
               latitude: marker.latitude,
               longitude: marker.longitude,
@@ -221,7 +218,7 @@ export default function HomeScreen() {
           <Text className="text-xs text-white">Report</Text>
         </TouchableOpacity>
 
-          <View className="w-full h-[2px] bg-[#FFFFFF80]" />
+        <View className="w-full h-[2px] bg-[#FFFFFF80]" />
 
         <TouchableOpacity
           onPress={() => handleClick()}
@@ -249,30 +246,29 @@ export default function HomeScreen() {
         />
       </View>
 
-        <View>
-          <Onboarding
-            onboardingModal={onboardingModal}
-            setOnBoardingModal={setOnBoardingModal}
-          />
-        </View>
-
-        <View>
-          <SosModal sosModal={sosModal} setSosModal={setSosModal} />
-        </View>
-
-        <View>
-          <ReportModal
-            emergencyModal={emergencyModal}
-            displayCurrentAddress={displayCurrentAddress}
-            setEmergencyModal={setEmergencyModal}
-            selectedEmergency={selectedEmergency}
-            setSelectedEmergency={setSelectedEmergency}
-            reportModal={reportModal}
-            setReportModal={setReportModal}
-          />
-        </View>
+      <View>
+        <Onboarding
+          onboardingModal={onboardingModal}
+          setOnBoardingModal={setOnBoardingModal}
+        />
       </View>
 
+      <View>
+        <SosModal sosModal={sosModal} setSosModal={setSosModal} />
+      </View>
+
+      <View>
+        <ReportModal
+          emergencyModal={emergencyModal}
+          displayCurrentAddress={displayCurrentAddress}
+          setEmergencyModal={setEmergencyModal}
+          selectedEmergency={selectedEmergency}
+          setSelectedEmergency={setSelectedEmergency}
+          reportModal={reportModal}
+          setReportModal={setReportModal}
+        />
+      </View>
+    </View>
   );
 }
 

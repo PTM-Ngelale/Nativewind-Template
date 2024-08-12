@@ -36,22 +36,22 @@ export const GetUserFullInfoQuery = gql`
   }
 `;
 
-export const GetAllAlerts = gql`
-  query listAlerts {
-    listAlerts {
+export const GetUserAlerts = gql`
+  query listUserAlerts($createdByOnly: Boolean) {
+    listAlerts(createdByOnly: $createdByOnly) {
       emergency
       latitude
       longitude
-      id
       address
+      id
       createdAt
     }
   }
 `;
 
-export const GetUserAlerts = gql`
-  query listUserAlerts($where: AlertWhereInput) {
-    listAlerts(where: $where) {
+export const GetUSerAssociatedAlertsForMap = gql`
+  query listAlertsByUserAssociation {
+    listAlertsByUserAssociation {
       emergency
       latitude
       longitude

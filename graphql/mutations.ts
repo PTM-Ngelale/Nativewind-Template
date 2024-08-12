@@ -65,10 +65,13 @@ export const UPDATE_USER_MUTATION = gql`
 export const CREATE_ALERT_MUTATION = gql`
   mutation CreateAlert($data: AlertCreateInput!) {
     createAlert(data: $data) {
-      id
-      emergency
-      latitude
-      longitude
+      alert {
+        id
+        emergency
+        latitude
+        longitude
+      }
+      totalNotified
     }
   }
 `;

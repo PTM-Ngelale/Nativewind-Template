@@ -78,6 +78,7 @@ export type Alert = {
   id: Scalars['ID']['output'];
   latitude: Scalars['Float']['output'];
   longitude: Scalars['Float']['output'];
+  status: AlertStatus;
   type: AlertType;
   updatedAt: Scalars['DateTime']['output'];
   users?: Maybe<Array<User>>;
@@ -116,6 +117,7 @@ export type AlertCountAggregate = {
   id: Scalars['Int']['output'];
   latitude: Scalars['Int']['output'];
   longitude: Scalars['Int']['output'];
+  status: Scalars['Int']['output'];
   type: Scalars['Int']['output'];
   updatedAt: Scalars['Int']['output'];
 };
@@ -130,6 +132,7 @@ export type AlertCountAggregateInput = {
   id?: InputMaybe<Scalars['Boolean']['input']>;
   latitude?: InputMaybe<Scalars['Boolean']['input']>;
   longitude?: InputMaybe<Scalars['Boolean']['input']>;
+  status?: InputMaybe<Scalars['Boolean']['input']>;
   type?: InputMaybe<Scalars['Boolean']['input']>;
   updatedAt?: InputMaybe<Scalars['Boolean']['input']>;
 };
@@ -143,6 +146,7 @@ export type AlertCountOrderByAggregateInput = {
   id?: InputMaybe<SortOrder>;
   latitude?: InputMaybe<SortOrder>;
   longitude?: InputMaybe<SortOrder>;
+  status?: InputMaybe<SortOrder>;
   type?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
 };
@@ -157,6 +161,7 @@ export type AlertCreateInput = {
   id?: InputMaybe<Scalars['String']['input']>;
   latitude: Scalars['Float']['input'];
   longitude: Scalars['Float']['input'];
+  status?: InputMaybe<AlertStatus>;
   type?: InputMaybe<AlertType>;
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>;
   users?: InputMaybe<UserCreateNestedManyWithoutAlertsInput>;
@@ -170,6 +175,7 @@ export type AlertCreateManyCreatorInput = {
   id?: InputMaybe<Scalars['String']['input']>;
   latitude: Scalars['Float']['input'];
   longitude: Scalars['Float']['input'];
+  status?: InputMaybe<AlertStatus>;
   type?: InputMaybe<AlertType>;
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>;
 };
@@ -187,6 +193,7 @@ export type AlertCreateManyGroupInput = {
   id?: InputMaybe<Scalars['String']['input']>;
   latitude: Scalars['Float']['input'];
   longitude: Scalars['Float']['input'];
+  status?: InputMaybe<AlertStatus>;
   type?: InputMaybe<AlertType>;
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>;
 };
@@ -205,6 +212,7 @@ export type AlertCreateManyInput = {
   id?: InputMaybe<Scalars['String']['input']>;
   latitude: Scalars['Float']['input'];
   longitude: Scalars['Float']['input'];
+  status?: InputMaybe<AlertStatus>;
   type?: InputMaybe<AlertType>;
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>;
 };
@@ -264,6 +272,7 @@ export type AlertCreateWithoutChatsInput = {
   id?: InputMaybe<Scalars['String']['input']>;
   latitude: Scalars['Float']['input'];
   longitude: Scalars['Float']['input'];
+  status?: InputMaybe<AlertStatus>;
   type?: InputMaybe<AlertType>;
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>;
   users?: InputMaybe<UserCreateNestedManyWithoutAlertsInput>;
@@ -278,6 +287,7 @@ export type AlertCreateWithoutCreatorInput = {
   id?: InputMaybe<Scalars['String']['input']>;
   latitude: Scalars['Float']['input'];
   longitude: Scalars['Float']['input'];
+  status?: InputMaybe<AlertStatus>;
   type?: InputMaybe<AlertType>;
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>;
   users?: InputMaybe<UserCreateNestedManyWithoutAlertsInput>;
@@ -292,6 +302,7 @@ export type AlertCreateWithoutGroupInput = {
   id?: InputMaybe<Scalars['String']['input']>;
   latitude: Scalars['Float']['input'];
   longitude: Scalars['Float']['input'];
+  status?: InputMaybe<AlertStatus>;
   type?: InputMaybe<AlertType>;
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>;
   users?: InputMaybe<UserCreateNestedManyWithoutAlertsInput>;
@@ -307,6 +318,7 @@ export type AlertCreateWithoutUsersInput = {
   id?: InputMaybe<Scalars['String']['input']>;
   latitude: Scalars['Float']['input'];
   longitude: Scalars['Float']['input'];
+  status?: InputMaybe<AlertStatus>;
   type?: InputMaybe<AlertType>;
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>;
 };
@@ -326,6 +338,7 @@ export type AlertGroupBy = {
   id: Scalars['String']['output'];
   latitude: Scalars['Float']['output'];
   longitude: Scalars['Float']['output'];
+  status: AlertStatus;
   type: AlertType;
   updatedAt: Scalars['DateTime']['output'];
 };
@@ -346,6 +359,7 @@ export type AlertMaxAggregate = {
   id?: Maybe<Scalars['String']['output']>;
   latitude?: Maybe<Scalars['Float']['output']>;
   longitude?: Maybe<Scalars['Float']['output']>;
+  status?: Maybe<AlertStatus>;
   type?: Maybe<AlertType>;
   updatedAt?: Maybe<Scalars['DateTime']['output']>;
 };
@@ -359,6 +373,7 @@ export type AlertMaxAggregateInput = {
   id?: InputMaybe<Scalars['Boolean']['input']>;
   latitude?: InputMaybe<Scalars['Boolean']['input']>;
   longitude?: InputMaybe<Scalars['Boolean']['input']>;
+  status?: InputMaybe<Scalars['Boolean']['input']>;
   type?: InputMaybe<Scalars['Boolean']['input']>;
   updatedAt?: InputMaybe<Scalars['Boolean']['input']>;
 };
@@ -372,6 +387,7 @@ export type AlertMaxOrderByAggregateInput = {
   id?: InputMaybe<SortOrder>;
   latitude?: InputMaybe<SortOrder>;
   longitude?: InputMaybe<SortOrder>;
+  status?: InputMaybe<SortOrder>;
   type?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
 };
@@ -386,6 +402,7 @@ export type AlertMinAggregate = {
   id?: Maybe<Scalars['String']['output']>;
   latitude?: Maybe<Scalars['Float']['output']>;
   longitude?: Maybe<Scalars['Float']['output']>;
+  status?: Maybe<AlertStatus>;
   type?: Maybe<AlertType>;
   updatedAt?: Maybe<Scalars['DateTime']['output']>;
 };
@@ -399,6 +416,7 @@ export type AlertMinAggregateInput = {
   id?: InputMaybe<Scalars['Boolean']['input']>;
   latitude?: InputMaybe<Scalars['Boolean']['input']>;
   longitude?: InputMaybe<Scalars['Boolean']['input']>;
+  status?: InputMaybe<Scalars['Boolean']['input']>;
   type?: InputMaybe<Scalars['Boolean']['input']>;
   updatedAt?: InputMaybe<Scalars['Boolean']['input']>;
 };
@@ -412,6 +430,7 @@ export type AlertMinOrderByAggregateInput = {
   id?: InputMaybe<SortOrder>;
   latitude?: InputMaybe<SortOrder>;
   longitude?: InputMaybe<SortOrder>;
+  status?: InputMaybe<SortOrder>;
   type?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
 };
@@ -434,6 +453,7 @@ export type AlertOrderByWithAggregationInput = {
   id?: InputMaybe<SortOrder>;
   latitude?: InputMaybe<SortOrder>;
   longitude?: InputMaybe<SortOrder>;
+  status?: InputMaybe<SortOrder>;
   type?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
 };
@@ -450,6 +470,7 @@ export type AlertOrderByWithRelationInput = {
   id?: InputMaybe<SortOrder>;
   latitude?: InputMaybe<SortOrder>;
   longitude?: InputMaybe<SortOrder>;
+  status?: InputMaybe<SortOrder>;
   type?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
   users?: InputMaybe<UserOrderByRelationAggregateInput>;
@@ -469,6 +490,7 @@ export enum AlertScalarFieldEnum {
   Id = 'id',
   Latitude = 'latitude',
   Longitude = 'longitude',
+  Status = 'status',
   Type = 'type',
   UpdatedAt = 'updatedAt'
 }
@@ -485,6 +507,7 @@ export type AlertScalarWhereInput = {
   id?: InputMaybe<StringFilter>;
   latitude?: InputMaybe<FloatFilter>;
   longitude?: InputMaybe<FloatFilter>;
+  status?: InputMaybe<EnumAlertStatusFilter>;
   type?: InputMaybe<EnumAlertTypeFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
 };
@@ -501,9 +524,15 @@ export type AlertScalarWhereWithAggregatesInput = {
   id?: InputMaybe<StringWithAggregatesFilter>;
   latitude?: InputMaybe<FloatWithAggregatesFilter>;
   longitude?: InputMaybe<FloatWithAggregatesFilter>;
+  status?: InputMaybe<EnumAlertStatusWithAggregatesFilter>;
   type?: InputMaybe<EnumAlertTypeWithAggregatesFilter>;
   updatedAt?: InputMaybe<DateTimeWithAggregatesFilter>;
 };
+
+export enum AlertStatus {
+  Active = 'Active',
+  Expired = 'Expired'
+}
 
 export type AlertSumAggregate = {
   __typename?: 'AlertSumAggregate';
@@ -536,6 +565,7 @@ export type AlertUpdateInput = {
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   latitude?: InputMaybe<FloatFieldUpdateOperationsInput>;
   longitude?: InputMaybe<FloatFieldUpdateOperationsInput>;
+  status?: InputMaybe<EnumAlertStatusFieldUpdateOperationsInput>;
   type?: InputMaybe<EnumAlertTypeFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
   users?: InputMaybe<UserUpdateManyWithoutAlertsNestedInput>;
@@ -548,6 +578,7 @@ export type AlertUpdateManyMutationInput = {
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   latitude?: InputMaybe<FloatFieldUpdateOperationsInput>;
   longitude?: InputMaybe<FloatFieldUpdateOperationsInput>;
+  status?: InputMaybe<EnumAlertStatusFieldUpdateOperationsInput>;
   type?: InputMaybe<EnumAlertTypeFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
@@ -645,6 +676,7 @@ export type AlertUpdateWithoutChatsInput = {
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   latitude?: InputMaybe<FloatFieldUpdateOperationsInput>;
   longitude?: InputMaybe<FloatFieldUpdateOperationsInput>;
+  status?: InputMaybe<EnumAlertStatusFieldUpdateOperationsInput>;
   type?: InputMaybe<EnumAlertTypeFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
   users?: InputMaybe<UserUpdateManyWithoutAlertsNestedInput>;
@@ -659,6 +691,7 @@ export type AlertUpdateWithoutCreatorInput = {
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   latitude?: InputMaybe<FloatFieldUpdateOperationsInput>;
   longitude?: InputMaybe<FloatFieldUpdateOperationsInput>;
+  status?: InputMaybe<EnumAlertStatusFieldUpdateOperationsInput>;
   type?: InputMaybe<EnumAlertTypeFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
   users?: InputMaybe<UserUpdateManyWithoutAlertsNestedInput>;
@@ -673,6 +706,7 @@ export type AlertUpdateWithoutGroupInput = {
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   latitude?: InputMaybe<FloatFieldUpdateOperationsInput>;
   longitude?: InputMaybe<FloatFieldUpdateOperationsInput>;
+  status?: InputMaybe<EnumAlertStatusFieldUpdateOperationsInput>;
   type?: InputMaybe<EnumAlertTypeFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
   users?: InputMaybe<UserUpdateManyWithoutAlertsNestedInput>;
@@ -688,6 +722,7 @@ export type AlertUpdateWithoutUsersInput = {
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   latitude?: InputMaybe<FloatFieldUpdateOperationsInput>;
   longitude?: InputMaybe<FloatFieldUpdateOperationsInput>;
+  status?: InputMaybe<EnumAlertStatusFieldUpdateOperationsInput>;
   type?: InputMaybe<EnumAlertTypeFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
@@ -731,6 +766,7 @@ export type AlertWhereInput = {
   id?: InputMaybe<StringFilter>;
   latitude?: InputMaybe<FloatFilter>;
   longitude?: InputMaybe<FloatFilter>;
+  status?: InputMaybe<EnumAlertStatusFilter>;
   type?: InputMaybe<EnumAlertTypeFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
   users?: InputMaybe<UserListRelationFilter>;
@@ -751,6 +787,7 @@ export type AlertWhereUniqueInput = {
   id?: InputMaybe<Scalars['String']['input']>;
   latitude?: InputMaybe<FloatFilter>;
   longitude?: InputMaybe<FloatFilter>;
+  status?: InputMaybe<EnumAlertStatusFilter>;
   type?: InputMaybe<EnumAlertTypeFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
   users?: InputMaybe<UserListRelationFilter>;
@@ -1152,6 +1189,12 @@ export type ChatWhereUniqueInput = {
   timestamp?: InputMaybe<DateTimeFilter>;
   user?: InputMaybe<UserRelationFilter>;
   userId?: InputMaybe<StringFilter>;
+};
+
+export type CreateAlertResponse = {
+  __typename?: 'CreateAlertResponse';
+  alert: Alert;
+  totalNotified: Scalars['Float']['output'];
 };
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -1587,6 +1630,27 @@ export type EmergencyWhereUniqueInput = {
   id?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<StringFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
+};
+
+export type EnumAlertStatusFieldUpdateOperationsInput = {
+  set?: InputMaybe<AlertStatus>;
+};
+
+export type EnumAlertStatusFilter = {
+  equals?: InputMaybe<AlertStatus>;
+  in?: InputMaybe<Array<AlertStatus>>;
+  not?: InputMaybe<NestedEnumAlertStatusFilter>;
+  notIn?: InputMaybe<Array<AlertStatus>>;
+};
+
+export type EnumAlertStatusWithAggregatesFilter = {
+  _count?: InputMaybe<NestedIntFilter>;
+  _max?: InputMaybe<NestedEnumAlertStatusFilter>;
+  _min?: InputMaybe<NestedEnumAlertStatusFilter>;
+  equals?: InputMaybe<AlertStatus>;
+  in?: InputMaybe<Array<AlertStatus>>;
+  not?: InputMaybe<NestedEnumAlertStatusWithAggregatesFilter>;
+  notIn?: InputMaybe<Array<AlertStatus>>;
 };
 
 export type EnumAlertTypeFieldUpdateOperationsInput = {
@@ -2361,7 +2425,7 @@ export type LoginData = {
 export type Mutation = {
   __typename?: 'Mutation';
   changePassword: User;
-  createAlert?: Maybe<Alert>;
+  createAlert?: Maybe<CreateAlertResponse>;
   createChat?: Maybe<Chat>;
   createEmergency?: Maybe<Emergency>;
   createGroup?: Maybe<Group>;
@@ -2690,6 +2754,23 @@ export type NestedDateTimeWithAggregatesFilter = {
   notIn?: InputMaybe<Array<Scalars['DateTime']['input']>>;
 };
 
+export type NestedEnumAlertStatusFilter = {
+  equals?: InputMaybe<AlertStatus>;
+  in?: InputMaybe<Array<AlertStatus>>;
+  not?: InputMaybe<NestedEnumAlertStatusFilter>;
+  notIn?: InputMaybe<Array<AlertStatus>>;
+};
+
+export type NestedEnumAlertStatusWithAggregatesFilter = {
+  _count?: InputMaybe<NestedIntFilter>;
+  _max?: InputMaybe<NestedEnumAlertStatusFilter>;
+  _min?: InputMaybe<NestedEnumAlertStatusFilter>;
+  equals?: InputMaybe<AlertStatus>;
+  in?: InputMaybe<Array<AlertStatus>>;
+  not?: InputMaybe<NestedEnumAlertStatusWithAggregatesFilter>;
+  notIn?: InputMaybe<Array<AlertStatus>>;
+};
+
 export type NestedEnumAlertTypeFilter = {
   equals?: InputMaybe<AlertType>;
   in?: InputMaybe<Array<AlertType>>;
@@ -2922,6 +3003,7 @@ export type Query = {
   groupByGroup: Array<GroupGroupBy>;
   groupByUser: Array<UserGroupBy>;
   listAlerts: Array<Alert>;
+  listAlertsByUserAssociation: Array<Alert>;
   listChats: Array<Chat>;
   listEmergencys: Array<Emergency>;
   listGroups: PaginatedGroup;
@@ -3158,6 +3240,17 @@ export type QueryGroupByUserArgs = {
 
 
 export type QueryListAlertsArgs = {
+  createdByOnly?: InputMaybe<Scalars['Boolean']['input']>;
+  cursor?: InputMaybe<AlertWhereUniqueInput>;
+  distinct?: InputMaybe<Array<AlertScalarFieldEnum>>;
+  orderBy?: InputMaybe<Array<AlertOrderByWithRelationInput>>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  take?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<AlertWhereInput>;
+};
+
+
+export type QueryListAlertsByUserAssociationArgs = {
   cursor?: InputMaybe<AlertWhereUniqueInput>;
   distinct?: InputMaybe<Array<AlertScalarFieldEnum>>;
   orderBy?: InputMaybe<Array<AlertOrderByWithRelationInput>>;
@@ -5587,7 +5680,7 @@ export type CreateAlertMutationVariables = Exact<{
 }>;
 
 
-export type CreateAlertMutation = { __typename?: 'Mutation', createAlert?: { __typename?: 'Alert', id: string, emergency: string, latitude: number, longitude: number } | null };
+export type CreateAlertMutation = { __typename?: 'Mutation', createAlert?: { __typename?: 'CreateAlertResponse', totalNotified: number, alert: { __typename?: 'Alert', id: string, emergency: string, latitude: number, longitude: number } } | null };
 
 export type GetUserBasicInfoQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -5604,17 +5697,17 @@ export type GetUserFullInfoQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetUserFullInfoQuery = { __typename?: 'Query', getCurrentUser: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, email: string } };
 
-export type ListAlertsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type ListAlertsQuery = { __typename?: 'Query', listAlerts: Array<{ __typename?: 'Alert', emergency: string, latitude: number, longitude: number, id: string, address?: string | null, createdAt: any }> };
-
 export type ListUserAlertsQueryVariables = Exact<{
-  where?: InputMaybe<AlertWhereInput>;
+  createdByOnly?: InputMaybe<Scalars['Boolean']['input']>;
 }>;
 
 
 export type ListUserAlertsQuery = { __typename?: 'Query', listAlerts: Array<{ __typename?: 'Alert', emergency: string, latitude: number, longitude: number, address?: string | null, id: string, createdAt: any }> };
+
+export type ListAlertsByUserAssociationQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ListAlertsByUserAssociationQuery = { __typename?: 'Query', listAlertsByUserAssociation: Array<{ __typename?: 'Alert', emergency: string, latitude: number, longitude: number, address?: string | null, id: string, createdAt: any }> };
 
 
 export const LoginUserDocument = gql`
@@ -5806,10 +5899,13 @@ export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<UpdateUserMut
 export const CreateAlertDocument = gql`
     mutation CreateAlert($data: AlertCreateInput!) {
   createAlert(data: $data) {
-    id
-    emergency
-    latitude
-    longitude
+    alert {
+      id
+      emergency
+      latitude
+      longitude
+    }
+    totalNotified
   }
 }
     `;
@@ -5965,53 +6061,9 @@ export type GetUserFullInfoQueryHookResult = ReturnType<typeof useGetUserFullInf
 export type GetUserFullInfoLazyQueryHookResult = ReturnType<typeof useGetUserFullInfoLazyQuery>;
 export type GetUserFullInfoSuspenseQueryHookResult = ReturnType<typeof useGetUserFullInfoSuspenseQuery>;
 export type GetUserFullInfoQueryResult = Apollo.QueryResult<GetUserFullInfoQuery, GetUserFullInfoQueryVariables>;
-export const ListAlertsDocument = gql`
-    query listAlerts {
-  listAlerts {
-    emergency
-    latitude
-    longitude
-    id
-    address
-    createdAt
-  }
-}
-    `;
-
-/**
- * __useListAlertsQuery__
- *
- * To run a query within a React component, call `useListAlertsQuery` and pass it any options that fit your needs.
- * When your component renders, `useListAlertsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useListAlertsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useListAlertsQuery(baseOptions?: Apollo.QueryHookOptions<ListAlertsQuery, ListAlertsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ListAlertsQuery, ListAlertsQueryVariables>(ListAlertsDocument, options);
-      }
-export function useListAlertsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ListAlertsQuery, ListAlertsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ListAlertsQuery, ListAlertsQueryVariables>(ListAlertsDocument, options);
-        }
-export function useListAlertsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ListAlertsQuery, ListAlertsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<ListAlertsQuery, ListAlertsQueryVariables>(ListAlertsDocument, options);
-        }
-export type ListAlertsQueryHookResult = ReturnType<typeof useListAlertsQuery>;
-export type ListAlertsLazyQueryHookResult = ReturnType<typeof useListAlertsLazyQuery>;
-export type ListAlertsSuspenseQueryHookResult = ReturnType<typeof useListAlertsSuspenseQuery>;
-export type ListAlertsQueryResult = Apollo.QueryResult<ListAlertsQuery, ListAlertsQueryVariables>;
 export const ListUserAlertsDocument = gql`
-    query listUserAlerts($where: AlertWhereInput) {
-  listAlerts(where: $where) {
+    query listUserAlerts($createdByOnly: Boolean) {
+  listAlerts(createdByOnly: $createdByOnly) {
     emergency
     latitude
     longitude
@@ -6034,7 +6086,7 @@ export const ListUserAlertsDocument = gql`
  * @example
  * const { data, loading, error } = useListUserAlertsQuery({
  *   variables: {
- *      where: // value for 'where'
+ *      createdByOnly: // value for 'createdByOnly'
  *   },
  * });
  */
@@ -6054,3 +6106,47 @@ export type ListUserAlertsQueryHookResult = ReturnType<typeof useListUserAlertsQ
 export type ListUserAlertsLazyQueryHookResult = ReturnType<typeof useListUserAlertsLazyQuery>;
 export type ListUserAlertsSuspenseQueryHookResult = ReturnType<typeof useListUserAlertsSuspenseQuery>;
 export type ListUserAlertsQueryResult = Apollo.QueryResult<ListUserAlertsQuery, ListUserAlertsQueryVariables>;
+export const ListAlertsByUserAssociationDocument = gql`
+    query listAlertsByUserAssociation {
+  listAlertsByUserAssociation {
+    emergency
+    latitude
+    longitude
+    address
+    id
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useListAlertsByUserAssociationQuery__
+ *
+ * To run a query within a React component, call `useListAlertsByUserAssociationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useListAlertsByUserAssociationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useListAlertsByUserAssociationQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useListAlertsByUserAssociationQuery(baseOptions?: Apollo.QueryHookOptions<ListAlertsByUserAssociationQuery, ListAlertsByUserAssociationQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ListAlertsByUserAssociationQuery, ListAlertsByUserAssociationQueryVariables>(ListAlertsByUserAssociationDocument, options);
+      }
+export function useListAlertsByUserAssociationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ListAlertsByUserAssociationQuery, ListAlertsByUserAssociationQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ListAlertsByUserAssociationQuery, ListAlertsByUserAssociationQueryVariables>(ListAlertsByUserAssociationDocument, options);
+        }
+export function useListAlertsByUserAssociationSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ListAlertsByUserAssociationQuery, ListAlertsByUserAssociationQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<ListAlertsByUserAssociationQuery, ListAlertsByUserAssociationQueryVariables>(ListAlertsByUserAssociationDocument, options);
+        }
+export type ListAlertsByUserAssociationQueryHookResult = ReturnType<typeof useListAlertsByUserAssociationQuery>;
+export type ListAlertsByUserAssociationLazyQueryHookResult = ReturnType<typeof useListAlertsByUserAssociationLazyQuery>;
+export type ListAlertsByUserAssociationSuspenseQueryHookResult = ReturnType<typeof useListAlertsByUserAssociationSuspenseQuery>;
+export type ListAlertsByUserAssociationQueryResult = Apollo.QueryResult<ListAlertsByUserAssociationQuery, ListAlertsByUserAssociationQueryVariables>;
