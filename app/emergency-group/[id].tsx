@@ -13,7 +13,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
 import CustomButton from "@/components/ui/CustomButton";
 import { useEffect, useRef, useState } from "react";
-import { formatDistanceToNow } from "date-fns";
+import {
+  differenceInDays,
+  differenceInHours,
+  formatDistanceToNow,
+} from "date-fns";
 
 const EmergencyData = [
   {
@@ -66,6 +70,24 @@ const EmergencyData = [
   },
 ];
 
+const formatTimestamp = (timestamp: string) => {
+  const now = new Date();
+  const date = new Date(timestamp);
+  const hours = differenceInHours(now, date);
+  const days = differenceInDays(now, date);
+
+  if (days > 0) {
+    return `${days}d`;
+  } else if (hours > 0) {
+    return `${hours}h`;
+  } else {
+    return formatDistanceToNow(date, {
+      addSuffix: false,
+      includeSeconds: true,
+    }).replace("about ", "");
+  }
+};
+
 const EmergencyPost = ({
   name,
   message,
@@ -96,10 +118,7 @@ const EmergencyPost = ({
         <View className="flex flex-row justify-between items-center">
           <Text className="font-bold text-base text-[#4B5563]">{name}</Text>
           <Text className="text-[#4B5563] text-base">
-            {formatDistanceToNow(new Date(timestamp), {
-              addSuffix: true,
-              includeSeconds: true,
-            }).replace("about ", "")}
+            {formatTimestamp(timestamp)}
           </Text>
         </View>
         <Text className="text-[#4B5563] leading-[16px]">{message}</Text>
@@ -146,16 +165,15 @@ const EmergencyGroup = () => {
 
   let parsedChats = [];
   try {
-    parsedChats = JSON.parse(chats);
+    if (typeof chats === "string") {
+      parsedChats = JSON.parse(chats);
+    } else {
+      parsedChats = chats;
+    }
   } catch (error) {
     console.error("Failed to parse chats:", error);
   }
 
-  if (Array.isArray(chats)) {
-    chats.forEach((chat) => console.log(JSON.stringify(chat.id)));
-  } else {
-    console.log(JSON.stringify(chats));
-  }
   return (
     <KeyboardAvoidingView
       behavior={"padding"}
