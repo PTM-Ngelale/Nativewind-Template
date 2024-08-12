@@ -1,5 +1,12 @@
+import { useUser } from "@/context/userContext";
+import {
+  GetUserEmailDocument,
+  useCreateAlertMutation,
+} from "@/generated/graphql";
+import { ApolloError, useQuery } from "@apollo/client";
 import React, { Dispatch, SetStateAction } from "react";
 import {
+  Image,
   Modal,
   ScrollView,
   StyleSheet,
@@ -7,11 +14,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import {
-  PanGestureHandlerGestureEvent,
-  State,
-} from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 
 interface Props {
   emergencyModal: boolean;
@@ -20,6 +24,7 @@ interface Props {
   setSelectedEmergency: Dispatch<SetStateAction<string>>;
   reportModal: boolean;
   setReportModal: Dispatch<SetStateAction<boolean>>;
+  displayCurrentAddress: string;
 }
 
 const ReportModal = ({
@@ -28,7 +33,26 @@ const ReportModal = ({
   setSelectedEmergency,
   reportModal,
   setReportModal,
+  displayCurrentAddress,
 }: Props) => {
+  const { data } = useQuery(GetUserEmailDocument);
+  const { getCurrentLocation, initialRegion } = useUser();
+
+  const userData = data?.getCurrentUser;
+
+  const [createAlert, { loading }] = useCreateAlertMutation({
+    onCompleted: () => {
+      setReportModal(false);
+      setEmergencyModal(true);
+      setSelectedEmergency("");
+      Toast.show({ type: "success", text1: "Report has been escalated!" });
+    },
+
+    onError: (error: ApolloError) => {
+      Toast.show({ type: "error", text1: error.message });
+    },
+  });
+
   const emergencies = [
     {
       id: 0,
@@ -67,10 +91,34 @@ const ReportModal = ({
       name: "Others",
     },
   ];
-  const handleClick = () => {
+  const handleClick = async () => {
     if (selectedEmergency && selectedEmergency.length > 0) {
-      setReportModal(false);
-      setEmergencyModal(true);
+      try {
+        // Ensure the current location is up-to-date
+        getCurrentLocation();
+
+        await createAlert({
+          variables: {
+            data: {
+              emergency: selectedEmergency,
+              latitude: initialRegion.latitude,
+              longitude: initialRegion.longitude,
+              address: displayCurrentAddress,
+              creator: {
+                connect: {
+                  id: userData.id,
+                },
+              },
+            },
+          },
+        });
+
+        setReportModal(false);
+        setEmergencyModal(true);
+      } catch (error) {
+        console.error("Error creating alert:", error);
+        // Handle error (e.g., show a toast or alert)
+      }
     }
   };
 
@@ -88,7 +136,17 @@ const ReportModal = ({
           <View className="mt-10">
             <ScrollView className="h-full w-full bg-white">
               <View className="w-full px-6">
-                <View className="mt-10">
+                <View className="mt-4">
+                  <TouchableOpacity
+                    onPress={() => setReportModal(!reportModal)}
+                    className="w-full items-end"
+                  >
+                    <Image
+                      source={require("../assets/images/Close.png")}
+                      className="w-7 h-7"
+                      resizeMode="contain"
+                    />
+                  </TouchableOpacity>
                   <Text className="text-[#192655] font-bold text-base">
                     What Kind of Emergency?
                   </Text>

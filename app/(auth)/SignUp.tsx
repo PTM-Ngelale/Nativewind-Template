@@ -1,19 +1,43 @@
 import CustomButton from "@/components/ui/CustomButton";
+import CustomTextInput from "@/components/ui/CustomInput";
+import { useCreateUserMutation, RoleType } from "@/generated/graphql";
+import { ApolloError } from "@apollo/client";
+
+import { Href, Link, useRouter } from "expo-router";
+import { useState } from "react";
 import {
-  SafeAreaView,
-  ScrollView,
-  View,
-  Text,
   Image,
   KeyboardAvoidingView,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import CustomTextInput from "@/components/ui/CustomInput";
-import { useState, useEffect } from "react";
-import { useRouter, Link, Href } from "expo-router";
-import { TouchableOpacity } from "react-native";
+import Toast from "react-native-toast-message";
 
 const SignUp = () => {
   const router = useRouter();
+  const [registerUser, { loading}] = useCreateUserMutation({
+    onCompleted: async (data) => {
+
+      console.log(data)
+      if (data.registerUser) {
+        Toast.show({
+          type: "success",
+          text1: "Please check your mail to confirm account.",
+        });
+        router.push({
+          pathname: "/(auth)/Validation",
+          params: { email: data.registerUser.email },
+        } as Href<string>);
+      }
+    },
+
+    onError: (error: ApolloError) => {
+      Toast.show({ type: "error", text1: error.message });
+    },
+  });
 
   const handleBack = () => {
     router.back();
@@ -25,45 +49,39 @@ const SignUp = () => {
     token: "",
   });
 
-  const [errorMessage, setErrorMessage] = useState("");
-
   const validateForm = () => {
     const { email, password, token } = form;
     if (!email || !password || !token) {
-      setErrorMessage("All fields are required.");
-      return false;
-    }
-
-    if (token !== "000") {
-      setErrorMessage("Please Input a correct token.");
+      Toast.show({ type: "error", text1: "All fields are required." });
       return false;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      setErrorMessage("Please enter a valid email address.");
+      Toast.show({
+        type: "error",
+        text1: "Please enter a valid email address.",
+      });
       return false;
     }
 
-    setErrorMessage("");
     return true;
   };
 
-  const handleContinue = () => {
+  const handleSignup = async () => {
     if (validateForm()) {
-      router.push("/(auth)/Validation" as Href<string>);
+      await registerUser({
+        variables: {
+          data: {
+            email: form.email,
+            password: form.password,
+            token: form.token,
+            role: RoleType.User,
+          },
+        },
+      });
     }
   };
-
-  useEffect(() => {
-    if (errorMessage) {
-      const timer = setTimeout(() => {
-        setErrorMessage("");
-      }, 3000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [errorMessage]);
 
   return (
     <SafeAreaView className="bg-white h-full">
@@ -129,17 +147,14 @@ const SignUp = () => {
                         />
                       </View>
                     </View>
-                    {errorMessage ? (
-                      <Text className="text-red-500 text-center mt-2">
-                        {errorMessage}
-                      </Text>
-                    ) : null}
+
                     <View>
                       <CustomButton
                         title="Sign Up"
                         textStyle="text-white"
                         customStyle="bg-[#192655]"
-                        onPress={handleContinue}
+                        onPress={handleSignup}
+                        isLoading={loading}
                       />
                     </View>
                     <View className="flex-row space-x-1">

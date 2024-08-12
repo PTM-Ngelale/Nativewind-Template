@@ -6,60 +6,34 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
-
-const allAlerts = [
-  {
-    id: 0,
-    title: "Emergency: Robbery in progress",
-    user: "Jane Kameroon",
-    distance: "Distance 5km away",
-    Location: "Location 4 Baduchum, off Nvigue Close...",
-  },
-  {
-    id: 1,
-    title: "Emergency: Robbery in progress",
-    user: "Jane Kameroon",
-    distance: "Distance 5km away",
-    Location: "Location 4 Baduchum, off Nvigue Close...",
-  },
-];
-
-export const myAlerts = [
-  {
-    id: 1,
-    title: "Emergency: Robbery in progress",
-    user: "Jane Kameroon",
-    distance: "Distance 5km away",
-    Location: "Location 4 Baduchum, off Nvigue Close...",
-  },
-  {
-    id: 2,
-    title: "Emergency: Robbery in progress",
-    user: "Jane Kameroon",
-    distance: "Distance 5km away",
-    Location: "Location 4 Baduchum, off Nvigue Close...",
-  },
-  {
-    id: 3,
-    title: "Emergency: Robbery in progress",
-    user: "Jane Kameroon",
-    distance: "Distance 5km away",
-    Location: "Location 4 Baduchum, off Nvigue Close...",
-  },
-  {
-    id: 4,
-    title: "Emergency: Robbery in progress",
-    user: "Jane Kameroon",
-    distance: "Distance 5km away",
-    Location: "Location 4 Baduchum, off Nvigue Close...",
-  },
-];
-
+import {
+  useGetUserBasicInfoQuery,
+  useListAlertsQuery,
+  useListUserAlertsQuery,
+} from "@/generated/graphql";
 const notifications = () => {
   const [activeTab, setActiveTab] = useState("all");
+
+  const { data: user, loading } = useGetUserBasicInfoQuery();
+  
+  const {
+    data: listAlerts,
+    loading: alertLoading,
+    error,
+  } = useListAlertsQuery();
+
+  const { data: listUserAlerts, loading: UserAlertLoading } =
+    useListUserAlertsQuery({
+      variables: {
+        where: { id: { equals: user?.getCurrentUser.id } },
+      },
+    });
+
+  const allAlerts = listAlerts?.listAlerts;
+  const myAlerts = listUserAlerts?.listAlerts;
 
   const toggleTab = (tab: any) => {
     setActiveTab(tab);
@@ -103,26 +77,51 @@ const notifications = () => {
               </TouchableOpacity>
             </View>
             <View className="mt-4">
-              {alertsToDisplay.map((alert, index) => (
-                <TouchableOpacity
-                  activeOpacity={0.9}
-                  onPress={() => router.push(`/emergency-group/${alert.id}`)}
-                  key={index}
-                  className="flex items-center flex-row mt-4 bg-white p-3 border border-[#192655] border-opacity-50 rounded-xl"
-                >
-                  <Image
-                    source={require("../../assets/images/Alert.png")}
-                    className="w-[37px] h-[40px]"
-                    resizeMode="contain"
-                  />
-                  <View className="ml-4">
-                    <Text className="text-sm font-bold">{alert.title}</Text>
-                    <Text className="text-sm">{alert.user}</Text>
-                    <Text className="text-sm">{alert.distance}</Text>
-                    <Text className="text-sm">{alert.Location}</Text>
-                  </View>
-                </TouchableOpacity>
-              ))}
+              {alertLoading
+                ? Array.from({ length: 6 }, (_, _i) => (
+                    <View key={_i}>
+                      <View className="flex items-center flex-row mt-4 bg-white p-3 border border-[#192655] border-opacity-50 rounded-xl">
+                        <View className="w-[37px] h-[40px] bg-gray-200"></View>
+                        <View className="ml-4 text-sm font-bold h-[30px] w-[70%] bg-gray-200">
+                          <View className="text-sm bg-gray-200"></View>
+                          {/* <Text className="text-sm">{alert.user}</Text>
+                      <Text className="text-sm">{alert.distance}</Text>
+                      <Text className="text-sm">{alert.Location}</Text> */}
+                        </View>
+                      </View>
+                    </View>
+                  ))
+                : alertsToDisplay?.map((alert, index) => (
+                    <TouchableOpacity
+                      activeOpacity={0.9}
+                      onPress={() =>
+                        router.push(`/emergency-group/${alert.id}`)
+                      }
+                      key={index}
+                      className="flex items-center flex-row mt-4 bg-white p-3 border border-[#192655] border-opacity-50 rounded-xl"
+                    >
+                      <Image
+                        source={require("../../assets/images/Alert.png")}
+                        className="w-[37px] h-[40px]"
+                        resizeMode="contain"
+                      />
+                      <View className="relative ml-4 w-[92%]">
+                        <View className="flex-row w-[92%] justify-between">
+                          <Text className="text-sm font-bold">
+                            Emergency: {alert.emergency}
+                          </Text>
+                          <Text className="absolute right-0 text-xs">
+                            {alert.createdAt}
+                          </Text>
+                        </View>
+                        <Text className="text-sm">
+                          Location: {alert.address}
+                        </Text>
+                        {/* <Text className="text-sm">{alert.distance}</Text>
+                      <Text className="text-sm">{alert.Location}</Text> */}
+                      </View>
+                    </TouchableOpacity>
+                  ))}
             </View>
           </View>
         </View>
@@ -131,5 +130,4 @@ const notifications = () => {
     </SafeAreaView>
   );
 };
-
 export default notifications;

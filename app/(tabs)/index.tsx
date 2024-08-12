@@ -20,6 +20,15 @@ import SosModal from "@/components/SosModal";
 import MapViewDirections from "react-native-maps-directions";
 import ReportModal from "@/components/ReportModal";
 import { useUser } from "@/context/userContext";
+import {
+  AlertType,
+  GetUserEmailDocument,
+  RoleType,
+  useCreateAlertMutation,
+  useListAlertsQuery,
+} from "@/generated/graphql";
+import Toast from "react-native-toast-message";
+import { ApolloError, useQuery } from "@apollo/client";
 
 export default function HomeScreen() {
   const [emergencyModal, setEmergencyModal] = useState(false);
@@ -37,6 +46,23 @@ export default function HomeScreen() {
   const [selectedEmergency, setSelectedEmergency] = useState("");
   const [reportModal, setReportModal] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [modalDetails, setModalDetails] = useState(0.0000);
+
+  const { data } = useQuery(GetUserEmailDocument);
+  const userData = data?.getCurrentUser;
+
+  const [createAlert, { loading: loadingAlerts }] = useCreateAlertMutation({
+    onCompleted: () => {
+      setReportModal(false);
+      setEmergencyModal(true);
+      setSelectedEmergency("");
+      Toast.show({ type: "success", text1: "Report has been escalated!" });
+    },
+
+    onError: (error: ApolloError) => {
+      Toast.show({ type: "error", text1: error.message });
+    },
+  });
 
   const { initialRegion, displayCurrentAddress, getCurrentLocation } =
     useUser();
@@ -50,31 +76,30 @@ export default function HomeScreen() {
     fetchLocation();
   }, []);
 
-  const circles = [
-    {
-      center: initialRegion,
-      color: "#0090FA33",
-    },
-    {
-      center: {
-        latitude: initialRegion.latitude + 0.00714,
-        longitude: initialRegion.longitude + 0.00075,
-        latitudeDelta: 0.004757,
-        longitudeDelta: 0.006866,
-      },
-      color: "#FA000033",
-    },
-  ];
+  const {
+    data: listAlerts,
+    loading: alertLoading,
+    error,
+  } = useListAlertsQuery();
 
-  const getDirection = () => {
+  const setMarkerDirection = (
+    latitude: number,
+    longitude: number,
+    id: number
+  ) => {
     setDirectionOrigin({
       latitude: initialRegion.latitude,
       longitude: initialRegion.longitude,
     });
     setDirectionDestination({
-      latitude: initialRegion.latitude + 0.00714,
-      longitude: initialRegion.longitude + 0.00075,
+      latitude: latitude,
+      longitude: longitude,
     });
+    setEmergencyModal(true);
+    setModalDetails(id);
+  };
+
+  const getDirection = () => {
     setDirection(true);
     setEmergencyModal(false);
   };
@@ -90,6 +115,35 @@ export default function HomeScreen() {
     );
   }
 
+  const handleClick = async () => {
+    try {
+      // Ensure the current location is up-to-date
+      getCurrentLocation();
+
+      await createAlert({
+        variables: {
+          data: {
+            emergency: "SOS",
+            latitude: initialRegion.latitude,
+            longitude: initialRegion.longitude,
+            type: AlertType.Sos,
+            address: displayCurrentAddress,
+            creator: {
+              connect: {
+                id: userData.id,
+              },
+            },
+          },
+        },
+      });
+
+      setSosModal(!sosModal);
+    } catch (error) {
+      console.error("Error creating alert:", error);
+      // Handle error (e.g., show a toast or alert)
+    }
+  };
+
   return (
     <View className="h-full w-full bg-white">
       <MapView
@@ -100,28 +154,48 @@ export default function HomeScreen() {
         initialRegion={initialRegion}
         provider={PROVIDER_DEFAULT}
       >
-        {circles.map((circle, i) => (
-          <Circle
-            key={i}
-            center={circle.center}
-            radius={150}
-            strokeWidth={1}
-            strokeColor={circle.color}
-            fillColor={circle.color}
+        <Circle
+          center={initialRegion}
+          radius={150}
+          strokeWidth={1}
+          strokeColor="#0090FA33"
+          fillColor="#0090FA33"
+        />
+        {listAlerts?.listAlerts.map((circle, i) => {
+          const center = {
+            latitude: circle.latitude,
+            longitude: circle.longitude,
+            latitudeDelta: 0.004757,
+            longitudeDelta: 0.006866,
+          };
+          return (
+            <Circle
+              key={i}
+              center={center}
+              radius={150}
+              strokeWidth={1}
+              strokeColor="#FA000033"
+              fillColor="#FA000033"
+            />
+          );
+        })}
+
+        {listAlerts?.listAlerts.map((marker, i) => (
+          <Marker
+            coordinate={{
+              latitude: marker.latitude,
+              longitude: marker.longitude,
+            }}
+            description={marker.emergency}
+            image={require("../../assets/images/alert-triangle.png")}
+            tappable
+            onPress={() =>
+              // console.log(marker.id)
+              setMarkerDirection(marker.latitude, marker.longitude, marker.latitude)
+            }
           />
         ))}
 
-        <Marker
-          coordinate={{
-            latitude: initialRegion.latitude + 0.00714,
-            longitude: initialRegion.longitude + 0.00075,
-          }}
-          title="Location"
-          description={displayCurrentAddress}
-          image={require("../../assets/images/alert-triangle.png")}
-          tappable
-          onPress={() => setEmergencyModal(true)}
-        ></Marker>
         {direction === true && (
           <MapViewDirections
             origin={directionOrigin}
@@ -146,10 +220,10 @@ export default function HomeScreen() {
           <Text className="text-xs text-white">Report</Text>
         </TouchableOpacity>
 
-        <View className="w-full h-[2px] bg-[#FFFFFF80]"></View>
+        <View className="w-full h-[2px] bg-[#FFFFFF80]" />
 
         <TouchableOpacity
-          onPress={() => setSosModal(!sosModal)}
+          onPress={() => handleClick()}
           activeOpacity={0.8}
           className="pb-4 items-center gap-y-2"
         >
@@ -166,8 +240,11 @@ export default function HomeScreen() {
         <EmergencyModal
           selectedEmergency={selectedEmergency}
           getDirection={getDirection}
+          direction={direction}
+          setDirection={setDirection}
           emergencyModal={emergencyModal}
           setEmergencyModal={setEmergencyModal}
+          modalDetails={modalDetails}
         />
       </View>
 
@@ -185,6 +262,7 @@ export default function HomeScreen() {
       <View>
         <ReportModal
           emergencyModal={emergencyModal}
+          displayCurrentAddress={displayCurrentAddress}
           setEmergencyModal={setEmergencyModal}
           selectedEmergency={selectedEmergency}
           setSelectedEmergency={setSelectedEmergency}
