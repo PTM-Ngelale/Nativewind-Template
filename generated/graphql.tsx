@@ -5607,7 +5607,14 @@ export type GetUserFullInfoQuery = { __typename?: 'Query', getCurrentUser: { __t
 export type ListAlertsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ListAlertsQuery = { __typename?: 'Query', listAlerts: Array<{ __typename?: 'Alert', emergency: string, latitude: number, longitude: number, id: string, address?: string | null }> };
+export type ListAlertsQuery = { __typename?: 'Query', listAlerts: Array<{ __typename?: 'Alert', emergency: string, latitude: number, longitude: number, id: string, address?: string | null, createdAt: any }> };
+
+export type ListUserAlertsQueryVariables = Exact<{
+  where?: InputMaybe<AlertWhereInput>;
+}>;
+
+
+export type ListUserAlertsQuery = { __typename?: 'Query', listAlerts: Array<{ __typename?: 'Alert', emergency: string, latitude: number, longitude: number, address?: string | null, id: string, createdAt: any }> };
 
 
 export const LoginUserDocument = gql`
@@ -5966,6 +5973,7 @@ export const ListAlertsDocument = gql`
     longitude
     id
     address
+    createdAt
   }
 }
     `;
@@ -6001,3 +6009,48 @@ export type ListAlertsQueryHookResult = ReturnType<typeof useListAlertsQuery>;
 export type ListAlertsLazyQueryHookResult = ReturnType<typeof useListAlertsLazyQuery>;
 export type ListAlertsSuspenseQueryHookResult = ReturnType<typeof useListAlertsSuspenseQuery>;
 export type ListAlertsQueryResult = Apollo.QueryResult<ListAlertsQuery, ListAlertsQueryVariables>;
+export const ListUserAlertsDocument = gql`
+    query listUserAlerts($where: AlertWhereInput) {
+  listAlerts(where: $where) {
+    emergency
+    latitude
+    longitude
+    address
+    id
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useListUserAlertsQuery__
+ *
+ * To run a query within a React component, call `useListUserAlertsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useListUserAlertsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useListUserAlertsQuery({
+ *   variables: {
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useListUserAlertsQuery(baseOptions?: Apollo.QueryHookOptions<ListUserAlertsQuery, ListUserAlertsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ListUserAlertsQuery, ListUserAlertsQueryVariables>(ListUserAlertsDocument, options);
+      }
+export function useListUserAlertsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ListUserAlertsQuery, ListUserAlertsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ListUserAlertsQuery, ListUserAlertsQueryVariables>(ListUserAlertsDocument, options);
+        }
+export function useListUserAlertsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ListUserAlertsQuery, ListUserAlertsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<ListUserAlertsQuery, ListUserAlertsQueryVariables>(ListUserAlertsDocument, options);
+        }
+export type ListUserAlertsQueryHookResult = ReturnType<typeof useListUserAlertsQuery>;
+export type ListUserAlertsLazyQueryHookResult = ReturnType<typeof useListUserAlertsLazyQuery>;
+export type ListUserAlertsSuspenseQueryHookResult = ReturnType<typeof useListUserAlertsSuspenseQuery>;
+export type ListUserAlertsQueryResult = Apollo.QueryResult<ListUserAlertsQuery, ListUserAlertsQueryVariables>;

@@ -9,31 +9,37 @@ import {
 import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
-import { useListAlertsQuery } from "@/generated/graphql";
+import {
+  useGetUserBasicInfoQuery,
+  useListAlertsQuery,
+  useListUserAlertsQuery,
+} from "@/generated/graphql";
 const notifications = () => {
   const [activeTab, setActiveTab] = useState("all");
+
+  const { data: user, loading } = useGetUserBasicInfoQuery();
   const {
     data: listAlerts,
     loading: alertLoading,
     error,
   } = useListAlertsQuery();
+
+  const { data: listUserAlerts, loading: UserAlertLoading } =
+    useListUserAlertsQuery({
+      variables: {
+        where: { id: { equals: user?.getCurrentUser.id } },
+      },
+    });
+
   const allAlerts = listAlerts?.listAlerts;
-  const myAlerts: never[] = [];
-  // if (loading) {
-  //   <Loading />;
-  // }
+  const myAlerts = listUserAlerts?.listAlerts;
+
   const toggleTab = (tab: any) => {
     setActiveTab(tab);
   };
+
   const alertsToDisplay = activeTab === "all" ? allAlerts : myAlerts;
 
-  if (!alertsToDisplay || alertsToDisplay.length === 0) {
-    return (
-      <View className="flex-1 bg-white items-center justify-center">
-        <Text>No Alerts</Text>
-      </View>
-    );
-  }
   return (
     <SafeAreaView className="h-full w-full bg-slate-100 ">
       <ScrollView>
@@ -98,11 +104,18 @@ const notifications = () => {
                         className="w-[37px] h-[40px]"
                         resizeMode="contain"
                       />
-                      <View className="ml-4">
-                        <Text className="text-sm font-bold">
-                          {alert.emergency}
+                      <View className="relative ml-4 w-[92%]">
+                        <View className="flex-row w-[92%] justify-between">
+                          <Text className="text-sm font-bold">
+                            Emergency: {alert.emergency}
+                          </Text>
+                          <Text className="absolute right-0 text-xs">
+                            {alert.createdAt}
+                          </Text>
+                        </View>
+                        <Text className="text-sm">
+                          Location: {alert.address}
                         </Text>
-                        <Text className="text-sm">{alert.address}</Text>
                         {/* <Text className="text-sm">{alert.distance}</Text>
                       <Text className="text-sm">{alert.Location}</Text> */}
                       </View>

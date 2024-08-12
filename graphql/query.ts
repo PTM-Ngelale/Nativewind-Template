@@ -44,6 +44,20 @@ export const GetAllAlerts = gql`
       longitude
       id
       address
+      createdAt
+    }
+  }
+`;
+
+export const GetUserAlerts = gql`
+  query listUserAlerts($where: AlertWhereInput) {
+    listAlerts(where: $where) {
+      emergency
+      latitude
+      longitude
+      address
+      id
+      createdAt
     }
   }
 `;
