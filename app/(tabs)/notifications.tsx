@@ -35,6 +35,7 @@ const notifications = () => {
 
   const alertsToDisplay = activeTab === "all" ? allAlerts : myAlerts;
 
+
   return (
     <SafeAreaView className="h-full w-full bg-slate-100 ">
       <ScrollView>
@@ -78,9 +79,6 @@ const notifications = () => {
                         <View className="w-[37px] h-[40px] bg-gray-200"></View>
                         <View className="ml-4 text-sm font-bold h-[30px] w-[70%] bg-gray-200">
                           <View className="text-sm bg-gray-200"></View>
-                          {/* <Text className="text-sm">{alert.user}</Text>
-                      <Text className="text-sm">{alert.distance}</Text>
-                      <Text className="text-sm">{alert.Location}</Text> */}
                         </View>
                       </View>
                     </View>
@@ -89,7 +87,18 @@ const notifications = () => {
                     <TouchableOpacity
                       activeOpacity={0.9}
                       onPress={() =>
-                        router.push(`/emergency-group/${alert.id}`)
+                        router.push({
+                          pathname: `/emergency-group/[id]`,
+                          params: {
+                            id: alert.id,
+                            emergency: alert.emergency,
+                            latitude: alert.latitude,
+                            longitude: alert.longitude,
+                            address: alert.address,
+                            createdAt: alert.createdAt,
+                            chats: JSON.stringify(alert.chats),
+                          },
+                        })
                       }
                       key={index}
                       className="flex items-center flex-row mt-4 bg-white p-3 border border-[#192655] border-opacity-50 rounded-xl"
@@ -114,8 +123,6 @@ const notifications = () => {
                         <Text className="text-sm w-full break-words flex-shrink flex-wrap">
                           Location: {alert.address}
                         </Text>
-                        {/* <Text className="text-sm">{alert.distance}</Text>
-                      <Text className="text-sm">{alert.Location}</Text> */}
                       </View>
                     </TouchableOpacity>
                   ))}

@@ -12,9 +12,8 @@ import * as ImagePicker from "expo-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
 import CustomButton from "@/components/ui/CustomButton";
-import { useState } from "react";
-import { myAlerts } from "../(tabs)/notifications";
-
+import { useEffect, useRef, useState } from "react";
+import { formatDistanceToNow } from "date-fns";
 
 const EmergencyData = [
   {
@@ -69,23 +68,23 @@ const EmergencyData = [
 
 const EmergencyPost = ({
   name,
-  description,
-  image,
-  time,
+  message,
+  imageUrl,
+  timestamp,
   profilePicture,
 }: {
   name: string;
-  description: string;
-  image: ImageProps;
-  time: string;
+  message: string;
+  imageUrl: ImageProps;
+  timestamp: string;
   profilePicture: ImageProps;
 }) => {
   return (
-    <View className="px-4 flex flex-row space-x-4 py-6 bg-[#EAEAEA]">
+    <View className="px-4 flex flex-row space-x-4 py-4 bg-[#EAEAEA]">
       <TouchableOpacity
         activeOpacity={0.9}
         onPress={() => router.back()}
-        className="w-[32px] h-[32px] rounded-full overflow-hidden"
+        className=" rounded-full overflow-hidden"
       >
         <Image
           source={profilePicture}
@@ -96,24 +95,33 @@ const EmergencyPost = ({
       <View className="space-y-2.5 flex-1">
         <View className="flex flex-row justify-between items-center">
           <Text className="font-bold text-base text-[#4B5563]">{name}</Text>
-          <Text className="text-[#4B5563] text-base">{time}</Text>
+          <Text className="text-[#4B5563] text-base">
+            {formatDistanceToNow(new Date(timestamp), {
+              addSuffix: true,
+              includeSeconds: true,
+            }).replace("about ", "")}
+          </Text>
         </View>
-        <Text className="text-[#4B5563] leading-[16px]">{description}</Text>
-        <TouchableOpacity className="w-full rounded-md h-[198px]">
-          <Image
-            source={image}
-            className="w-full h-full rounded-md"
-            resizeMode="cover"
-          />
-        </TouchableOpacity>
+        <Text className="text-[#4B5563] leading-[16px]">{message}</Text>
+        {imageUrl ? (
+          <TouchableOpacity className="w-full rounded-md h-[198px]">
+            <Image
+              source={imageUrl}
+              className="w-full h-full rounded-md"
+              resizeMode="cover"
+            />
+          </TouchableOpacity>
+        ) : null}
       </View>
     </View>
   );
 };
 const EmergencyGroup = () => {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const params = useLocalSearchParams();
+  const { id, address, emergency, latitude, longitude, chats } = params;
 
   const [selectedImage, setSelectedImage] = useState<null | string>(null);
+  const flatListRef = useRef<FlatList>(null);
 
   const pickImageAsync = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -127,6 +135,27 @@ const EmergencyGroup = () => {
       alert("You did not select any image.");
     }
   };
+
+  useEffect(() => {
+    if (flatListRef.current) {
+      setTimeout(() => {
+        flatListRef?.current?.scrollToEnd({ animated: true });
+      }, 100);
+    }
+  }, []);
+
+  let parsedChats = [];
+  try {
+    parsedChats = JSON.parse(chats);
+  } catch (error) {
+    console.error("Failed to parse chats:", error);
+  }
+
+  if (Array.isArray(chats)) {
+    chats.forEach((chat) => console.log(JSON.stringify(chat.id)));
+  } else {
+    console.log(JSON.stringify(chats));
+  }
   return (
     <KeyboardAvoidingView
       behavior={"padding"}
@@ -134,7 +163,8 @@ const EmergencyGroup = () => {
     >
       <SafeAreaView className="flex-1">
         <FlatList
-          data={EmergencyData}
+          ref={flatListRef}
+          data={parsedChats}
           ListHeaderComponent={() => {
             return (
               <View>
@@ -161,7 +191,7 @@ const EmergencyGroup = () => {
                       className="h-[16px] w-[16px]"
                     />
                     <Text className="text-white text-sm">
-                      Location 4 Baduchum, off Nvigue Close...
+                      Location: {address}
                     </Text>
                   </View>
                   <CustomButton
@@ -179,7 +209,7 @@ const EmergencyGroup = () => {
                       resizeMode="contain"
                       className="h-[13px] w-[13px]"
                     />
-                    <Text className="text-white text-base">Fire</Text>
+                    <Text className="text-white text-base">{emergency}</Text>
                   </View>
                 </View>
               </View>

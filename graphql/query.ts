@@ -45,6 +45,12 @@ export const GetUserAlerts = gql`
       address
       id
       createdAt
+      chats{
+        id
+        message
+        timestamp
+        userId
+      }
     }
   }
 `;

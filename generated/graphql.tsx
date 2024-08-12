@@ -3390,6 +3390,11 @@ export type StringWithAggregatesFilter = {
   startsWith?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type Subscription = {
+  __typename?: 'Subscription';
+  chatCreated: Chat;
+};
+
 export type User = {
   __typename?: 'User';
   _count: UserCount;
@@ -5702,7 +5707,7 @@ export type ListUserAlertsQueryVariables = Exact<{
 }>;
 
 
-export type ListUserAlertsQuery = { __typename?: 'Query', listAlerts: Array<{ __typename?: 'Alert', emergency: string, latitude: number, longitude: number, address?: string | null, id: string, createdAt: any }> };
+export type ListUserAlertsQuery = { __typename?: 'Query', listAlerts: Array<{ __typename?: 'Alert', emergency: string, latitude: number, longitude: number, address?: string | null, id: string, createdAt: any, chats?: Array<{ __typename?: 'Chat', id: string, message: string, timestamp: any, userId: string }> | null }> };
 
 export type ListAlertsByUserAssociationQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -6070,6 +6075,12 @@ export const ListUserAlertsDocument = gql`
     address
     id
     createdAt
+    chats {
+      id
+      message
+      timestamp
+      userId
+    }
   }
 }
     `;
