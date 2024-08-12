@@ -18,6 +18,7 @@ const notifications = () => {
   const [activeTab, setActiveTab] = useState("all");
 
   const { data: user, loading } = useGetUserBasicInfoQuery();
+  
   const {
     data: listAlerts,
     loading: alertLoading,

@@ -7,20 +7,26 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 import MapView, {
   Circle,
   Marker,
   PROVIDER_DEFAULT,
-  PROVIDER_GOOGLE
+  PROVIDER_GOOGLE,
 } from "react-native-maps";
 
 import SosModal from "@/components/SosModal";
 import MapViewDirections from "react-native-maps-directions";
 import ReportModal from "@/components/ReportModal";
 import { useUser } from "@/context/userContext";
-import { AlertType, GetUserEmailDocument, RoleType, useCreateAlertMutation } from "@/generated/graphql";
+import {
+  AlertType,
+  GetUserEmailDocument,
+  RoleType,
+  useCreateAlertMutation,
+  useListAlertsQuery,
+} from "@/generated/graphql";
 import Toast from "react-native-toast-message";
 import { ApolloError, useQuery } from "@apollo/client";
 
@@ -31,17 +37,19 @@ export default function HomeScreen() {
   const [direction, setDirection] = useState(false);
   const [directionOrigin, setDirectionOrigin] = useState({
     latitude: 0,
-    longitude: 0
+    longitude: 0,
   });
   const [directionDestination, setDirectionDestination] = useState({
     latitude: 0,
-    longitude: 0
+    longitude: 0,
   });
   const [selectedEmergency, setSelectedEmergency] = useState("");
   const [reportModal, setReportModal] = useState(false);
   const [loading, setLoading] = useState(true);
-    const { data,  } = useQuery(GetUserEmailDocument);
-    const userData = data?.getCurrentUser;
+  const [modalDetails, setModalDetails] = useState(0.0000);
+
+  const { data } = useQuery(GetUserEmailDocument);
+  const userData = data?.getCurrentUser;
 
   const [createAlert, { loading: loadingAlerts }] = useCreateAlertMutation({
     onCompleted: () => {
@@ -56,11 +64,8 @@ export default function HomeScreen() {
     },
   });
 
-  const {
-    initialRegion,
-    displayCurrentAddress,
-    getCurrentLocation,
-  } = useUser();
+  const { initialRegion, displayCurrentAddress, getCurrentLocation } =
+    useUser();
 
   useEffect(() => {
     const fetchLocation = async () => {
@@ -71,31 +76,30 @@ export default function HomeScreen() {
     fetchLocation();
   }, []);
 
-  const circles = [
-    {
-      center: initialRegion,
-      color: "#0090FA33"
-    },
-    {
-      center: {
-        latitude: initialRegion.latitude + 0.00714,
-        longitude: initialRegion.longitude + 0.00075,
-        latitudeDelta: 0.004757,
-        longitudeDelta: 0.006866
-      },
-      color: "#FA000033"
-    }
-  ];
+  const {
+    data: listAlerts,
+    loading: alertLoading,
+    error,
+  } = useListAlertsQuery();
 
-  const getDirection = () => {
+  const setMarkerDirection = (
+    latitude: number,
+    longitude: number,
+    id: number
+  ) => {
     setDirectionOrigin({
       latitude: initialRegion.latitude,
-      longitude: initialRegion.longitude
+      longitude: initialRegion.longitude,
     });
     setDirectionDestination({
-      latitude: initialRegion.latitude + 0.00714,
-      longitude: initialRegion.longitude + 0.00075
+      latitude: latitude,
+      longitude: longitude,
     });
+    setEmergencyModal(true);
+    setModalDetails(id);
+  };
+
+  const getDirection = () => {
     setDirection(true);
     setEmergencyModal(false);
   };
@@ -111,35 +115,33 @@ export default function HomeScreen() {
     );
   }
 
+  const handleClick = async () => {
+    try {
+      // Ensure the current location is up-to-date
+      getCurrentLocation();
 
-    const handleClick = async () => {
-      try {
-        // Ensure the current location is up-to-date
-        getCurrentLocation();
-
-        await createAlert({
-          variables: {
-            data: {
-              emergency: "SOS",
-              latitude: initialRegion.latitude,
-              longitude: initialRegion.longitude,
-              type: AlertType.Sos,
-              address: displayCurrentAddress,
-              creator: {
-                connect: {
-                  id: userData.id,
-                },
+      await createAlert({
+        variables: {
+          data: {
+            emergency: "SOS",
+            latitude: initialRegion.latitude,
+            longitude: initialRegion.longitude,
+            type: AlertType.Sos,
+            address: displayCurrentAddress,
+            creator: {
+              connect: {
+                id: userData.id,
               },
             },
           },
-        });
+        },
+      });
 
-        setSosModal(!sosModal)
-      } catch (error) {
-        console.error("Error creating alert:", error);
-        // Handle error (e.g., show a toast or alert)
-      }
-    
+      setSosModal(!sosModal);
+    } catch (error) {
+      console.error("Error creating alert:", error);
+      // Handle error (e.g., show a toast or alert)
+    }
   };
 
   return (
@@ -150,43 +152,66 @@ export default function HomeScreen() {
         // followsUserLocation={true}
         style={styles.map}
         initialRegion={initialRegion}
-        provider={PROVIDER_DEFAULT}>
-        {circles.map((circle, i) =>
-          <Circle
-            key={i}
-            center={circle.center}
-            radius={150}
-            strokeWidth={1}
-            strokeColor={circle.color}
-            fillColor={circle.color}
-          />
-        )}
-
-        <Marker
-          coordinate={{
-            latitude: initialRegion.latitude + 0.00714,
-            longitude: initialRegion.longitude + 0.00075
-          }}
-          title="Location"
-          description={displayCurrentAddress}
-          image={require("../../assets/images/alert-triangle.png")}
-          tappable
-          onPress={() => setEmergencyModal(true)}
+        provider={PROVIDER_DEFAULT}
+      >
+        <Circle
+          center={initialRegion}
+          radius={150}
+          strokeWidth={1}
+          strokeColor="#0090FA33"
+          fillColor="#0090FA33"
         />
-        {direction === true &&
+        {listAlerts?.listAlerts.map((circle, i) => {
+          const center = {
+            latitude: circle.latitude,
+            longitude: circle.longitude,
+            latitudeDelta: 0.004757,
+            longitudeDelta: 0.006866,
+          };
+          return (
+            <Circle
+              key={i}
+              center={center}
+              radius={150}
+              strokeWidth={1}
+              strokeColor="#FA000033"
+              fillColor="#FA000033"
+            />
+          );
+        })}
+
+        {listAlerts?.listAlerts.map((marker, i) => (
+          <Marker
+            coordinate={{
+              latitude: marker.latitude,
+              longitude: marker.longitude,
+            }}
+            description={marker.emergency}
+            image={require("../../assets/images/alert-triangle.png")}
+            tappable
+            onPress={() =>
+              // console.log(marker.id)
+              setMarkerDirection(marker.latitude, marker.longitude, marker.latitude)
+            }
+          />
+        ))}
+
+        {direction === true && (
           <MapViewDirections
             origin={directionOrigin}
             destination={directionDestination}
             apikey={GOOGLE_MAPS_APIKEY}
             strokeWidth={3}
             strokeColor="hotpink"
-          />}
+          />
+        )}
       </MapView>
       <View className="h-[20vh] w-[13%] bg-[#00000040] absolute bottom-5 right-5 rounded-full items-center justify-between">
         <TouchableOpacity
           onPress={() => setReportModal(true)}
           activeOpacity={0.8}
-          className="items-center pt-3 gap-y-2">
+          className="items-center pt-3 gap-y-2"
+        >
           <Image
             source={require("../../assets/images/edit.png")}
             className="w-[40px] h-[40px]"
@@ -200,7 +225,8 @@ export default function HomeScreen() {
         <TouchableOpacity
           onPress={() => handleClick()}
           activeOpacity={0.8}
-          className="pb-4 items-center gap-y-2">
+          className="pb-4 items-center gap-y-2"
+        >
           <Image
             source={require("../../assets/images/Sos.png")}
             className="w-[40px] h-[40px]"
@@ -218,6 +244,7 @@ export default function HomeScreen() {
           setDirection={setDirection}
           emergencyModal={emergencyModal}
           setEmergencyModal={setEmergencyModal}
+          modalDetails={modalDetails}
         />
       </View>
 
@@ -250,9 +277,9 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
-    flex: 1
+    flex: 1,
   },
   map: {
-    ...StyleSheet.absoluteFillObject
-  }
+    ...StyleSheet.absoluteFillObject,
+  },
 });
