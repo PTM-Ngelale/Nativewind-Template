@@ -67,3 +67,19 @@ export const GetUSerAssociatedAlertsForMap = gql`
     }
   }
 `;
+
+export const GetSingleChat = gql`
+query GetChatsByAlertId($alertId: String!) {
+  findChatsByAlertId(alertId: $alertId) {
+    id
+    message
+    timestamp
+    imageUrl
+    user {
+      firstName
+      lastName
+      profilePhoto
+    }
+  }
+}
+    `

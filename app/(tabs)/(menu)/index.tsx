@@ -24,11 +24,11 @@ const MenuNavigation: {
     link: "/profile",
     icon: <TabBarIcon name={"person"} color={"#192655"} />
   },
-  {
-    name: "Settings",
-    link: "/test",
-    icon: <TabBarIcon name={"settings"} color={"#192655"} />
-  },
+  // {
+  //   name: "Settings",
+  //   link: "/test",
+  //   icon: <TabBarIcon name={"settings"} color={"#192655"} />
+  // },
   {
     name: "Logout",
     link: "/(auth)/Login",

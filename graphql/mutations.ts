@@ -75,3 +75,22 @@ export const CREATE_ALERT_MUTATION = gql`
     }
   }
 `;
+
+
+//Chats
+export const CREATE_CHAT_MUTATIon = gql`
+  mutation CreateChat($data: ChatCreateInput!) {
+    createChat(data: $data) {
+      id
+      message 
+      timestamp
+      imageUrl
+      user {
+      firstName
+      lastName
+      profilePhoto
+      }
+    }
+  }
+`;
+

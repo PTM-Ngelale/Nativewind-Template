@@ -47,6 +47,7 @@
     "expo-updates": "~0.25.22",
     "expo-web-browser": "~13.0.3",
     "graphql": "^16.9.0",
+    "graphql-ws": "^5.16.0",
     "nativewind": "^2.0.11",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -62,7 +63,8 @@
     "react-native-screens": "3.31.1",
     "react-native-svg": "15.2.0",
     "react-native-toast-message": "^2.2.0",
-    "react-native-web": "~0.19.10"
+    "react-native-web": "~0.19.10",
+    "subscriptions-transport-ws": "^0.11.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
