@@ -1,27 +1,21 @@
+import { ApolloClient, InMemoryCache, createHttpLink, DefaultOptions, split } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
-import {
-  ApolloClient,
-  InMemoryCache,
-  createHttpLink,
-  DefaultOptions,
-  split,
-} from "@apollo/client";
 import { getMainDefinition } from '@apollo/client/utilities';
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Href, router } from "expo-router";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
+import * as SecureStore from 'expo-secure-store';
+import { Href, router } from "expo-router";
 
 // HTTP connection to the GraphQL API
 const httpLink = createHttpLink({
-  uri: "https://alarm-saas-backend-y2v2v.ondigitalocean.app/graphql",
+  uri: "https://4840-2c0f-2a80-a-6f10-49a7-20a7-5c32-fe2a.ngrok-free.app/graphql",
 });
 
 // WebSocket link for subscriptions
 const wsLink = new GraphQLWsLink(createClient({
-  url: 'wss://alarm-saas-backend-y2v2v.ondigitalocean.app/graphql',
+  url: 'wss://4840-2c0f-2a80-a-6f10-49a7-20a7-5c32-fe2a.ngrok-free.app/graphql',
   connectionParams: async () => {
-    const tokenData = await AsyncStorage.getItem("userToken");
+    const tokenData = await SecureStore.getItemAsync("alarmixToken");
     let authToken = "";
     if (tokenData) {
       const { token } = JSON.parse(tokenData);
@@ -48,54 +42,66 @@ export const createAuthLink = (userToken: string) => {
 };
 
 // Apollo Client initialization
-export const createApolloClient = async () => {
-  const tokenData = await AsyncStorage.getItem("userToken");
-  let userToken = "";
+export const createApolloClient = async (): Promise<ApolloClient<any>> => {
+  try {
+    const tokenData = await SecureStore.getItemAsync("alarmixToken");
+    let userToken = "";
 
-  if (tokenData) {
-    try {
-      const { token, expiration } = JSON.parse(tokenData);
-      const currentTime = new Date().getTime();
+    if (tokenData) {
+      try {
+        const { token, expiration } = JSON.parse(tokenData);
+        const currentTime = new Date().getTime();
 
-      if (currentTime < expiration) {
-        userToken = token;
-      } else {
-        // Token has expired, handle accordingly (i.e., redirect to login)
-        await AsyncStorage.removeItem("userToken");
+        if (currentTime < expiration) {
+          userToken = token;
+        } else {
+          // Token has expired, handle accordingly (i.e., redirect to login)
+          console.log("Token has expired");
+          await SecureStore.deleteItemAsync("alarmixToken");
+          router.replace("/(auth)/Login" as Href<string>);
+        }
+      } catch (error) {
+        console.error("Error parsing token data:", error);
+        await SecureStore.deleteItemAsync("alarmixToken");
         router.replace("/(auth)/Login" as Href<string>);
       }
-    } catch (error) {
-      await AsyncStorage.removeItem("userToken");
-      router.replace("/(auth)/Login" as Href<string>);
+    } else {
+      console.log("No token found");
     }
+
+    console.log("User token:", userToken);
+
+    const authLink = createAuthLink(userToken);
+
+    // Using split to direct the operations to the correct link
+    const link = split(
+      // Split based on operation type
+      ({ query }) => {
+        const definition = getMainDefinition(query);
+        return (
+          definition.kind === 'OperationDefinition' &&
+          definition.operation === 'subscription'
+        );
+      },
+      wsLink, // Use WebSocket link for subscriptions
+      authLink.concat(httpLink), // Use HTTP link for queries and mutations
+    );
+
+    const cache = new InMemoryCache();
+    const defaultOptions: DefaultOptions = {
+      watchQuery: {
+        fetchPolicy: "network-only",
+      },
+    };
+
+    return new ApolloClient({
+      link,
+      cache,
+      defaultOptions,
+    });
+  } catch (error) {
+    console.error("Error creating Apollo Client:", error);
+    router.replace("/(auth)/Login" as Href<string>);
+    throw new Error("Failed to create Apollo Client");
   }
-
-  const authLink = createAuthLink(userToken);
-
-  // Using split to direct the operations to the correct link
-  const link = split(
-    // Split based on operation type
-    ({ query }) => {
-      const definition = getMainDefinition(query);
-      return (
-        definition.kind === 'OperationDefinition' &&
-        definition.operation === 'subscription'
-      );
-    },
-    wsLink, // Use WebSocket link for subscriptions
-    authLink.concat(httpLink), // Use HTTP link for queries and mutations
-  );
-
-  const cache = new InMemoryCache();
-  const defaultOptions: DefaultOptions = {
-    watchQuery: {
-      fetchPolicy: "network-only",
-    },
-  };
-
-  return new ApolloClient({
-    link,
-    cache,
-    defaultOptions,
-  });
 };

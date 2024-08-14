@@ -812,14 +812,23 @@ export type BoolWithAggregatesFilter = {
 
 export type Chat = {
   __typename?: 'Chat';
+  UserChat?: Maybe<Array<UserChat>>;
+  _count: ChatCount;
   alert: Alert;
   alertId: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   imageUrl?: Maybe<Scalars['String']['output']>;
   message: Scalars['String']['output'];
+  participants?: Maybe<Array<User>>;
   timestamp: Scalars['DateTime']['output'];
-  user: User;
-  userId: Scalars['String']['output'];
+  user?: Maybe<User>;
+  userId?: Maybe<Scalars['String']['output']>;
+};
+
+export type ChatCount = {
+  __typename?: 'ChatCount';
+  UserChat: Scalars['Int']['output'];
+  participants: Scalars['Int']['output'];
 };
 
 export type ChatCountAggregate = {
@@ -853,12 +862,14 @@ export type ChatCountOrderByAggregateInput = {
 };
 
 export type ChatCreateInput = {
+  UserChat?: InputMaybe<UserChatCreateNestedManyWithoutChatInput>;
   alert: AlertCreateNestedOneWithoutChatsInput;
   id?: InputMaybe<Scalars['String']['input']>;
   imageUrl?: InputMaybe<Scalars['String']['input']>;
   message: Scalars['String']['input'];
+  participants?: InputMaybe<UserCreateNestedManyWithoutChatsInput>;
   timestamp?: InputMaybe<Scalars['DateTime']['input']>;
-  user: UserCreateNestedOneWithoutChatsInput;
+  user?: InputMaybe<UserCreateNestedOneWithoutChatInput>;
 };
 
 export type ChatCreateManyAlertInput = {
@@ -866,7 +877,7 @@ export type ChatCreateManyAlertInput = {
   imageUrl?: InputMaybe<Scalars['String']['input']>;
   message: Scalars['String']['input'];
   timestamp?: InputMaybe<Scalars['DateTime']['input']>;
-  userId: Scalars['String']['input'];
+  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type ChatCreateManyAlertInputEnvelope = {
@@ -880,7 +891,7 @@ export type ChatCreateManyInput = {
   imageUrl?: InputMaybe<Scalars['String']['input']>;
   message: Scalars['String']['input'];
   timestamp?: InputMaybe<Scalars['DateTime']['input']>;
-  userId: Scalars['String']['input'];
+  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type ChatCreateManyUserInput = {
@@ -903,6 +914,12 @@ export type ChatCreateNestedManyWithoutAlertInput = {
   createMany?: InputMaybe<ChatCreateManyAlertInputEnvelope>;
 };
 
+export type ChatCreateNestedManyWithoutParticipantsInput = {
+  connect?: InputMaybe<Array<ChatWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<ChatCreateOrConnectWithoutParticipantsInput>>;
+  create?: InputMaybe<Array<ChatCreateWithoutParticipantsInput>>;
+};
+
 export type ChatCreateNestedManyWithoutUserInput = {
   connect?: InputMaybe<Array<ChatWhereUniqueInput>>;
   connectOrCreate?: InputMaybe<Array<ChatCreateOrConnectWithoutUserInput>>;
@@ -910,8 +927,24 @@ export type ChatCreateNestedManyWithoutUserInput = {
   createMany?: InputMaybe<ChatCreateManyUserInputEnvelope>;
 };
 
+export type ChatCreateNestedOneWithoutUserChatInput = {
+  connect?: InputMaybe<ChatWhereUniqueInput>;
+  connectOrCreate?: InputMaybe<ChatCreateOrConnectWithoutUserChatInput>;
+  create?: InputMaybe<ChatCreateWithoutUserChatInput>;
+};
+
 export type ChatCreateOrConnectWithoutAlertInput = {
   create: ChatCreateWithoutAlertInput;
+  where: ChatWhereUniqueInput;
+};
+
+export type ChatCreateOrConnectWithoutParticipantsInput = {
+  create: ChatCreateWithoutParticipantsInput;
+  where: ChatWhereUniqueInput;
+};
+
+export type ChatCreateOrConnectWithoutUserChatInput = {
+  create: ChatCreateWithoutUserChatInput;
   where: ChatWhereUniqueInput;
 };
 
@@ -921,18 +954,42 @@ export type ChatCreateOrConnectWithoutUserInput = {
 };
 
 export type ChatCreateWithoutAlertInput = {
+  UserChat?: InputMaybe<UserChatCreateNestedManyWithoutChatInput>;
   id?: InputMaybe<Scalars['String']['input']>;
   imageUrl?: InputMaybe<Scalars['String']['input']>;
   message: Scalars['String']['input'];
+  participants?: InputMaybe<UserCreateNestedManyWithoutChatsInput>;
   timestamp?: InputMaybe<Scalars['DateTime']['input']>;
-  user: UserCreateNestedOneWithoutChatsInput;
+  user?: InputMaybe<UserCreateNestedOneWithoutChatInput>;
 };
 
-export type ChatCreateWithoutUserInput = {
+export type ChatCreateWithoutParticipantsInput = {
+  UserChat?: InputMaybe<UserChatCreateNestedManyWithoutChatInput>;
   alert: AlertCreateNestedOneWithoutChatsInput;
   id?: InputMaybe<Scalars['String']['input']>;
   imageUrl?: InputMaybe<Scalars['String']['input']>;
   message: Scalars['String']['input'];
+  timestamp?: InputMaybe<Scalars['DateTime']['input']>;
+  user?: InputMaybe<UserCreateNestedOneWithoutChatInput>;
+};
+
+export type ChatCreateWithoutUserChatInput = {
+  alert: AlertCreateNestedOneWithoutChatsInput;
+  id?: InputMaybe<Scalars['String']['input']>;
+  imageUrl?: InputMaybe<Scalars['String']['input']>;
+  message: Scalars['String']['input'];
+  participants?: InputMaybe<UserCreateNestedManyWithoutChatsInput>;
+  timestamp?: InputMaybe<Scalars['DateTime']['input']>;
+  user?: InputMaybe<UserCreateNestedOneWithoutChatInput>;
+};
+
+export type ChatCreateWithoutUserInput = {
+  UserChat?: InputMaybe<UserChatCreateNestedManyWithoutChatInput>;
+  alert: AlertCreateNestedOneWithoutChatsInput;
+  id?: InputMaybe<Scalars['String']['input']>;
+  imageUrl?: InputMaybe<Scalars['String']['input']>;
+  message: Scalars['String']['input'];
+  participants?: InputMaybe<UserCreateNestedManyWithoutChatsInput>;
   timestamp?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
@@ -946,7 +1003,7 @@ export type ChatGroupBy = {
   imageUrl?: Maybe<Scalars['String']['output']>;
   message: Scalars['String']['output'];
   timestamp: Scalars['DateTime']['output'];
-  userId: Scalars['String']['output'];
+  userId?: Maybe<Scalars['String']['output']>;
 };
 
 export type ChatListRelationFilter = {
@@ -1024,18 +1081,25 @@ export type ChatOrderByWithAggregationInput = {
   imageUrl?: InputMaybe<SortOrderInput>;
   message?: InputMaybe<SortOrder>;
   timestamp?: InputMaybe<SortOrder>;
-  userId?: InputMaybe<SortOrder>;
+  userId?: InputMaybe<SortOrderInput>;
 };
 
 export type ChatOrderByWithRelationInput = {
+  UserChat?: InputMaybe<UserChatOrderByRelationAggregateInput>;
   alert?: InputMaybe<AlertOrderByWithRelationInput>;
   alertId?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
   imageUrl?: InputMaybe<SortOrderInput>;
   message?: InputMaybe<SortOrder>;
+  participants?: InputMaybe<UserOrderByRelationAggregateInput>;
   timestamp?: InputMaybe<SortOrder>;
   user?: InputMaybe<UserOrderByWithRelationInput>;
-  userId?: InputMaybe<SortOrder>;
+  userId?: InputMaybe<SortOrderInput>;
+};
+
+export type ChatRelationFilter = {
+  is?: InputMaybe<ChatWhereInput>;
+  isNot?: InputMaybe<ChatWhereInput>;
 };
 
 export enum ChatScalarFieldEnum {
@@ -1056,7 +1120,7 @@ export type ChatScalarWhereInput = {
   imageUrl?: InputMaybe<StringNullableFilter>;
   message?: InputMaybe<StringFilter>;
   timestamp?: InputMaybe<DateTimeFilter>;
-  userId?: InputMaybe<StringFilter>;
+  userId?: InputMaybe<StringNullableFilter>;
 };
 
 export type ChatScalarWhereWithAggregatesInput = {
@@ -1068,16 +1132,18 @@ export type ChatScalarWhereWithAggregatesInput = {
   imageUrl?: InputMaybe<StringNullableWithAggregatesFilter>;
   message?: InputMaybe<StringWithAggregatesFilter>;
   timestamp?: InputMaybe<DateTimeWithAggregatesFilter>;
-  userId?: InputMaybe<StringWithAggregatesFilter>;
+  userId?: InputMaybe<StringNullableWithAggregatesFilter>;
 };
 
 export type ChatUpdateInput = {
+  UserChat?: InputMaybe<UserChatUpdateManyWithoutChatNestedInput>;
   alert?: InputMaybe<AlertUpdateOneRequiredWithoutChatsNestedInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   imageUrl?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   message?: InputMaybe<StringFieldUpdateOperationsInput>;
+  participants?: InputMaybe<UserUpdateManyWithoutChatsNestedInput>;
   timestamp?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  user?: InputMaybe<UserUpdateOneRequiredWithoutChatsNestedInput>;
+  user?: InputMaybe<UserUpdateOneWithoutChatNestedInput>;
 };
 
 export type ChatUpdateManyMutationInput = {
@@ -1088,6 +1154,11 @@ export type ChatUpdateManyMutationInput = {
 };
 
 export type ChatUpdateManyWithWhereWithoutAlertInput = {
+  data: ChatUpdateManyMutationInput;
+  where: ChatScalarWhereInput;
+};
+
+export type ChatUpdateManyWithWhereWithoutParticipantsInput = {
   data: ChatUpdateManyMutationInput;
   where: ChatScalarWhereInput;
 };
@@ -1111,6 +1182,19 @@ export type ChatUpdateManyWithoutAlertNestedInput = {
   upsert?: InputMaybe<Array<ChatUpsertWithWhereUniqueWithoutAlertInput>>;
 };
 
+export type ChatUpdateManyWithoutParticipantsNestedInput = {
+  connect?: InputMaybe<Array<ChatWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<ChatCreateOrConnectWithoutParticipantsInput>>;
+  create?: InputMaybe<Array<ChatCreateWithoutParticipantsInput>>;
+  delete?: InputMaybe<Array<ChatWhereUniqueInput>>;
+  deleteMany?: InputMaybe<Array<ChatScalarWhereInput>>;
+  disconnect?: InputMaybe<Array<ChatWhereUniqueInput>>;
+  set?: InputMaybe<Array<ChatWhereUniqueInput>>;
+  update?: InputMaybe<Array<ChatUpdateWithWhereUniqueWithoutParticipantsInput>>;
+  updateMany?: InputMaybe<Array<ChatUpdateManyWithWhereWithoutParticipantsInput>>;
+  upsert?: InputMaybe<Array<ChatUpsertWithWhereUniqueWithoutParticipantsInput>>;
+};
+
 export type ChatUpdateManyWithoutUserNestedInput = {
   connect?: InputMaybe<Array<ChatWhereUniqueInput>>;
   connectOrCreate?: InputMaybe<Array<ChatCreateOrConnectWithoutUserInput>>;
@@ -1125,8 +1209,26 @@ export type ChatUpdateManyWithoutUserNestedInput = {
   upsert?: InputMaybe<Array<ChatUpsertWithWhereUniqueWithoutUserInput>>;
 };
 
+export type ChatUpdateOneRequiredWithoutUserChatNestedInput = {
+  connect?: InputMaybe<ChatWhereUniqueInput>;
+  connectOrCreate?: InputMaybe<ChatCreateOrConnectWithoutUserChatInput>;
+  create?: InputMaybe<ChatCreateWithoutUserChatInput>;
+  update?: InputMaybe<ChatUpdateToOneWithWhereWithoutUserChatInput>;
+  upsert?: InputMaybe<ChatUpsertWithoutUserChatInput>;
+};
+
+export type ChatUpdateToOneWithWhereWithoutUserChatInput = {
+  data: ChatUpdateWithoutUserChatInput;
+  where?: InputMaybe<ChatWhereInput>;
+};
+
 export type ChatUpdateWithWhereUniqueWithoutAlertInput = {
   data: ChatUpdateWithoutAlertInput;
+  where: ChatWhereUniqueInput;
+};
+
+export type ChatUpdateWithWhereUniqueWithoutParticipantsInput = {
+  data: ChatUpdateWithoutParticipantsInput;
   where: ChatWhereUniqueInput;
 };
 
@@ -1136,18 +1238,42 @@ export type ChatUpdateWithWhereUniqueWithoutUserInput = {
 };
 
 export type ChatUpdateWithoutAlertInput = {
+  UserChat?: InputMaybe<UserChatUpdateManyWithoutChatNestedInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   imageUrl?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   message?: InputMaybe<StringFieldUpdateOperationsInput>;
+  participants?: InputMaybe<UserUpdateManyWithoutChatsNestedInput>;
   timestamp?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  user?: InputMaybe<UserUpdateOneRequiredWithoutChatsNestedInput>;
+  user?: InputMaybe<UserUpdateOneWithoutChatNestedInput>;
 };
 
-export type ChatUpdateWithoutUserInput = {
+export type ChatUpdateWithoutParticipantsInput = {
+  UserChat?: InputMaybe<UserChatUpdateManyWithoutChatNestedInput>;
   alert?: InputMaybe<AlertUpdateOneRequiredWithoutChatsNestedInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   imageUrl?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   message?: InputMaybe<StringFieldUpdateOperationsInput>;
+  timestamp?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  user?: InputMaybe<UserUpdateOneWithoutChatNestedInput>;
+};
+
+export type ChatUpdateWithoutUserChatInput = {
+  alert?: InputMaybe<AlertUpdateOneRequiredWithoutChatsNestedInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  imageUrl?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  message?: InputMaybe<StringFieldUpdateOperationsInput>;
+  participants?: InputMaybe<UserUpdateManyWithoutChatsNestedInput>;
+  timestamp?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  user?: InputMaybe<UserUpdateOneWithoutChatNestedInput>;
+};
+
+export type ChatUpdateWithoutUserInput = {
+  UserChat?: InputMaybe<UserChatUpdateManyWithoutChatNestedInput>;
+  alert?: InputMaybe<AlertUpdateOneRequiredWithoutChatsNestedInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  imageUrl?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  message?: InputMaybe<StringFieldUpdateOperationsInput>;
+  participants?: InputMaybe<UserUpdateManyWithoutChatsNestedInput>;
   timestamp?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
 
@@ -1157,38 +1283,54 @@ export type ChatUpsertWithWhereUniqueWithoutAlertInput = {
   where: ChatWhereUniqueInput;
 };
 
+export type ChatUpsertWithWhereUniqueWithoutParticipantsInput = {
+  create: ChatCreateWithoutParticipantsInput;
+  update: ChatUpdateWithoutParticipantsInput;
+  where: ChatWhereUniqueInput;
+};
+
 export type ChatUpsertWithWhereUniqueWithoutUserInput = {
   create: ChatCreateWithoutUserInput;
   update: ChatUpdateWithoutUserInput;
   where: ChatWhereUniqueInput;
 };
 
+export type ChatUpsertWithoutUserChatInput = {
+  create: ChatCreateWithoutUserChatInput;
+  update: ChatUpdateWithoutUserChatInput;
+  where?: InputMaybe<ChatWhereInput>;
+};
+
 export type ChatWhereInput = {
   AND?: InputMaybe<Array<ChatWhereInput>>;
   NOT?: InputMaybe<Array<ChatWhereInput>>;
   OR?: InputMaybe<Array<ChatWhereInput>>;
+  UserChat?: InputMaybe<UserChatListRelationFilter>;
   alert?: InputMaybe<AlertRelationFilter>;
   alertId?: InputMaybe<StringFilter>;
   id?: InputMaybe<StringFilter>;
   imageUrl?: InputMaybe<StringNullableFilter>;
   message?: InputMaybe<StringFilter>;
+  participants?: InputMaybe<UserListRelationFilter>;
   timestamp?: InputMaybe<DateTimeFilter>;
-  user?: InputMaybe<UserRelationFilter>;
-  userId?: InputMaybe<StringFilter>;
+  user?: InputMaybe<UserNullableRelationFilter>;
+  userId?: InputMaybe<StringNullableFilter>;
 };
 
 export type ChatWhereUniqueInput = {
   AND?: InputMaybe<Array<ChatWhereInput>>;
   NOT?: InputMaybe<Array<ChatWhereInput>>;
   OR?: InputMaybe<Array<ChatWhereInput>>;
+  UserChat?: InputMaybe<UserChatListRelationFilter>;
   alert?: InputMaybe<AlertRelationFilter>;
   alertId?: InputMaybe<StringFilter>;
   id?: InputMaybe<Scalars['String']['input']>;
   imageUrl?: InputMaybe<StringNullableFilter>;
   message?: InputMaybe<StringFilter>;
+  participants?: InputMaybe<UserListRelationFilter>;
   timestamp?: InputMaybe<DateTimeFilter>;
-  user?: InputMaybe<UserRelationFilter>;
-  userId?: InputMaybe<StringFilter>;
+  user?: InputMaybe<UserNullableRelationFilter>;
+  userId?: InputMaybe<StringNullableFilter>;
 };
 
 export type CreateAlertResponse = {
@@ -2995,7 +3137,7 @@ export type Query = {
   findUniqueGroup: Group;
   findUniqueUser: User;
   getCurrentUser: User;
-  getSubAdminsOfSuperAdmin: PaginatedGroup;
+  getSubAdminsOfSuperAdmin: PaginatedUser;
   getUsersAndSubAdminsOfSuperAdmin: PaginatedUser;
   getUsersOfSubAdmin: PaginatedGroup;
   groupByAlert: Array<AlertGroupBy>;
@@ -3398,11 +3540,14 @@ export type StringWithAggregatesFilter = {
 
 export type Subscription = {
   __typename?: 'Subscription';
+  alertCreated: Alert;
   chatCreated: Chat;
 };
 
 export type User = {
   __typename?: 'User';
+  Chat?: Maybe<Array<Chat>>;
+  UserChat?: Maybe<Array<UserChat>>;
   _count: UserCount;
   accountVerified: Scalars['Boolean']['output'];
   address?: Maybe<Scalars['String']['output']>;
@@ -3464,8 +3609,188 @@ export type UserAvgOrderByAggregateInput = {
   radius?: InputMaybe<SortOrder>;
 };
 
+export type UserChat = {
+  __typename?: 'UserChat';
+  chat: Chat;
+  chatId: Scalars['String']['output'];
+  user: User;
+  userId: Scalars['String']['output'];
+};
+
+export type UserChatCreateManyChatInput = {
+  userId: Scalars['String']['input'];
+};
+
+export type UserChatCreateManyChatInputEnvelope = {
+  data: Array<UserChatCreateManyChatInput>;
+  skipDuplicates?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type UserChatCreateManyUserInput = {
+  chatId: Scalars['String']['input'];
+};
+
+export type UserChatCreateManyUserInputEnvelope = {
+  data: Array<UserChatCreateManyUserInput>;
+  skipDuplicates?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type UserChatCreateNestedManyWithoutChatInput = {
+  connect?: InputMaybe<Array<UserChatWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<UserChatCreateOrConnectWithoutChatInput>>;
+  create?: InputMaybe<Array<UserChatCreateWithoutChatInput>>;
+  createMany?: InputMaybe<UserChatCreateManyChatInputEnvelope>;
+};
+
+export type UserChatCreateNestedManyWithoutUserInput = {
+  connect?: InputMaybe<Array<UserChatWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<UserChatCreateOrConnectWithoutUserInput>>;
+  create?: InputMaybe<Array<UserChatCreateWithoutUserInput>>;
+  createMany?: InputMaybe<UserChatCreateManyUserInputEnvelope>;
+};
+
+export type UserChatCreateOrConnectWithoutChatInput = {
+  create: UserChatCreateWithoutChatInput;
+  where: UserChatWhereUniqueInput;
+};
+
+export type UserChatCreateOrConnectWithoutUserInput = {
+  create: UserChatCreateWithoutUserInput;
+  where: UserChatWhereUniqueInput;
+};
+
+export type UserChatCreateWithoutChatInput = {
+  user: UserCreateNestedOneWithoutUserChatInput;
+};
+
+export type UserChatCreateWithoutUserInput = {
+  chat: ChatCreateNestedOneWithoutUserChatInput;
+};
+
+export type UserChatListRelationFilter = {
+  every?: InputMaybe<UserChatWhereInput>;
+  none?: InputMaybe<UserChatWhereInput>;
+  some?: InputMaybe<UserChatWhereInput>;
+};
+
+export type UserChatOrderByRelationAggregateInput = {
+  _count?: InputMaybe<SortOrder>;
+};
+
+export type UserChatScalarWhereInput = {
+  AND?: InputMaybe<Array<UserChatScalarWhereInput>>;
+  NOT?: InputMaybe<Array<UserChatScalarWhereInput>>;
+  OR?: InputMaybe<Array<UserChatScalarWhereInput>>;
+  chatId?: InputMaybe<StringFilter>;
+  userId?: InputMaybe<StringFilter>;
+};
+
+export type UserChatUncheckedUpdateManyWithoutChatInput = {
+  userId?: InputMaybe<StringFieldUpdateOperationsInput>;
+};
+
+export type UserChatUncheckedUpdateManyWithoutUserInput = {
+  chatId?: InputMaybe<StringFieldUpdateOperationsInput>;
+};
+
+export type UserChatUpdateManyWithWhereWithoutChatInput = {
+  data: UserChatUncheckedUpdateManyWithoutChatInput;
+  where: UserChatScalarWhereInput;
+};
+
+export type UserChatUpdateManyWithWhereWithoutUserInput = {
+  data: UserChatUncheckedUpdateManyWithoutUserInput;
+  where: UserChatScalarWhereInput;
+};
+
+export type UserChatUpdateManyWithoutChatNestedInput = {
+  connect?: InputMaybe<Array<UserChatWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<UserChatCreateOrConnectWithoutChatInput>>;
+  create?: InputMaybe<Array<UserChatCreateWithoutChatInput>>;
+  createMany?: InputMaybe<UserChatCreateManyChatInputEnvelope>;
+  delete?: InputMaybe<Array<UserChatWhereUniqueInput>>;
+  deleteMany?: InputMaybe<Array<UserChatScalarWhereInput>>;
+  disconnect?: InputMaybe<Array<UserChatWhereUniqueInput>>;
+  set?: InputMaybe<Array<UserChatWhereUniqueInput>>;
+  update?: InputMaybe<Array<UserChatUpdateWithWhereUniqueWithoutChatInput>>;
+  updateMany?: InputMaybe<Array<UserChatUpdateManyWithWhereWithoutChatInput>>;
+  upsert?: InputMaybe<Array<UserChatUpsertWithWhereUniqueWithoutChatInput>>;
+};
+
+export type UserChatUpdateManyWithoutUserNestedInput = {
+  connect?: InputMaybe<Array<UserChatWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<UserChatCreateOrConnectWithoutUserInput>>;
+  create?: InputMaybe<Array<UserChatCreateWithoutUserInput>>;
+  createMany?: InputMaybe<UserChatCreateManyUserInputEnvelope>;
+  delete?: InputMaybe<Array<UserChatWhereUniqueInput>>;
+  deleteMany?: InputMaybe<Array<UserChatScalarWhereInput>>;
+  disconnect?: InputMaybe<Array<UserChatWhereUniqueInput>>;
+  set?: InputMaybe<Array<UserChatWhereUniqueInput>>;
+  update?: InputMaybe<Array<UserChatUpdateWithWhereUniqueWithoutUserInput>>;
+  updateMany?: InputMaybe<Array<UserChatUpdateManyWithWhereWithoutUserInput>>;
+  upsert?: InputMaybe<Array<UserChatUpsertWithWhereUniqueWithoutUserInput>>;
+};
+
+export type UserChatUpdateWithWhereUniqueWithoutChatInput = {
+  data: UserChatUpdateWithoutChatInput;
+  where: UserChatWhereUniqueInput;
+};
+
+export type UserChatUpdateWithWhereUniqueWithoutUserInput = {
+  data: UserChatUpdateWithoutUserInput;
+  where: UserChatWhereUniqueInput;
+};
+
+export type UserChatUpdateWithoutChatInput = {
+  user?: InputMaybe<UserUpdateOneRequiredWithoutUserChatNestedInput>;
+};
+
+export type UserChatUpdateWithoutUserInput = {
+  chat?: InputMaybe<ChatUpdateOneRequiredWithoutUserChatNestedInput>;
+};
+
+export type UserChatUpsertWithWhereUniqueWithoutChatInput = {
+  create: UserChatCreateWithoutChatInput;
+  update: UserChatUpdateWithoutChatInput;
+  where: UserChatWhereUniqueInput;
+};
+
+export type UserChatUpsertWithWhereUniqueWithoutUserInput = {
+  create: UserChatCreateWithoutUserInput;
+  update: UserChatUpdateWithoutUserInput;
+  where: UserChatWhereUniqueInput;
+};
+
+export type UserChatUserIdChatIdCompoundUniqueInput = {
+  chatId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
+};
+
+export type UserChatWhereInput = {
+  AND?: InputMaybe<Array<UserChatWhereInput>>;
+  NOT?: InputMaybe<Array<UserChatWhereInput>>;
+  OR?: InputMaybe<Array<UserChatWhereInput>>;
+  chat?: InputMaybe<ChatRelationFilter>;
+  chatId?: InputMaybe<StringFilter>;
+  user?: InputMaybe<UserRelationFilter>;
+  userId?: InputMaybe<StringFilter>;
+};
+
+export type UserChatWhereUniqueInput = {
+  AND?: InputMaybe<Array<UserChatWhereInput>>;
+  NOT?: InputMaybe<Array<UserChatWhereInput>>;
+  OR?: InputMaybe<Array<UserChatWhereInput>>;
+  chat?: InputMaybe<ChatRelationFilter>;
+  chatId?: InputMaybe<StringFilter>;
+  user?: InputMaybe<UserRelationFilter>;
+  userId?: InputMaybe<StringFilter>;
+  userId_chatId?: InputMaybe<UserChatUserIdChatIdCompoundUniqueInput>;
+};
+
 export type UserCount = {
   __typename?: 'UserCount';
+  Chat: Scalars['Int']['output'];
+  UserChat: Scalars['Int']['output'];
   alerts: Scalars['Int']['output'];
   assignedEmergencies: Scalars['Int']['output'];
   assignedGroups: Scalars['Int']['output'];
@@ -3572,6 +3897,8 @@ export type UserCountOrderByAggregateInput = {
 };
 
 export type UserCreateInput = {
+  Chat?: InputMaybe<ChatCreateNestedManyWithoutUserInput>;
+  UserChat?: InputMaybe<UserChatCreateNestedManyWithoutUserInput>;
   accountVerified?: InputMaybe<Scalars['Boolean']['input']>;
   address?: InputMaybe<Scalars['String']['input']>;
   alerts?: InputMaybe<AlertCreateNestedManyWithoutUsersInput>;
@@ -3579,7 +3906,7 @@ export type UserCreateInput = {
   assignedGroups?: InputMaybe<GroupCreateNestedManyWithoutAssigneeInput>;
   assignedUsers?: InputMaybe<UserCreateNestedManyWithoutAssigneeInput>;
   assignee?: InputMaybe<UserCreateNestedOneWithoutAssignedUsersInput>;
-  chats?: InputMaybe<ChatCreateNestedManyWithoutUserInput>;
+  chats?: InputMaybe<ChatCreateNestedManyWithoutParticipantsInput>;
   companyName?: InputMaybe<Scalars['String']['input']>;
   createdAlerts?: InputMaybe<AlertCreateNestedManyWithoutCreatorInput>;
   createdAt?: InputMaybe<Scalars['DateTime']['input']>;
@@ -3722,6 +4049,12 @@ export type UserCreateNestedManyWithoutAssigneeInput = {
   createMany?: InputMaybe<UserCreateManyAssigneeInputEnvelope>;
 };
 
+export type UserCreateNestedManyWithoutChatsInput = {
+  connect?: InputMaybe<Array<UserWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<UserCreateOrConnectWithoutChatsInput>>;
+  create?: InputMaybe<Array<UserCreateWithoutChatsInput>>;
+};
+
 export type UserCreateNestedManyWithoutCreatorInput = {
   connect?: InputMaybe<Array<UserWhereUniqueInput>>;
   connectOrCreate?: InputMaybe<Array<UserCreateOrConnectWithoutCreatorInput>>;
@@ -3753,10 +4086,10 @@ export type UserCreateNestedOneWithoutAssignedUsersInput = {
   create?: InputMaybe<UserCreateWithoutAssignedUsersInput>;
 };
 
-export type UserCreateNestedOneWithoutChatsInput = {
+export type UserCreateNestedOneWithoutChatInput = {
   connect?: InputMaybe<UserWhereUniqueInput>;
-  connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutChatsInput>;
-  create?: InputMaybe<UserCreateWithoutChatsInput>;
+  connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutChatInput>;
+  create?: InputMaybe<UserCreateWithoutChatInput>;
 };
 
 export type UserCreateNestedOneWithoutCreatedAlertsInput = {
@@ -3783,6 +4116,12 @@ export type UserCreateNestedOneWithoutCreatedUsersInput = {
   create?: InputMaybe<UserCreateWithoutCreatedUsersInput>;
 };
 
+export type UserCreateNestedOneWithoutUserChatInput = {
+  connect?: InputMaybe<UserWhereUniqueInput>;
+  connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutUserChatInput>;
+  create?: InputMaybe<UserCreateWithoutUserChatInput>;
+};
+
 export type UserCreateOrConnectWithoutAlertsInput = {
   create: UserCreateWithoutAlertsInput;
   where: UserWhereUniqueInput;
@@ -3805,6 +4144,11 @@ export type UserCreateOrConnectWithoutAssignedUsersInput = {
 
 export type UserCreateOrConnectWithoutAssigneeInput = {
   create: UserCreateWithoutAssigneeInput;
+  where: UserWhereUniqueInput;
+};
+
+export type UserCreateOrConnectWithoutChatInput = {
+  create: UserCreateWithoutChatInput;
   where: UserWhereUniqueInput;
 };
 
@@ -3843,14 +4187,21 @@ export type UserCreateOrConnectWithoutGroupsInput = {
   where: UserWhereUniqueInput;
 };
 
+export type UserCreateOrConnectWithoutUserChatInput = {
+  create: UserCreateWithoutUserChatInput;
+  where: UserWhereUniqueInput;
+};
+
 export type UserCreateWithoutAlertsInput = {
+  Chat?: InputMaybe<ChatCreateNestedManyWithoutUserInput>;
+  UserChat?: InputMaybe<UserChatCreateNestedManyWithoutUserInput>;
   accountVerified?: InputMaybe<Scalars['Boolean']['input']>;
   address?: InputMaybe<Scalars['String']['input']>;
   assignedEmergencies?: InputMaybe<EmergencyCreateNestedManyWithoutAssigneeInput>;
   assignedGroups?: InputMaybe<GroupCreateNestedManyWithoutAssigneeInput>;
   assignedUsers?: InputMaybe<UserCreateNestedManyWithoutAssigneeInput>;
   assignee?: InputMaybe<UserCreateNestedOneWithoutAssignedUsersInput>;
-  chats?: InputMaybe<ChatCreateNestedManyWithoutUserInput>;
+  chats?: InputMaybe<ChatCreateNestedManyWithoutParticipantsInput>;
   companyName?: InputMaybe<Scalars['String']['input']>;
   createdAlerts?: InputMaybe<AlertCreateNestedManyWithoutCreatorInput>;
   createdAt?: InputMaybe<Scalars['DateTime']['input']>;
@@ -3883,13 +4234,15 @@ export type UserCreateWithoutAlertsInput = {
 };
 
 export type UserCreateWithoutAssignedEmergenciesInput = {
+  Chat?: InputMaybe<ChatCreateNestedManyWithoutUserInput>;
+  UserChat?: InputMaybe<UserChatCreateNestedManyWithoutUserInput>;
   accountVerified?: InputMaybe<Scalars['Boolean']['input']>;
   address?: InputMaybe<Scalars['String']['input']>;
   alerts?: InputMaybe<AlertCreateNestedManyWithoutUsersInput>;
   assignedGroups?: InputMaybe<GroupCreateNestedManyWithoutAssigneeInput>;
   assignedUsers?: InputMaybe<UserCreateNestedManyWithoutAssigneeInput>;
   assignee?: InputMaybe<UserCreateNestedOneWithoutAssignedUsersInput>;
-  chats?: InputMaybe<ChatCreateNestedManyWithoutUserInput>;
+  chats?: InputMaybe<ChatCreateNestedManyWithoutParticipantsInput>;
   companyName?: InputMaybe<Scalars['String']['input']>;
   createdAlerts?: InputMaybe<AlertCreateNestedManyWithoutCreatorInput>;
   createdAt?: InputMaybe<Scalars['DateTime']['input']>;
@@ -3922,13 +4275,15 @@ export type UserCreateWithoutAssignedEmergenciesInput = {
 };
 
 export type UserCreateWithoutAssignedGroupsInput = {
+  Chat?: InputMaybe<ChatCreateNestedManyWithoutUserInput>;
+  UserChat?: InputMaybe<UserChatCreateNestedManyWithoutUserInput>;
   accountVerified?: InputMaybe<Scalars['Boolean']['input']>;
   address?: InputMaybe<Scalars['String']['input']>;
   alerts?: InputMaybe<AlertCreateNestedManyWithoutUsersInput>;
   assignedEmergencies?: InputMaybe<EmergencyCreateNestedManyWithoutAssigneeInput>;
   assignedUsers?: InputMaybe<UserCreateNestedManyWithoutAssigneeInput>;
   assignee?: InputMaybe<UserCreateNestedOneWithoutAssignedUsersInput>;
-  chats?: InputMaybe<ChatCreateNestedManyWithoutUserInput>;
+  chats?: InputMaybe<ChatCreateNestedManyWithoutParticipantsInput>;
   companyName?: InputMaybe<Scalars['String']['input']>;
   createdAlerts?: InputMaybe<AlertCreateNestedManyWithoutCreatorInput>;
   createdAt?: InputMaybe<Scalars['DateTime']['input']>;
@@ -3961,13 +4316,15 @@ export type UserCreateWithoutAssignedGroupsInput = {
 };
 
 export type UserCreateWithoutAssignedUsersInput = {
+  Chat?: InputMaybe<ChatCreateNestedManyWithoutUserInput>;
+  UserChat?: InputMaybe<UserChatCreateNestedManyWithoutUserInput>;
   accountVerified?: InputMaybe<Scalars['Boolean']['input']>;
   address?: InputMaybe<Scalars['String']['input']>;
   alerts?: InputMaybe<AlertCreateNestedManyWithoutUsersInput>;
   assignedEmergencies?: InputMaybe<EmergencyCreateNestedManyWithoutAssigneeInput>;
   assignedGroups?: InputMaybe<GroupCreateNestedManyWithoutAssigneeInput>;
   assignee?: InputMaybe<UserCreateNestedOneWithoutAssignedUsersInput>;
-  chats?: InputMaybe<ChatCreateNestedManyWithoutUserInput>;
+  chats?: InputMaybe<ChatCreateNestedManyWithoutParticipantsInput>;
   companyName?: InputMaybe<Scalars['String']['input']>;
   createdAlerts?: InputMaybe<AlertCreateNestedManyWithoutCreatorInput>;
   createdAt?: InputMaybe<Scalars['DateTime']['input']>;
@@ -4000,13 +4357,56 @@ export type UserCreateWithoutAssignedUsersInput = {
 };
 
 export type UserCreateWithoutAssigneeInput = {
+  Chat?: InputMaybe<ChatCreateNestedManyWithoutUserInput>;
+  UserChat?: InputMaybe<UserChatCreateNestedManyWithoutUserInput>;
   accountVerified?: InputMaybe<Scalars['Boolean']['input']>;
   address?: InputMaybe<Scalars['String']['input']>;
   alerts?: InputMaybe<AlertCreateNestedManyWithoutUsersInput>;
   assignedEmergencies?: InputMaybe<EmergencyCreateNestedManyWithoutAssigneeInput>;
   assignedGroups?: InputMaybe<GroupCreateNestedManyWithoutAssigneeInput>;
   assignedUsers?: InputMaybe<UserCreateNestedManyWithoutAssigneeInput>;
-  chats?: InputMaybe<ChatCreateNestedManyWithoutUserInput>;
+  chats?: InputMaybe<ChatCreateNestedManyWithoutParticipantsInput>;
+  companyName?: InputMaybe<Scalars['String']['input']>;
+  createdAlerts?: InputMaybe<AlertCreateNestedManyWithoutCreatorInput>;
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>;
+  createdEmergencies?: InputMaybe<EmergencyCreateNestedManyWithoutCreatorInput>;
+  createdGroups?: InputMaybe<GroupCreateNestedManyWithoutCreatorInput>;
+  createdUsers?: InputMaybe<UserCreateNestedManyWithoutCreatorInput>;
+  creator?: InputMaybe<UserCreateNestedOneWithoutCreatedUsersInput>;
+  deviceId?: InputMaybe<Scalars['String']['input']>;
+  deviceModel?: InputMaybe<Scalars['String']['input']>;
+  deviceName?: InputMaybe<Scalars['String']['input']>;
+  email: Scalars['String']['input'];
+  firstName?: InputMaybe<Scalars['String']['input']>;
+  groups?: InputMaybe<GroupCreateNestedManyWithoutUsersInput>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  lastName?: InputMaybe<Scalars['String']['input']>;
+  latitude?: InputMaybe<Scalars['Float']['input']>;
+  longitude?: InputMaybe<Scalars['Float']['input']>;
+  nextOfKinContact?: InputMaybe<Scalars['String']['input']>;
+  nextOfKinName?: InputMaybe<Scalars['String']['input']>;
+  onBoarding?: InputMaybe<Scalars['Boolean']['input']>;
+  otpExpiration?: InputMaybe<Scalars['DateTime']['input']>;
+  password: Scalars['String']['input'];
+  profilePhoto?: InputMaybe<Scalars['String']['input']>;
+  pushToken?: InputMaybe<Scalars['String']['input']>;
+  radius?: InputMaybe<Scalars['Float']['input']>;
+  role: RoleType;
+  token?: InputMaybe<Scalars['String']['input']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>;
+  verificationOtp?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UserCreateWithoutChatInput = {
+  UserChat?: InputMaybe<UserChatCreateNestedManyWithoutUserInput>;
+  accountVerified?: InputMaybe<Scalars['Boolean']['input']>;
+  address?: InputMaybe<Scalars['String']['input']>;
+  alerts?: InputMaybe<AlertCreateNestedManyWithoutUsersInput>;
+  assignedEmergencies?: InputMaybe<EmergencyCreateNestedManyWithoutAssigneeInput>;
+  assignedGroups?: InputMaybe<GroupCreateNestedManyWithoutAssigneeInput>;
+  assignedUsers?: InputMaybe<UserCreateNestedManyWithoutAssigneeInput>;
+  assignee?: InputMaybe<UserCreateNestedOneWithoutAssignedUsersInput>;
+  chats?: InputMaybe<ChatCreateNestedManyWithoutParticipantsInput>;
   companyName?: InputMaybe<Scalars['String']['input']>;
   createdAlerts?: InputMaybe<AlertCreateNestedManyWithoutCreatorInput>;
   createdAt?: InputMaybe<Scalars['DateTime']['input']>;
@@ -4039,6 +4439,8 @@ export type UserCreateWithoutAssigneeInput = {
 };
 
 export type UserCreateWithoutChatsInput = {
+  Chat?: InputMaybe<ChatCreateNestedManyWithoutUserInput>;
+  UserChat?: InputMaybe<UserChatCreateNestedManyWithoutUserInput>;
   accountVerified?: InputMaybe<Scalars['Boolean']['input']>;
   address?: InputMaybe<Scalars['String']['input']>;
   alerts?: InputMaybe<AlertCreateNestedManyWithoutUsersInput>;
@@ -4078,6 +4480,8 @@ export type UserCreateWithoutChatsInput = {
 };
 
 export type UserCreateWithoutCreatedAlertsInput = {
+  Chat?: InputMaybe<ChatCreateNestedManyWithoutUserInput>;
+  UserChat?: InputMaybe<UserChatCreateNestedManyWithoutUserInput>;
   accountVerified?: InputMaybe<Scalars['Boolean']['input']>;
   address?: InputMaybe<Scalars['String']['input']>;
   alerts?: InputMaybe<AlertCreateNestedManyWithoutUsersInput>;
@@ -4085,7 +4489,7 @@ export type UserCreateWithoutCreatedAlertsInput = {
   assignedGroups?: InputMaybe<GroupCreateNestedManyWithoutAssigneeInput>;
   assignedUsers?: InputMaybe<UserCreateNestedManyWithoutAssigneeInput>;
   assignee?: InputMaybe<UserCreateNestedOneWithoutAssignedUsersInput>;
-  chats?: InputMaybe<ChatCreateNestedManyWithoutUserInput>;
+  chats?: InputMaybe<ChatCreateNestedManyWithoutParticipantsInput>;
   companyName?: InputMaybe<Scalars['String']['input']>;
   createdAt?: InputMaybe<Scalars['DateTime']['input']>;
   createdEmergencies?: InputMaybe<EmergencyCreateNestedManyWithoutCreatorInput>;
@@ -4117,6 +4521,8 @@ export type UserCreateWithoutCreatedAlertsInput = {
 };
 
 export type UserCreateWithoutCreatedEmergenciesInput = {
+  Chat?: InputMaybe<ChatCreateNestedManyWithoutUserInput>;
+  UserChat?: InputMaybe<UserChatCreateNestedManyWithoutUserInput>;
   accountVerified?: InputMaybe<Scalars['Boolean']['input']>;
   address?: InputMaybe<Scalars['String']['input']>;
   alerts?: InputMaybe<AlertCreateNestedManyWithoutUsersInput>;
@@ -4124,7 +4530,7 @@ export type UserCreateWithoutCreatedEmergenciesInput = {
   assignedGroups?: InputMaybe<GroupCreateNestedManyWithoutAssigneeInput>;
   assignedUsers?: InputMaybe<UserCreateNestedManyWithoutAssigneeInput>;
   assignee?: InputMaybe<UserCreateNestedOneWithoutAssignedUsersInput>;
-  chats?: InputMaybe<ChatCreateNestedManyWithoutUserInput>;
+  chats?: InputMaybe<ChatCreateNestedManyWithoutParticipantsInput>;
   companyName?: InputMaybe<Scalars['String']['input']>;
   createdAlerts?: InputMaybe<AlertCreateNestedManyWithoutCreatorInput>;
   createdAt?: InputMaybe<Scalars['DateTime']['input']>;
@@ -4156,6 +4562,8 @@ export type UserCreateWithoutCreatedEmergenciesInput = {
 };
 
 export type UserCreateWithoutCreatedGroupsInput = {
+  Chat?: InputMaybe<ChatCreateNestedManyWithoutUserInput>;
+  UserChat?: InputMaybe<UserChatCreateNestedManyWithoutUserInput>;
   accountVerified?: InputMaybe<Scalars['Boolean']['input']>;
   address?: InputMaybe<Scalars['String']['input']>;
   alerts?: InputMaybe<AlertCreateNestedManyWithoutUsersInput>;
@@ -4163,7 +4571,7 @@ export type UserCreateWithoutCreatedGroupsInput = {
   assignedGroups?: InputMaybe<GroupCreateNestedManyWithoutAssigneeInput>;
   assignedUsers?: InputMaybe<UserCreateNestedManyWithoutAssigneeInput>;
   assignee?: InputMaybe<UserCreateNestedOneWithoutAssignedUsersInput>;
-  chats?: InputMaybe<ChatCreateNestedManyWithoutUserInput>;
+  chats?: InputMaybe<ChatCreateNestedManyWithoutParticipantsInput>;
   companyName?: InputMaybe<Scalars['String']['input']>;
   createdAlerts?: InputMaybe<AlertCreateNestedManyWithoutCreatorInput>;
   createdAt?: InputMaybe<Scalars['DateTime']['input']>;
@@ -4195,6 +4603,8 @@ export type UserCreateWithoutCreatedGroupsInput = {
 };
 
 export type UserCreateWithoutCreatedUsersInput = {
+  Chat?: InputMaybe<ChatCreateNestedManyWithoutUserInput>;
+  UserChat?: InputMaybe<UserChatCreateNestedManyWithoutUserInput>;
   accountVerified?: InputMaybe<Scalars['Boolean']['input']>;
   address?: InputMaybe<Scalars['String']['input']>;
   alerts?: InputMaybe<AlertCreateNestedManyWithoutUsersInput>;
@@ -4202,7 +4612,7 @@ export type UserCreateWithoutCreatedUsersInput = {
   assignedGroups?: InputMaybe<GroupCreateNestedManyWithoutAssigneeInput>;
   assignedUsers?: InputMaybe<UserCreateNestedManyWithoutAssigneeInput>;
   assignee?: InputMaybe<UserCreateNestedOneWithoutAssignedUsersInput>;
-  chats?: InputMaybe<ChatCreateNestedManyWithoutUserInput>;
+  chats?: InputMaybe<ChatCreateNestedManyWithoutParticipantsInput>;
   companyName?: InputMaybe<Scalars['String']['input']>;
   createdAlerts?: InputMaybe<AlertCreateNestedManyWithoutCreatorInput>;
   createdAt?: InputMaybe<Scalars['DateTime']['input']>;
@@ -4234,6 +4644,8 @@ export type UserCreateWithoutCreatedUsersInput = {
 };
 
 export type UserCreateWithoutCreatorInput = {
+  Chat?: InputMaybe<ChatCreateNestedManyWithoutUserInput>;
+  UserChat?: InputMaybe<UserChatCreateNestedManyWithoutUserInput>;
   accountVerified?: InputMaybe<Scalars['Boolean']['input']>;
   address?: InputMaybe<Scalars['String']['input']>;
   alerts?: InputMaybe<AlertCreateNestedManyWithoutUsersInput>;
@@ -4241,7 +4653,7 @@ export type UserCreateWithoutCreatorInput = {
   assignedGroups?: InputMaybe<GroupCreateNestedManyWithoutAssigneeInput>;
   assignedUsers?: InputMaybe<UserCreateNestedManyWithoutAssigneeInput>;
   assignee?: InputMaybe<UserCreateNestedOneWithoutAssignedUsersInput>;
-  chats?: InputMaybe<ChatCreateNestedManyWithoutUserInput>;
+  chats?: InputMaybe<ChatCreateNestedManyWithoutParticipantsInput>;
   companyName?: InputMaybe<Scalars['String']['input']>;
   createdAlerts?: InputMaybe<AlertCreateNestedManyWithoutCreatorInput>;
   createdAt?: InputMaybe<Scalars['DateTime']['input']>;
@@ -4273,6 +4685,8 @@ export type UserCreateWithoutCreatorInput = {
 };
 
 export type UserCreateWithoutGroupsInput = {
+  Chat?: InputMaybe<ChatCreateNestedManyWithoutUserInput>;
+  UserChat?: InputMaybe<UserChatCreateNestedManyWithoutUserInput>;
   accountVerified?: InputMaybe<Scalars['Boolean']['input']>;
   address?: InputMaybe<Scalars['String']['input']>;
   alerts?: InputMaybe<AlertCreateNestedManyWithoutUsersInput>;
@@ -4280,7 +4694,7 @@ export type UserCreateWithoutGroupsInput = {
   assignedGroups?: InputMaybe<GroupCreateNestedManyWithoutAssigneeInput>;
   assignedUsers?: InputMaybe<UserCreateNestedManyWithoutAssigneeInput>;
   assignee?: InputMaybe<UserCreateNestedOneWithoutAssignedUsersInput>;
-  chats?: InputMaybe<ChatCreateNestedManyWithoutUserInput>;
+  chats?: InputMaybe<ChatCreateNestedManyWithoutParticipantsInput>;
   companyName?: InputMaybe<Scalars['String']['input']>;
   createdAlerts?: InputMaybe<AlertCreateNestedManyWithoutCreatorInput>;
   createdAt?: InputMaybe<Scalars['DateTime']['input']>;
@@ -4293,6 +4707,47 @@ export type UserCreateWithoutGroupsInput = {
   deviceName?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
   firstName?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  lastName?: InputMaybe<Scalars['String']['input']>;
+  latitude?: InputMaybe<Scalars['Float']['input']>;
+  longitude?: InputMaybe<Scalars['Float']['input']>;
+  nextOfKinContact?: InputMaybe<Scalars['String']['input']>;
+  nextOfKinName?: InputMaybe<Scalars['String']['input']>;
+  onBoarding?: InputMaybe<Scalars['Boolean']['input']>;
+  otpExpiration?: InputMaybe<Scalars['DateTime']['input']>;
+  password: Scalars['String']['input'];
+  profilePhoto?: InputMaybe<Scalars['String']['input']>;
+  pushToken?: InputMaybe<Scalars['String']['input']>;
+  radius?: InputMaybe<Scalars['Float']['input']>;
+  role: RoleType;
+  token?: InputMaybe<Scalars['String']['input']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>;
+  verificationOtp?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UserCreateWithoutUserChatInput = {
+  Chat?: InputMaybe<ChatCreateNestedManyWithoutUserInput>;
+  accountVerified?: InputMaybe<Scalars['Boolean']['input']>;
+  address?: InputMaybe<Scalars['String']['input']>;
+  alerts?: InputMaybe<AlertCreateNestedManyWithoutUsersInput>;
+  assignedEmergencies?: InputMaybe<EmergencyCreateNestedManyWithoutAssigneeInput>;
+  assignedGroups?: InputMaybe<GroupCreateNestedManyWithoutAssigneeInput>;
+  assignedUsers?: InputMaybe<UserCreateNestedManyWithoutAssigneeInput>;
+  assignee?: InputMaybe<UserCreateNestedOneWithoutAssignedUsersInput>;
+  chats?: InputMaybe<ChatCreateNestedManyWithoutParticipantsInput>;
+  companyName?: InputMaybe<Scalars['String']['input']>;
+  createdAlerts?: InputMaybe<AlertCreateNestedManyWithoutCreatorInput>;
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>;
+  createdEmergencies?: InputMaybe<EmergencyCreateNestedManyWithoutCreatorInput>;
+  createdGroups?: InputMaybe<GroupCreateNestedManyWithoutCreatorInput>;
+  createdUsers?: InputMaybe<UserCreateNestedManyWithoutCreatorInput>;
+  creator?: InputMaybe<UserCreateNestedOneWithoutCreatedUsersInput>;
+  deviceId?: InputMaybe<Scalars['String']['input']>;
+  deviceModel?: InputMaybe<Scalars['String']['input']>;
+  deviceName?: InputMaybe<Scalars['String']['input']>;
+  email: Scalars['String']['input'];
+  firstName?: InputMaybe<Scalars['String']['input']>;
+  groups?: InputMaybe<GroupCreateNestedManyWithoutUsersInput>;
   id?: InputMaybe<Scalars['String']['input']>;
   lastName?: InputMaybe<Scalars['String']['input']>;
   latitude?: InputMaybe<Scalars['Float']['input']>;
@@ -4580,6 +5035,8 @@ export type UserOrderByWithAggregationInput = {
 };
 
 export type UserOrderByWithRelationInput = {
+  Chat?: InputMaybe<ChatOrderByRelationAggregateInput>;
+  UserChat?: InputMaybe<UserChatOrderByRelationAggregateInput>;
   accountVerified?: InputMaybe<SortOrder>;
   address?: InputMaybe<SortOrderInput>;
   alerts?: InputMaybe<AlertOrderByRelationAggregateInput>;
@@ -4742,6 +5199,8 @@ export type UserSumOrderByAggregateInput = {
 };
 
 export type UserUpdateInput = {
+  Chat?: InputMaybe<ChatUpdateManyWithoutUserNestedInput>;
+  UserChat?: InputMaybe<UserChatUpdateManyWithoutUserNestedInput>;
   accountVerified?: InputMaybe<BoolFieldUpdateOperationsInput>;
   address?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   alerts?: InputMaybe<AlertUpdateManyWithoutUsersNestedInput>;
@@ -4749,7 +5208,7 @@ export type UserUpdateInput = {
   assignedGroups?: InputMaybe<GroupUpdateManyWithoutAssigneeNestedInput>;
   assignedUsers?: InputMaybe<UserUpdateManyWithoutAssigneeNestedInput>;
   assignee?: InputMaybe<UserUpdateOneWithoutAssignedUsersNestedInput>;
-  chats?: InputMaybe<ChatUpdateManyWithoutUserNestedInput>;
+  chats?: InputMaybe<ChatUpdateManyWithoutParticipantsNestedInput>;
   companyName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   createdAlerts?: InputMaybe<AlertUpdateManyWithoutCreatorNestedInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
@@ -4819,6 +5278,11 @@ export type UserUpdateManyWithWhereWithoutAssigneeInput = {
   where: UserScalarWhereInput;
 };
 
+export type UserUpdateManyWithWhereWithoutChatsInput = {
+  data: UserUpdateManyMutationInput;
+  where: UserScalarWhereInput;
+};
+
 export type UserUpdateManyWithWhereWithoutCreatorInput = {
   data: UserUpdateManyMutationInput;
   where: UserScalarWhereInput;
@@ -4856,6 +5320,19 @@ export type UserUpdateManyWithoutAssigneeNestedInput = {
   upsert?: InputMaybe<Array<UserUpsertWithWhereUniqueWithoutAssigneeInput>>;
 };
 
+export type UserUpdateManyWithoutChatsNestedInput = {
+  connect?: InputMaybe<Array<UserWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<UserCreateOrConnectWithoutChatsInput>>;
+  create?: InputMaybe<Array<UserCreateWithoutChatsInput>>;
+  delete?: InputMaybe<Array<UserWhereUniqueInput>>;
+  deleteMany?: InputMaybe<Array<UserScalarWhereInput>>;
+  disconnect?: InputMaybe<Array<UserWhereUniqueInput>>;
+  set?: InputMaybe<Array<UserWhereUniqueInput>>;
+  update?: InputMaybe<Array<UserUpdateWithWhereUniqueWithoutChatsInput>>;
+  updateMany?: InputMaybe<Array<UserUpdateManyWithWhereWithoutChatsInput>>;
+  upsert?: InputMaybe<Array<UserUpsertWithWhereUniqueWithoutChatsInput>>;
+};
+
 export type UserUpdateManyWithoutCreatorNestedInput = {
   connect?: InputMaybe<Array<UserWhereUniqueInput>>;
   connectOrCreate?: InputMaybe<Array<UserCreateOrConnectWithoutCreatorInput>>;
@@ -4891,14 +5368,6 @@ export type UserUpdateOneRequiredWithoutAssignedEmergenciesNestedInput = {
   upsert?: InputMaybe<UserUpsertWithoutAssignedEmergenciesInput>;
 };
 
-export type UserUpdateOneRequiredWithoutChatsNestedInput = {
-  connect?: InputMaybe<UserWhereUniqueInput>;
-  connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutChatsInput>;
-  create?: InputMaybe<UserCreateWithoutChatsInput>;
-  update?: InputMaybe<UserUpdateToOneWithWhereWithoutChatsInput>;
-  upsert?: InputMaybe<UserUpsertWithoutChatsInput>;
-};
-
 export type UserUpdateOneRequiredWithoutCreatedAlertsNestedInput = {
   connect?: InputMaybe<UserWhereUniqueInput>;
   connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutCreatedAlertsInput>;
@@ -4913,6 +5382,14 @@ export type UserUpdateOneRequiredWithoutCreatedEmergenciesNestedInput = {
   create?: InputMaybe<UserCreateWithoutCreatedEmergenciesInput>;
   update?: InputMaybe<UserUpdateToOneWithWhereWithoutCreatedEmergenciesInput>;
   upsert?: InputMaybe<UserUpsertWithoutCreatedEmergenciesInput>;
+};
+
+export type UserUpdateOneRequiredWithoutUserChatNestedInput = {
+  connect?: InputMaybe<UserWhereUniqueInput>;
+  connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutUserChatInput>;
+  create?: InputMaybe<UserCreateWithoutUserChatInput>;
+  update?: InputMaybe<UserUpdateToOneWithWhereWithoutUserChatInput>;
+  upsert?: InputMaybe<UserUpsertWithoutUserChatInput>;
 };
 
 export type UserUpdateOneWithoutAssignedGroupsNestedInput = {
@@ -4933,6 +5410,16 @@ export type UserUpdateOneWithoutAssignedUsersNestedInput = {
   disconnect?: InputMaybe<UserWhereInput>;
   update?: InputMaybe<UserUpdateToOneWithWhereWithoutAssignedUsersInput>;
   upsert?: InputMaybe<UserUpsertWithoutAssignedUsersInput>;
+};
+
+export type UserUpdateOneWithoutChatNestedInput = {
+  connect?: InputMaybe<UserWhereUniqueInput>;
+  connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutChatInput>;
+  create?: InputMaybe<UserCreateWithoutChatInput>;
+  delete?: InputMaybe<UserWhereInput>;
+  disconnect?: InputMaybe<UserWhereInput>;
+  update?: InputMaybe<UserUpdateToOneWithWhereWithoutChatInput>;
+  upsert?: InputMaybe<UserUpsertWithoutChatInput>;
 };
 
 export type UserUpdateOneWithoutCreatedGroupsNestedInput = {
@@ -4970,8 +5457,8 @@ export type UserUpdateToOneWithWhereWithoutAssignedUsersInput = {
   where?: InputMaybe<UserWhereInput>;
 };
 
-export type UserUpdateToOneWithWhereWithoutChatsInput = {
-  data: UserUpdateWithoutChatsInput;
+export type UserUpdateToOneWithWhereWithoutChatInput = {
+  data: UserUpdateWithoutChatInput;
   where?: InputMaybe<UserWhereInput>;
 };
 
@@ -4995,6 +5482,11 @@ export type UserUpdateToOneWithWhereWithoutCreatedUsersInput = {
   where?: InputMaybe<UserWhereInput>;
 };
 
+export type UserUpdateToOneWithWhereWithoutUserChatInput = {
+  data: UserUpdateWithoutUserChatInput;
+  where?: InputMaybe<UserWhereInput>;
+};
+
 export type UserUpdateWithWhereUniqueWithoutAlertsInput = {
   data: UserUpdateWithoutAlertsInput;
   where: UserWhereUniqueInput;
@@ -5002,6 +5494,11 @@ export type UserUpdateWithWhereUniqueWithoutAlertsInput = {
 
 export type UserUpdateWithWhereUniqueWithoutAssigneeInput = {
   data: UserUpdateWithoutAssigneeInput;
+  where: UserWhereUniqueInput;
+};
+
+export type UserUpdateWithWhereUniqueWithoutChatsInput = {
+  data: UserUpdateWithoutChatsInput;
   where: UserWhereUniqueInput;
 };
 
@@ -5016,13 +5513,15 @@ export type UserUpdateWithWhereUniqueWithoutGroupsInput = {
 };
 
 export type UserUpdateWithoutAlertsInput = {
+  Chat?: InputMaybe<ChatUpdateManyWithoutUserNestedInput>;
+  UserChat?: InputMaybe<UserChatUpdateManyWithoutUserNestedInput>;
   accountVerified?: InputMaybe<BoolFieldUpdateOperationsInput>;
   address?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   assignedEmergencies?: InputMaybe<EmergencyUpdateManyWithoutAssigneeNestedInput>;
   assignedGroups?: InputMaybe<GroupUpdateManyWithoutAssigneeNestedInput>;
   assignedUsers?: InputMaybe<UserUpdateManyWithoutAssigneeNestedInput>;
   assignee?: InputMaybe<UserUpdateOneWithoutAssignedUsersNestedInput>;
-  chats?: InputMaybe<ChatUpdateManyWithoutUserNestedInput>;
+  chats?: InputMaybe<ChatUpdateManyWithoutParticipantsNestedInput>;
   companyName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   createdAlerts?: InputMaybe<AlertUpdateManyWithoutCreatorNestedInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
@@ -5055,13 +5554,15 @@ export type UserUpdateWithoutAlertsInput = {
 };
 
 export type UserUpdateWithoutAssignedEmergenciesInput = {
+  Chat?: InputMaybe<ChatUpdateManyWithoutUserNestedInput>;
+  UserChat?: InputMaybe<UserChatUpdateManyWithoutUserNestedInput>;
   accountVerified?: InputMaybe<BoolFieldUpdateOperationsInput>;
   address?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   alerts?: InputMaybe<AlertUpdateManyWithoutUsersNestedInput>;
   assignedGroups?: InputMaybe<GroupUpdateManyWithoutAssigneeNestedInput>;
   assignedUsers?: InputMaybe<UserUpdateManyWithoutAssigneeNestedInput>;
   assignee?: InputMaybe<UserUpdateOneWithoutAssignedUsersNestedInput>;
-  chats?: InputMaybe<ChatUpdateManyWithoutUserNestedInput>;
+  chats?: InputMaybe<ChatUpdateManyWithoutParticipantsNestedInput>;
   companyName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   createdAlerts?: InputMaybe<AlertUpdateManyWithoutCreatorNestedInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
@@ -5094,13 +5595,15 @@ export type UserUpdateWithoutAssignedEmergenciesInput = {
 };
 
 export type UserUpdateWithoutAssignedGroupsInput = {
+  Chat?: InputMaybe<ChatUpdateManyWithoutUserNestedInput>;
+  UserChat?: InputMaybe<UserChatUpdateManyWithoutUserNestedInput>;
   accountVerified?: InputMaybe<BoolFieldUpdateOperationsInput>;
   address?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   alerts?: InputMaybe<AlertUpdateManyWithoutUsersNestedInput>;
   assignedEmergencies?: InputMaybe<EmergencyUpdateManyWithoutAssigneeNestedInput>;
   assignedUsers?: InputMaybe<UserUpdateManyWithoutAssigneeNestedInput>;
   assignee?: InputMaybe<UserUpdateOneWithoutAssignedUsersNestedInput>;
-  chats?: InputMaybe<ChatUpdateManyWithoutUserNestedInput>;
+  chats?: InputMaybe<ChatUpdateManyWithoutParticipantsNestedInput>;
   companyName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   createdAlerts?: InputMaybe<AlertUpdateManyWithoutCreatorNestedInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
@@ -5133,13 +5636,15 @@ export type UserUpdateWithoutAssignedGroupsInput = {
 };
 
 export type UserUpdateWithoutAssignedUsersInput = {
+  Chat?: InputMaybe<ChatUpdateManyWithoutUserNestedInput>;
+  UserChat?: InputMaybe<UserChatUpdateManyWithoutUserNestedInput>;
   accountVerified?: InputMaybe<BoolFieldUpdateOperationsInput>;
   address?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   alerts?: InputMaybe<AlertUpdateManyWithoutUsersNestedInput>;
   assignedEmergencies?: InputMaybe<EmergencyUpdateManyWithoutAssigneeNestedInput>;
   assignedGroups?: InputMaybe<GroupUpdateManyWithoutAssigneeNestedInput>;
   assignee?: InputMaybe<UserUpdateOneWithoutAssignedUsersNestedInput>;
-  chats?: InputMaybe<ChatUpdateManyWithoutUserNestedInput>;
+  chats?: InputMaybe<ChatUpdateManyWithoutParticipantsNestedInput>;
   companyName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   createdAlerts?: InputMaybe<AlertUpdateManyWithoutCreatorNestedInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
@@ -5172,13 +5677,56 @@ export type UserUpdateWithoutAssignedUsersInput = {
 };
 
 export type UserUpdateWithoutAssigneeInput = {
+  Chat?: InputMaybe<ChatUpdateManyWithoutUserNestedInput>;
+  UserChat?: InputMaybe<UserChatUpdateManyWithoutUserNestedInput>;
   accountVerified?: InputMaybe<BoolFieldUpdateOperationsInput>;
   address?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   alerts?: InputMaybe<AlertUpdateManyWithoutUsersNestedInput>;
   assignedEmergencies?: InputMaybe<EmergencyUpdateManyWithoutAssigneeNestedInput>;
   assignedGroups?: InputMaybe<GroupUpdateManyWithoutAssigneeNestedInput>;
   assignedUsers?: InputMaybe<UserUpdateManyWithoutAssigneeNestedInput>;
-  chats?: InputMaybe<ChatUpdateManyWithoutUserNestedInput>;
+  chats?: InputMaybe<ChatUpdateManyWithoutParticipantsNestedInput>;
+  companyName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  createdAlerts?: InputMaybe<AlertUpdateManyWithoutCreatorNestedInput>;
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  createdEmergencies?: InputMaybe<EmergencyUpdateManyWithoutCreatorNestedInput>;
+  createdGroups?: InputMaybe<GroupUpdateManyWithoutCreatorNestedInput>;
+  createdUsers?: InputMaybe<UserUpdateManyWithoutCreatorNestedInput>;
+  creator?: InputMaybe<UserUpdateOneWithoutCreatedUsersNestedInput>;
+  deviceId?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  deviceModel?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  deviceName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  email?: InputMaybe<StringFieldUpdateOperationsInput>;
+  firstName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  groups?: InputMaybe<GroupUpdateManyWithoutUsersNestedInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  lastName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  latitude?: InputMaybe<NullableFloatFieldUpdateOperationsInput>;
+  longitude?: InputMaybe<NullableFloatFieldUpdateOperationsInput>;
+  nextOfKinContact?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  nextOfKinName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  onBoarding?: InputMaybe<BoolFieldUpdateOperationsInput>;
+  otpExpiration?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
+  password?: InputMaybe<StringFieldUpdateOperationsInput>;
+  profilePhoto?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  pushToken?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  radius?: InputMaybe<NullableFloatFieldUpdateOperationsInput>;
+  role?: InputMaybe<EnumRoleTypeFieldUpdateOperationsInput>;
+  token?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  verificationOtp?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+};
+
+export type UserUpdateWithoutChatInput = {
+  UserChat?: InputMaybe<UserChatUpdateManyWithoutUserNestedInput>;
+  accountVerified?: InputMaybe<BoolFieldUpdateOperationsInput>;
+  address?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  alerts?: InputMaybe<AlertUpdateManyWithoutUsersNestedInput>;
+  assignedEmergencies?: InputMaybe<EmergencyUpdateManyWithoutAssigneeNestedInput>;
+  assignedGroups?: InputMaybe<GroupUpdateManyWithoutAssigneeNestedInput>;
+  assignedUsers?: InputMaybe<UserUpdateManyWithoutAssigneeNestedInput>;
+  assignee?: InputMaybe<UserUpdateOneWithoutAssignedUsersNestedInput>;
+  chats?: InputMaybe<ChatUpdateManyWithoutParticipantsNestedInput>;
   companyName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   createdAlerts?: InputMaybe<AlertUpdateManyWithoutCreatorNestedInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
@@ -5211,6 +5759,8 @@ export type UserUpdateWithoutAssigneeInput = {
 };
 
 export type UserUpdateWithoutChatsInput = {
+  Chat?: InputMaybe<ChatUpdateManyWithoutUserNestedInput>;
+  UserChat?: InputMaybe<UserChatUpdateManyWithoutUserNestedInput>;
   accountVerified?: InputMaybe<BoolFieldUpdateOperationsInput>;
   address?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   alerts?: InputMaybe<AlertUpdateManyWithoutUsersNestedInput>;
@@ -5250,6 +5800,8 @@ export type UserUpdateWithoutChatsInput = {
 };
 
 export type UserUpdateWithoutCreatedAlertsInput = {
+  Chat?: InputMaybe<ChatUpdateManyWithoutUserNestedInput>;
+  UserChat?: InputMaybe<UserChatUpdateManyWithoutUserNestedInput>;
   accountVerified?: InputMaybe<BoolFieldUpdateOperationsInput>;
   address?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   alerts?: InputMaybe<AlertUpdateManyWithoutUsersNestedInput>;
@@ -5257,7 +5809,7 @@ export type UserUpdateWithoutCreatedAlertsInput = {
   assignedGroups?: InputMaybe<GroupUpdateManyWithoutAssigneeNestedInput>;
   assignedUsers?: InputMaybe<UserUpdateManyWithoutAssigneeNestedInput>;
   assignee?: InputMaybe<UserUpdateOneWithoutAssignedUsersNestedInput>;
-  chats?: InputMaybe<ChatUpdateManyWithoutUserNestedInput>;
+  chats?: InputMaybe<ChatUpdateManyWithoutParticipantsNestedInput>;
   companyName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
   createdEmergencies?: InputMaybe<EmergencyUpdateManyWithoutCreatorNestedInput>;
@@ -5289,6 +5841,8 @@ export type UserUpdateWithoutCreatedAlertsInput = {
 };
 
 export type UserUpdateWithoutCreatedEmergenciesInput = {
+  Chat?: InputMaybe<ChatUpdateManyWithoutUserNestedInput>;
+  UserChat?: InputMaybe<UserChatUpdateManyWithoutUserNestedInput>;
   accountVerified?: InputMaybe<BoolFieldUpdateOperationsInput>;
   address?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   alerts?: InputMaybe<AlertUpdateManyWithoutUsersNestedInput>;
@@ -5296,7 +5850,7 @@ export type UserUpdateWithoutCreatedEmergenciesInput = {
   assignedGroups?: InputMaybe<GroupUpdateManyWithoutAssigneeNestedInput>;
   assignedUsers?: InputMaybe<UserUpdateManyWithoutAssigneeNestedInput>;
   assignee?: InputMaybe<UserUpdateOneWithoutAssignedUsersNestedInput>;
-  chats?: InputMaybe<ChatUpdateManyWithoutUserNestedInput>;
+  chats?: InputMaybe<ChatUpdateManyWithoutParticipantsNestedInput>;
   companyName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   createdAlerts?: InputMaybe<AlertUpdateManyWithoutCreatorNestedInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
@@ -5328,6 +5882,8 @@ export type UserUpdateWithoutCreatedEmergenciesInput = {
 };
 
 export type UserUpdateWithoutCreatedGroupsInput = {
+  Chat?: InputMaybe<ChatUpdateManyWithoutUserNestedInput>;
+  UserChat?: InputMaybe<UserChatUpdateManyWithoutUserNestedInput>;
   accountVerified?: InputMaybe<BoolFieldUpdateOperationsInput>;
   address?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   alerts?: InputMaybe<AlertUpdateManyWithoutUsersNestedInput>;
@@ -5335,7 +5891,7 @@ export type UserUpdateWithoutCreatedGroupsInput = {
   assignedGroups?: InputMaybe<GroupUpdateManyWithoutAssigneeNestedInput>;
   assignedUsers?: InputMaybe<UserUpdateManyWithoutAssigneeNestedInput>;
   assignee?: InputMaybe<UserUpdateOneWithoutAssignedUsersNestedInput>;
-  chats?: InputMaybe<ChatUpdateManyWithoutUserNestedInput>;
+  chats?: InputMaybe<ChatUpdateManyWithoutParticipantsNestedInput>;
   companyName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   createdAlerts?: InputMaybe<AlertUpdateManyWithoutCreatorNestedInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
@@ -5367,6 +5923,8 @@ export type UserUpdateWithoutCreatedGroupsInput = {
 };
 
 export type UserUpdateWithoutCreatedUsersInput = {
+  Chat?: InputMaybe<ChatUpdateManyWithoutUserNestedInput>;
+  UserChat?: InputMaybe<UserChatUpdateManyWithoutUserNestedInput>;
   accountVerified?: InputMaybe<BoolFieldUpdateOperationsInput>;
   address?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   alerts?: InputMaybe<AlertUpdateManyWithoutUsersNestedInput>;
@@ -5374,7 +5932,7 @@ export type UserUpdateWithoutCreatedUsersInput = {
   assignedGroups?: InputMaybe<GroupUpdateManyWithoutAssigneeNestedInput>;
   assignedUsers?: InputMaybe<UserUpdateManyWithoutAssigneeNestedInput>;
   assignee?: InputMaybe<UserUpdateOneWithoutAssignedUsersNestedInput>;
-  chats?: InputMaybe<ChatUpdateManyWithoutUserNestedInput>;
+  chats?: InputMaybe<ChatUpdateManyWithoutParticipantsNestedInput>;
   companyName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   createdAlerts?: InputMaybe<AlertUpdateManyWithoutCreatorNestedInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
@@ -5406,6 +5964,8 @@ export type UserUpdateWithoutCreatedUsersInput = {
 };
 
 export type UserUpdateWithoutCreatorInput = {
+  Chat?: InputMaybe<ChatUpdateManyWithoutUserNestedInput>;
+  UserChat?: InputMaybe<UserChatUpdateManyWithoutUserNestedInput>;
   accountVerified?: InputMaybe<BoolFieldUpdateOperationsInput>;
   address?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   alerts?: InputMaybe<AlertUpdateManyWithoutUsersNestedInput>;
@@ -5413,7 +5973,7 @@ export type UserUpdateWithoutCreatorInput = {
   assignedGroups?: InputMaybe<GroupUpdateManyWithoutAssigneeNestedInput>;
   assignedUsers?: InputMaybe<UserUpdateManyWithoutAssigneeNestedInput>;
   assignee?: InputMaybe<UserUpdateOneWithoutAssignedUsersNestedInput>;
-  chats?: InputMaybe<ChatUpdateManyWithoutUserNestedInput>;
+  chats?: InputMaybe<ChatUpdateManyWithoutParticipantsNestedInput>;
   companyName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   createdAlerts?: InputMaybe<AlertUpdateManyWithoutCreatorNestedInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
@@ -5445,6 +6005,8 @@ export type UserUpdateWithoutCreatorInput = {
 };
 
 export type UserUpdateWithoutGroupsInput = {
+  Chat?: InputMaybe<ChatUpdateManyWithoutUserNestedInput>;
+  UserChat?: InputMaybe<UserChatUpdateManyWithoutUserNestedInput>;
   accountVerified?: InputMaybe<BoolFieldUpdateOperationsInput>;
   address?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   alerts?: InputMaybe<AlertUpdateManyWithoutUsersNestedInput>;
@@ -5452,7 +6014,7 @@ export type UserUpdateWithoutGroupsInput = {
   assignedGroups?: InputMaybe<GroupUpdateManyWithoutAssigneeNestedInput>;
   assignedUsers?: InputMaybe<UserUpdateManyWithoutAssigneeNestedInput>;
   assignee?: InputMaybe<UserUpdateOneWithoutAssignedUsersNestedInput>;
-  chats?: InputMaybe<ChatUpdateManyWithoutUserNestedInput>;
+  chats?: InputMaybe<ChatUpdateManyWithoutParticipantsNestedInput>;
   companyName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   createdAlerts?: InputMaybe<AlertUpdateManyWithoutCreatorNestedInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
@@ -5483,6 +6045,47 @@ export type UserUpdateWithoutGroupsInput = {
   verificationOtp?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
 };
 
+export type UserUpdateWithoutUserChatInput = {
+  Chat?: InputMaybe<ChatUpdateManyWithoutUserNestedInput>;
+  accountVerified?: InputMaybe<BoolFieldUpdateOperationsInput>;
+  address?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  alerts?: InputMaybe<AlertUpdateManyWithoutUsersNestedInput>;
+  assignedEmergencies?: InputMaybe<EmergencyUpdateManyWithoutAssigneeNestedInput>;
+  assignedGroups?: InputMaybe<GroupUpdateManyWithoutAssigneeNestedInput>;
+  assignedUsers?: InputMaybe<UserUpdateManyWithoutAssigneeNestedInput>;
+  assignee?: InputMaybe<UserUpdateOneWithoutAssignedUsersNestedInput>;
+  chats?: InputMaybe<ChatUpdateManyWithoutParticipantsNestedInput>;
+  companyName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  createdAlerts?: InputMaybe<AlertUpdateManyWithoutCreatorNestedInput>;
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  createdEmergencies?: InputMaybe<EmergencyUpdateManyWithoutCreatorNestedInput>;
+  createdGroups?: InputMaybe<GroupUpdateManyWithoutCreatorNestedInput>;
+  createdUsers?: InputMaybe<UserUpdateManyWithoutCreatorNestedInput>;
+  creator?: InputMaybe<UserUpdateOneWithoutCreatedUsersNestedInput>;
+  deviceId?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  deviceModel?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  deviceName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  email?: InputMaybe<StringFieldUpdateOperationsInput>;
+  firstName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  groups?: InputMaybe<GroupUpdateManyWithoutUsersNestedInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  lastName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  latitude?: InputMaybe<NullableFloatFieldUpdateOperationsInput>;
+  longitude?: InputMaybe<NullableFloatFieldUpdateOperationsInput>;
+  nextOfKinContact?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  nextOfKinName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  onBoarding?: InputMaybe<BoolFieldUpdateOperationsInput>;
+  otpExpiration?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
+  password?: InputMaybe<StringFieldUpdateOperationsInput>;
+  profilePhoto?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  pushToken?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  radius?: InputMaybe<NullableFloatFieldUpdateOperationsInput>;
+  role?: InputMaybe<EnumRoleTypeFieldUpdateOperationsInput>;
+  token?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  verificationOtp?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+};
+
 export type UserUpsertWithWhereUniqueWithoutAlertsInput = {
   create: UserCreateWithoutAlertsInput;
   update: UserUpdateWithoutAlertsInput;
@@ -5492,6 +6095,12 @@ export type UserUpsertWithWhereUniqueWithoutAlertsInput = {
 export type UserUpsertWithWhereUniqueWithoutAssigneeInput = {
   create: UserCreateWithoutAssigneeInput;
   update: UserUpdateWithoutAssigneeInput;
+  where: UserWhereUniqueInput;
+};
+
+export type UserUpsertWithWhereUniqueWithoutChatsInput = {
+  create: UserCreateWithoutChatsInput;
+  update: UserUpdateWithoutChatsInput;
   where: UserWhereUniqueInput;
 };
 
@@ -5525,9 +6134,9 @@ export type UserUpsertWithoutAssignedUsersInput = {
   where?: InputMaybe<UserWhereInput>;
 };
 
-export type UserUpsertWithoutChatsInput = {
-  create: UserCreateWithoutChatsInput;
-  update: UserUpdateWithoutChatsInput;
+export type UserUpsertWithoutChatInput = {
+  create: UserCreateWithoutChatInput;
+  update: UserUpdateWithoutChatInput;
   where?: InputMaybe<UserWhereInput>;
 };
 
@@ -5555,10 +6164,18 @@ export type UserUpsertWithoutCreatedUsersInput = {
   where?: InputMaybe<UserWhereInput>;
 };
 
+export type UserUpsertWithoutUserChatInput = {
+  create: UserCreateWithoutUserChatInput;
+  update: UserUpdateWithoutUserChatInput;
+  where?: InputMaybe<UserWhereInput>;
+};
+
 export type UserWhereInput = {
   AND?: InputMaybe<Array<UserWhereInput>>;
+  Chat?: InputMaybe<ChatListRelationFilter>;
   NOT?: InputMaybe<Array<UserWhereInput>>;
   OR?: InputMaybe<Array<UserWhereInput>>;
+  UserChat?: InputMaybe<UserChatListRelationFilter>;
   accountVerified?: InputMaybe<BoolFilter>;
   address?: InputMaybe<StringNullableFilter>;
   alerts?: InputMaybe<AlertListRelationFilter>;
@@ -5602,8 +6219,10 @@ export type UserWhereInput = {
 
 export type UserWhereUniqueInput = {
   AND?: InputMaybe<Array<UserWhereInput>>;
+  Chat?: InputMaybe<ChatListRelationFilter>;
   NOT?: InputMaybe<Array<UserWhereInput>>;
   OR?: InputMaybe<Array<UserWhereInput>>;
+  UserChat?: InputMaybe<UserChatListRelationFilter>;
   accountVerified?: InputMaybe<BoolFilter>;
   address?: InputMaybe<StringNullableFilter>;
   alerts?: InputMaybe<AlertListRelationFilter>;
@@ -5691,14 +6310,14 @@ export type CreateAlertMutationVariables = Exact<{
 }>;
 
 
-export type CreateAlertMutation = { __typename?: 'Mutation', createAlert?: { __typename?: 'CreateAlertResponse', totalNotified: number, alert: { __typename?: 'Alert', id: string, emergency: string, latitude: number, longitude: number } } | null };
+export type CreateAlertMutation = { __typename?: 'Mutation', createAlert?: { __typename?: 'CreateAlertResponse', totalNotified: number, alert: { __typename?: 'Alert', id: string, emergency: string, latitude: number, longitude: number, address?: string | null } } | null };
 
 export type CreateChatMutationVariables = Exact<{
   data: ChatCreateInput;
 }>;
 
 
-export type CreateChatMutation = { __typename?: 'Mutation', createChat?: { __typename?: 'Chat', id: string, message: string, timestamp: any, imageUrl?: string | null, user: { __typename?: 'User', firstName?: string | null, lastName?: string | null, profilePhoto?: string | null } } | null };
+export type CreateChatMutation = { __typename?: 'Mutation', createChat?: { __typename?: 'Chat', id: string, message: string, timestamp: any, imageUrl?: string | null, user?: { __typename?: 'User', firstName?: string | null, lastName?: string | null, profilePhoto?: string | null } | null } | null };
 
 export type GetUserBasicInfoQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -5720,7 +6339,7 @@ export type ListUserAlertsQueryVariables = Exact<{
 }>;
 
 
-export type ListUserAlertsQuery = { __typename?: 'Query', listAlerts: Array<{ __typename?: 'Alert', emergency: string, latitude: number, longitude: number, address?: string | null, id: string, createdAt: any, chats?: Array<{ __typename?: 'Chat', id: string, message: string, timestamp: any, userId: string }> | null }> };
+export type ListUserAlertsQuery = { __typename?: 'Query', listAlerts: Array<{ __typename?: 'Alert', emergency: string, latitude: number, longitude: number, address?: string | null, id: string, createdAt: any, chats?: Array<{ __typename?: 'Chat', id: string, message: string, timestamp: any, userId?: string | null }> | null }> };
 
 export type ListAlertsByUserAssociationQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -5732,12 +6351,17 @@ export type GetChatsByAlertIdQueryVariables = Exact<{
 }>;
 
 
-export type GetChatsByAlertIdQuery = { __typename?: 'Query', findChatsByAlertId?: Array<{ __typename?: 'Chat', id: string, message: string, timestamp: any, imageUrl?: string | null, user: { __typename?: 'User', firstName?: string | null, lastName?: string | null, profilePhoto?: string | null } } | null> | null };
+export type GetChatsByAlertIdQuery = { __typename?: 'Query', findChatsByAlertId?: Array<{ __typename?: 'Chat', id: string, message: string, timestamp: any, imageUrl?: string | null, user?: { __typename?: 'User', firstName?: string | null, lastName?: string | null, profilePhoto?: string | null } | null } | null> | null };
 
 export type ChatCreatedSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ChatCreatedSubscription = { __typename?: 'Subscription', chatCreated: { __typename?: 'Chat', id: string, message: string, timestamp: any, alertId: string, user: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, profilePhoto?: string | null } } };
+export type ChatCreatedSubscription = { __typename?: 'Subscription', chatCreated: { __typename?: 'Chat', id: string, message: string, timestamp: any, alertId: string, user?: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, profilePhoto?: string | null } | null } };
+
+export type AlertCreatedSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AlertCreatedSubscription = { __typename?: 'Subscription', alertCreated: { __typename?: 'Alert', id: string, emergency: string, latitude: number, longitude: number, address?: string | null } };
 
 
 export const LoginUserDocument = gql`
@@ -5934,6 +6558,7 @@ export const CreateAlertDocument = gql`
       emergency
       latitude
       longitude
+      address
     }
     totalNotified
   }
@@ -6313,3 +6938,36 @@ export function useChatCreatedSubscription(baseOptions?: Apollo.SubscriptionHook
       }
 export type ChatCreatedSubscriptionHookResult = ReturnType<typeof useChatCreatedSubscription>;
 export type ChatCreatedSubscriptionResult = Apollo.SubscriptionResult<ChatCreatedSubscription>;
+export const AlertCreatedDocument = gql`
+    subscription AlertCreated {
+  alertCreated {
+    id
+    emergency
+    latitude
+    longitude
+    address
+  }
+}
+    `;
+
+/**
+ * __useAlertCreatedSubscription__
+ *
+ * To run a query within a React component, call `useAlertCreatedSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useAlertCreatedSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAlertCreatedSubscription({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAlertCreatedSubscription(baseOptions?: Apollo.SubscriptionHookOptions<AlertCreatedSubscription, AlertCreatedSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<AlertCreatedSubscription, AlertCreatedSubscriptionVariables>(AlertCreatedDocument, options);
+      }
+export type AlertCreatedSubscriptionHookResult = ReturnType<typeof useAlertCreatedSubscription>;
+export type AlertCreatedSubscriptionResult = Apollo.SubscriptionResult<AlertCreatedSubscription>;

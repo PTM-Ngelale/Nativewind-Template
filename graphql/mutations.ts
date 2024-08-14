@@ -70,6 +70,8 @@ export const CREATE_ALERT_MUTATION = gql`
         emergency
         latitude
         longitude
+        address
+       
       }
       totalNotified
     }

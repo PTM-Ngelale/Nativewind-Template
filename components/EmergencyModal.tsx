@@ -19,28 +19,32 @@ interface Props {
   direction: boolean;
   setDirection: Dispatch<SetStateAction<boolean>>;
   modalDetails: number;
+  name?: string;
+  address: string;
+  emergency: string;
+  alertData: {
+    id: string;
+    emergency: string;
+    latitude: number;
+    longitude: number;
+    address: string;
+    createdAt: string;
+    createdBy: string;
+  };
 }
 
 const EmergencyModal = ({
-  selectedEmergency,
   emergencyModal,
   setEmergencyModal,
   getDirection,
   direction,
   setDirection,
-  modalDetails,
+  name,
+  address,
+  emergency,
+  alertData,
 }: Props) => {
-  const {
-    data: listAlerts,
-    loading: alertLoading,
-    error,
-  } = useListUserAlertsQuery({
-    variables: {
-      where: { latitude: { equals: modalDetails } },
-    },
-  });
 
-  const emergency = listAlerts?.listAlerts[0];
 
   return (
     <View style={styles.centeredView}>
@@ -49,7 +53,7 @@ const EmergencyModal = ({
         transparent={true}
         visible={emergencyModal}
         onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
+
           setEmergencyModal(!emergencyModal);
         }}
       >
@@ -68,27 +72,37 @@ const EmergencyModal = ({
                   resizeMode="contain"
                 />
                 <Text className="text-white">
-                  {emergency?.emergency || "Robbery"}
+                  {emergency || "Robbery"}
                 </Text>
               </View>
               <View className="gap-y-1 items-center">
-                <Text className="text-base font-bold">Jane Kameroon</Text>
-                <Text>5km away</Text>
+                <Text className="text-base font-bold">{name}</Text>
+
                 <Text className="text-center text-sm text-[#6B7280] max-w-[200px]">
-                  {emergency?.address}
+                  {address}
                 </Text>
               </View>
 
               <View className="mt-4 flex-row gap-x-4 items-center">
                 <TouchableOpacity
                   onPress={() => {
-                    router.push("/emergency-group/1");
+                    router.push({
+                      pathname: `/emergency-group/[id]`, params: {
+                        id: alertData.id,
+                        emergency: alertData.emergency,
+                        latitude: alertData.latitude,
+                        longitude: alertData.longitude,
+                        address: alertData.address,
+                        createdAt: alertData.createdAt,
+                        userId: alertData.createdBy,
+                      }
+                    },);
                     setEmergencyModal(false);
                   }}
                   activeOpacity={0.8}
                   className="bg-[#192655] border px-4 py-[10px] rounded-xl"
                 >
-                  <Text className="text-white">Join Group</Text>
+                  <Text className="text-white">View Chat</Text>
                 </TouchableOpacity>
                 {direction ? (
                   <TouchableOpacity
@@ -122,14 +136,14 @@ const EmergencyModal = ({
             </TouchableOpacity>
           </View>
         </View>
-      </Modal>
+      </Modal >
       {/* <Pressable
         style={[styles.button, styles.buttonOpen]}
         onPress={() => setEmergencyModal(true)}
       >
         <Text style={styles.textStyle}>Show Modal</Text>
       </Pressable> */}
-    </View>
+    </View >
   );
 };
 

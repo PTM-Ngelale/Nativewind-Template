@@ -1,10 +1,10 @@
-import { useListUserAlertsQuery } from "@/generated/graphql";
+import { useAlertCreatedSubscription, useListUserAlertsQuery } from "@/generated/graphql";
 import { GetUserBasicInfoQuery } from "@/graphql/query";
 import { useQuery } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Image,
   SafeAreaView,
@@ -18,10 +18,10 @@ const notifications = () => {
   const [activeTab, setActiveTab] = useState("all");
   const { data, loading, error } = useQuery(GetUserBasicInfoQuery);
   const { id } = data?.getCurrentUser || {};
-  const { data: listAlerts, loading: alertLoading } = useListUserAlertsQuery({
+  const { data: listAlerts, loading: alertLoading, refetch: refetchList } = useListUserAlertsQuery({
     skip: activeTab !== "all",
   });
-
+  const { data: subscriptionData, } = useAlertCreatedSubscription();
   const { data: listUserAlerts, loading: userAlertLoading } =
     useListUserAlertsQuery({
       variables: {
@@ -37,6 +37,14 @@ const notifications = () => {
   };
 
   const alertsToDisplay = activeTab === "all" ? allAlerts : myAlerts;
+
+  useEffect(() => {
+    if (subscriptionData) {
+      console.log(subscriptionData, "alonso")
+
+      refetchList();
+    }
+  }, [subscriptionData]);
 
 
   return (
@@ -95,7 +103,6 @@ const notifications = () => {
                           longitude: alert.longitude,
                           address: alert.address,
                           createdAt: alert.createdAt,
-                          chats: JSON.stringify(alert.chats),
                           userId: id
                         },
                       })

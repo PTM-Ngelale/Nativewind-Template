@@ -11,7 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import React from "react";
 import { Href, router } from "expo-router";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SecureStore from 'expo-secure-store';
 import Toast from "react-native-toast-message";
 
 const MenuNavigation: {
@@ -19,22 +19,22 @@ const MenuNavigation: {
   link: any;
   icon: React.JSX.Element;
 }[] = [
-  {
-    name: "My Profile",
-    link: "/profile",
-    icon: <TabBarIcon name={"person"} color={"#192655"} />
-  },
-  // {
-  //   name: "Settings",
-  //   link: "/test",
-  //   icon: <TabBarIcon name={"settings"} color={"#192655"} />
-  // },
-  {
-    name: "Logout",
-    link: "/(auth)/Login",
-    icon: <TabBarIcon name={"log-out"} color={"#192655"} />
-  }
-];
+    {
+      name: "My Profile",
+      link: "/profile",
+      icon: <TabBarIcon name={"person"} color={"#192655"} />
+    },
+    // {
+    //   name: "Settings",
+    //   link: "/test",
+    //   icon: <TabBarIcon name={"settings"} color={"#192655"} />
+    // },
+    {
+      name: "Logout",
+      link: "/(auth)/Login",
+      icon: <TabBarIcon name={"log-out"} color={"#192655"} />
+    }
+  ];
 
 const Menu = () => {
   return (
@@ -57,7 +57,7 @@ const Menu = () => {
               <TouchableOpacity
                 onPress={async () => {
                   if (item.name === "Logout") {
-                    await AsyncStorage.removeItem("userToken");
+                    await SecureStore.deleteItemAsync("alarmixToken");
                     router.replace("/(auth)/Login" as Href<string>);
                     Toast.show({ type: "success", text1: "Logout Successful" });
                   } else {

@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import "react-native-reanimated";
 import Toast from "react-native-toast-message";
 import { JsStack } from "./layouts/js-stack";
+import * as SecureStore from 'expo-secure-store';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -34,9 +35,12 @@ export default function RootLayout() {
 
       await persistCache({
         cache: apolloClient.cache,
-        storage: AsyncStorage,
+        storage: {
+          getItem: AsyncStorage.getItem,
+          setItem: AsyncStorage.setItem,
+          removeItem: AsyncStorage.removeItem,
+        },
       });
-
       setLoadingCache(false);
     };
 

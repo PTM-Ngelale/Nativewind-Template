@@ -26,6 +26,8 @@ interface Props {
   reportModal: boolean;
   setReportModal: Dispatch<SetStateAction<boolean>>;
   displayCurrentAddress: string;
+  setTotalNotified: Dispatch<SetStateAction<number>>;
+  setChatData: Dispatch<SetStateAction<any>>;
 }
 
 const ReportModal = ({
@@ -35,6 +37,8 @@ const ReportModal = ({
   reportModal,
   setReportModal,
   displayCurrentAddress,
+  setTotalNotified,
+  setChatData
 }: Props) => {
   const { data, } = useQuery(GetUserEmailDocument);
   const { getCurrentLocation, initialRegion } = useUser();
@@ -43,10 +47,12 @@ const ReportModal = ({
   const userData = data?.getCurrentUser;
 
   const [createAlert, { loading }] = useCreateAlertMutation({
-    onCompleted: () => {
+    onCompleted: (data) => {
+      const alert = data.createAlert;
       setReportModal(false);
       setEmergencyModal(true);
-      setSelectedEmergency("");
+      setTotalNotified(data.createAlert?.totalNotified || 0)
+      setChatData(data.createAlert?.alert)
       Toast.show({ type: "success", text1: "Report has been escalated!" });
     },
 

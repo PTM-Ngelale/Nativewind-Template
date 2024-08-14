@@ -83,12 +83,10 @@ const UserProvider = (props: { children: ReactNode }): ReactElement => {
 
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
-        console.log(notification);
       });
 
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log(response);
       });
 
     return () => {
@@ -170,7 +168,6 @@ const UserProvider = (props: { children: ReactNode }): ReactElement => {
         const address = response[0].formattedAddress;
         setDisplayCurrentAddress(address as string);
       }
-      console.log('Address', response[0].formattedAddress)
     }
   };
 
@@ -222,7 +219,6 @@ const UserProvider = (props: { children: ReactNode }): ReactElement => {
             projectId,
           })
         ).data;
-        console.log(pushTokenString);
         return pushTokenString;
       } catch (e: unknown) {
         handleRegistrationError(`${e}`);

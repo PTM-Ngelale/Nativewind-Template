@@ -77,7 +77,6 @@ async function registerForPushNotificationsAsync() {
           projectId,
         })
       ).data;
-      console.log(pushTokenString);
       // await sendPushTokenToBackend(pushTokenString); // Send the token to your backend
       return pushTokenString;
     } catch (e: unknown) {
@@ -108,7 +107,6 @@ export default function App() {
 
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log(response);
       });
 
     return () => {

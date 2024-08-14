@@ -16,6 +16,8 @@ import {
   View,
 } from "react-native";
 import Toast from "react-native-toast-message";
+import * as SecureStore from 'expo-secure-store';
+
 
 const Login = () => {
   const router = useRouter();
@@ -33,13 +35,12 @@ const Login = () => {
         });
 
         // Store token and expiration time in AsyncStorage
-        await AsyncStorage.setItem("userToken", tokenData);
+        await SecureStore.setItemAsync("alarmixToken", tokenData);
 
         router.push("/(tabs)" as Href<string>);
       }
     },
     onError: (error: ApolloError) => {
-      console.log(error.message)
       Toast.show({ type: "error", text1: error.message });
     },
   });

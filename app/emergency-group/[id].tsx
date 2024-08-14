@@ -72,12 +72,12 @@ const EmergencyPost = ({
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`;
   };
-
+  
   return (
     <View className=" flex flex-col  bg-[#EAEAEA]">
       <View className="flex flex-row  justify-between px-4 pt-4 space-x-2 items-center w-full">
         <View className="flex justify-between flex-row items-center space-x-2 flex-0">
-          {user.profilePhoto ? (
+          {user?.profilePhoto ? (
             <Image
               source={user.profilePhoto}
               className="w-full h-full rounded-full"
@@ -86,7 +86,7 @@ const EmergencyPost = ({
           ) :
             <View className="w-10 h-10  rounded-full bg-[#192655]  flex items-center justify-center">
               <Text className="text-white">
-                {getInitials(user.firstName, user.lastName)}
+                {getInitials(user?.firstName, user?.lastName)}
               </Text>
             </View>
           }
@@ -127,7 +127,7 @@ const EmergencyGroup = () => {
   const params = useLocalSearchParams();
   const { id, address, emergency, latitude, longitude, userId } = params;
   const [message, setMessage] = useState('');
-  const { data: chatMessages } = useGetChatsByAlertIdQuery({
+  const { data: chatMessages, refetch } = useGetChatsByAlertIdQuery({
     variables: {
       alertId: id as string,
     },
@@ -155,7 +155,7 @@ const EmergencyGroup = () => {
   useEffect(() => {
     if (subscriptionData) {
 
-      setChats(currentChats => [...currentChats, subscriptionData.chatCreated]);
+      refetch();
     }
   }, [subscriptionData]);
 
