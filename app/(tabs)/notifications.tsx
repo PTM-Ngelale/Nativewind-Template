@@ -40,8 +40,6 @@ const notifications = () => {
 
   useEffect(() => {
     if (subscriptionData) {
-      console.log(subscriptionData, "alonso")
-
       refetchList();
     }
   }, [subscriptionData]);

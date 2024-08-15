@@ -1,14 +1,12 @@
-import { useListUserAlertsQuery } from "@/generated/graphql";
 import { router } from "expo-router";
 import React, { Dispatch, SetStateAction } from "react";
 import {
-  Alert,
+  Image,
   Modal,
   StyleSheet,
   Text,
-  View,
-  Image,
   TouchableOpacity,
+  View,
 } from "react-native";
 
 interface Props {
@@ -44,8 +42,6 @@ const EmergencyModal = ({
   emergency,
   alertData,
 }: Props) => {
-
-
   return (
     <View style={styles.centeredView}>
       <Modal
@@ -53,7 +49,6 @@ const EmergencyModal = ({
         transparent={true}
         visible={emergencyModal}
         onRequestClose={() => {
-
           setEmergencyModal(!emergencyModal);
         }}
       >
@@ -71,9 +66,7 @@ const EmergencyModal = ({
                   className="h-[24px] w-[24px]"
                   resizeMode="contain"
                 />
-                <Text className="text-white">
-                  {emergency || "Robbery"}
-                </Text>
+                <Text className="text-white">{emergency || "Robbery"}</Text>
               </View>
               <View className="gap-y-1 items-center">
                 <Text className="text-base font-bold">{name}</Text>
@@ -86,8 +79,10 @@ const EmergencyModal = ({
               <View className="mt-4 flex-row gap-x-4 items-center">
                 <TouchableOpacity
                   onPress={() => {
+                    setEmergencyModal(false);
                     router.push({
-                      pathname: `/emergency-group/[id]`, params: {
+                      pathname: `/emergency-group/[id]`,
+                      params: {
                         id: alertData.id,
                         emergency: alertData.emergency,
                         latitude: alertData.latitude,
@@ -95,9 +90,8 @@ const EmergencyModal = ({
                         address: alertData.address,
                         createdAt: alertData.createdAt,
                         userId: alertData.createdBy,
-                      }
-                    },);
-                    setEmergencyModal(false);
+                      },
+                    });
                   }}
                   activeOpacity={0.8}
                   className="bg-[#192655] border px-4 py-[10px] rounded-xl"
@@ -136,14 +130,14 @@ const EmergencyModal = ({
             </TouchableOpacity>
           </View>
         </View>
-      </Modal >
+      </Modal>
       {/* <Pressable
         style={[styles.button, styles.buttonOpen]}
         onPress={() => setEmergencyModal(true)}
       >
         <Text style={styles.textStyle}>Show Modal</Text>
       </Pressable> */}
-    </View >
+    </View>
   );
 };
 

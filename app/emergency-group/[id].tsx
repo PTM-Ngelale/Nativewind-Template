@@ -1,26 +1,31 @@
-import {
-  FlatList,
-  Text,
-  TouchableOpacity,
-  Image,
-  View,
-  ImageProps,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
-import CustomTextInput from "@/components/ui/CustomInput";
-import * as ImagePicker from "expo-image-picker";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { router, useLocalSearchParams } from "expo-router";
 import CustomButton from "@/components/ui/CustomButton";
-import { useEffect, useRef, useState } from "react";
+import CustomTextInput from "@/components/ui/CustomInput";
+import {
+  useChatCreatedSubscription,
+  useCreateChatMutation,
+  useGetChatsByAlertIdQuery,
+} from "@/generated/graphql";
+import { ApolloError } from "@apollo/client";
 import {
   differenceInDays,
   differenceInHours,
   formatDistanceToNow,
 } from "date-fns";
-import { useChatCreatedSubscription, useCreateChatMutation, useGetChatsByAlertIdQuery } from "@/generated/graphql";
-import { ApolloError } from "@apollo/client";
+import * as ImagePicker from "expo-image-picker";
+import { router, useLocalSearchParams } from "expo-router";
+import { useEffect, useRef, useState } from "react";
+import {
+  FlatList,
+  Image,
+  ImageProps,
+  KeyboardAvoidingView,
+  Platform,
+  Text,
+  TouchableOpacity,
+  Vibration,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type Chat = {
   __typename?: "Chat";
@@ -37,14 +42,11 @@ type Chat = {
   };
 };
 
-
 const formatTimestamp = (timestamp: string) => {
   const now = new Date();
   const date = new Date(timestamp);
   const hours = differenceInHours(now, date);
   const days = differenceInDays(now, date);
-
-
 
   if (days > 0) {
     return `${days}d`;
@@ -72,7 +74,7 @@ const EmergencyPost = ({
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`;
   };
-  
+
   return (
     <View className=" flex flex-col  bg-[#EAEAEA]">
       <View className="flex flex-row  justify-between px-4 pt-4 space-x-2 items-center w-full">
@@ -83,14 +85,17 @@ const EmergencyPost = ({
               className="w-full h-full rounded-full"
               resizeMode="cover"
             />
-          ) :
+          ) : (
             <View className="w-10 h-10  rounded-full bg-[#192655]  flex items-center justify-center">
               <Text className="text-white">
                 {getInitials(user?.firstName, user?.lastName)}
               </Text>
             </View>
-          }
-          <Text className="font-bold text-[16px]">{user.firstName}{user.lastName}</Text>
+          )}
+          <Text className="font-bold text-[16px]">
+            {user.firstName}
+            {user.lastName}
+          </Text>
         </View>
 
         <View className="flex ml-auto">
@@ -104,10 +109,8 @@ const EmergencyPost = ({
           activeOpacity={0.9}
           onPress={() => router.back()}
           className=" rounded-full overflow-hidden"
-        >
-        </TouchableOpacity>
+        ></TouchableOpacity>
         <View className="space-y-2.5 flex-1">
-
           <Text className="text-[#4B5563] leading-[16px]">{message}</Text>
           {imageUrl ? (
             <TouchableOpacity className="w-full rounded-md h-[198px]">
@@ -125,40 +128,50 @@ const EmergencyPost = ({
 };
 const EmergencyGroup = () => {
   const params = useLocalSearchParams();
-  const { id, address, emergency, latitude, longitude, userId } = params;
-  const [message, setMessage] = useState('');
-  const { data: chatMessages, refetch } = useGetChatsByAlertIdQuery({
+  const { id, address, emergency, userId } = params;
+  const [message, setMessage] = useState("");
+  const { data: chatMessages,} = useGetChatsByAlertIdQuery({
     variables: {
       alertId: id as string,
     },
-  })
+  });
 
   const [chats, setChats] = useState<Chat[]>([]);
   useEffect(() => {
     if (chatMessages?.findChatsByAlertId) {
-      setChats(chatMessages.findChatsByAlertId.filter(chat => chat !== null) as Chat[]);
+      setChats(
+        chatMessages.findChatsByAlertId.filter(
+          (chat) => chat !== null
+        ) as Chat[]
+      );
     }
   }, [chatMessages]);
 
-  const [createChat, { loading }] = useCreateChatMutation({
-    onCompleted: async (data) => {
-
-    },
+  const [createChat] = useCreateChatMutation({
+    onCompleted: async () => {},
 
     onError: (error: ApolloError) => {
       console.error("Error creating chat", error);
     },
-  })
+  });
 
-  const { data: subscriptionData, error: subscriptionError } = useChatCreatedSubscription();
+  const { data: subscriptionData } = useChatCreatedSubscription();
 
   useEffect(() => {
     if (subscriptionData) {
+      // Check if the new message belongs to the current alert
+      if (subscriptionData.chatCreated.alertId === id) {
+        // Update the chat state by appending the new message
+        setChats([...chats, subscriptionData.chatCreated as Chat]);
 
-      refetch();
+        // Check if the message is from a different user
+        if (subscriptionData?.chatCreated?.user?.id !== userId) {
+          // Play a sound or vibrate
+          Vibration.vibrate(); // Vibrate the device
+        }
+      }
     }
   }, [subscriptionData]);
-
 
   const [selectedImage, setSelectedImage] = useState<null | string>(null);
   const flatListRef = useRef<FlatList>(null);
@@ -170,20 +183,18 @@ const EmergencyGroup = () => {
           message: message,
           alert: {
             connect: {
-              id: id as string
-            }
+              id: id as string,
+            },
           },
           user: {
             connect: {
               id: userId as string,
             },
-          }
-
-        }
-      }
-    })
-  }
-
+          },
+        },
+      },
+    });
+  };
 
   const pickImageAsync = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -206,20 +217,19 @@ const EmergencyGroup = () => {
     }
   }, []);
 
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       className="bg-white w-full h-full"
       style={{ flex: 1 }}
-
     >
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} className="flex-1" keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}>
+      <SafeAreaView className="flex-1" edges={["top", "bottom"]}>
         <FlatList
           ref={flatListRef}
           data={chats}
-          onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
-
+          onContentSizeChange={() =>
+            flatListRef.current?.scrollToEnd({ animated: true })
+          }
           ListHeaderComponent={() => {
             return (
               <View>
@@ -236,9 +246,9 @@ const EmergencyGroup = () => {
                   </TouchableOpacity>
                 </View>
                 <View className="px-4 py-[34px] bg-[#192655] space-y-2 items-center">
-                  <Text className="font-bold text-base text-white">
+                  {/* <Text className="font-bold text-base text-white">
                     Jane Kameroon
-                  </Text>
+                  </Text> */}
                   <View className="flex flex-row items-center space-x-2">
                     <Image
                       source={require("../../assets/images/location.png")}
@@ -249,12 +259,12 @@ const EmergencyGroup = () => {
                       Location: {address}
                     </Text>
                   </View>
-                  <CustomButton
-                    onPress={() => { }}
+                  {/* <CustomButton
+                    onPress={getDirection}
                     title="Get Direction"
                     textStyle="text-[#192655] text-sm text-center px-2"
                     customStyle="bg-white mt-3"
-                  />
+                  /> */}
                   <View className=""></View>
                 </View>
                 <View className="px-4 py-2 items-center bg-[#D22121]">
@@ -271,10 +281,10 @@ const EmergencyGroup = () => {
             );
           }}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ width: "100%", }}
+          contentContainerStyle={{ width: "100%" }}
           renderItem={({ item }) => <EmergencyPost {...item} />}
         />
-      </KeyboardAvoidingView>
+      </SafeAreaView>
       <View className="px-4  py-4 space-x-3 flex items-center justify-between flex-row">
         <TouchableOpacity onPress={pickImageAsync}>
           <View className="w-10 h-10 items-center justify-center rounded-full border border-[#6B728080]">
@@ -303,7 +313,7 @@ const EmergencyGroup = () => {
           onPress={() => {
             if (message.trim()) {
               handleSendMessage(); // Call createChat with the message
-              setMessage(''); // Clear the input field after sending the message
+              setMessage(""); // Clear the input field after sending the message
             }
           }}
           title="send"
@@ -311,7 +321,6 @@ const EmergencyGroup = () => {
           customStyle="bg-[#192655] border border-[#D1D5DB] w-[70px] bg-white"
         />
       </View>
-
     </KeyboardAvoidingView>
   );
 };

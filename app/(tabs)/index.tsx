@@ -4,6 +4,7 @@ import ReportModal from "@/components/ReportModal";
 import SosModal from "@/components/SosModal";
 import { useUser } from "@/context/userContext";
 import {
+  Alert,
   AlertType,
   GetUserEmailDocument,
   useCreateAlertMutation,
@@ -46,15 +47,15 @@ export default function HomeScreen() {
   const [totalNotified, setTotalNotified] = useState(0);
   const { data } = useQuery(GetUserEmailDocument);
   const userData = data?.getCurrentUser;
-  const [chatData, setChatData] = useState<any>(null)
+  const [chatData, setChatData] = useState<any>(null);
 
   const [createAlert, { loading: loadingAlerts }] = useCreateAlertMutation({
     onCompleted: (data) => {
       const alert = data.createAlert;
       setReportModal(false);
       setSosModal(true);
-      setTotalNotified(data.createAlert?.totalNotified || 0)
-      setChatData(data.createAlert?.alert)
+      setTotalNotified(data.createAlert?.totalNotified || 0);
+      setChatData(data.createAlert?.alert);
       Toast.show({ type: "success", text1: "Report has been escalated!" });
     },
     onError: (error: ApolloError) => {
@@ -74,16 +75,15 @@ export default function HomeScreen() {
     fetchLocation();
   }, []);
 
-  const {
-    data: listAlerts,
-  } = useListAlertsByUserAssociationQuery();
+  const { data: listAlerts } = useListAlertsByUserAssociationQuery();
 
   const setMarkerDirection = (
     latitude: number,
     longitude: number,
     id: number,
     emergency: string,
-    address: string
+    address: string,
+    alert: any
   ) => {
     setDirectionOrigin({
       latitude: initialRegion.latitude,
@@ -97,6 +97,7 @@ export default function HomeScreen() {
     setModalDetails(id);
     setEmergency(emergency); // Set the emergency detail
     setAddress(address); // Set the address detail
+    setChatData(alert);
   };
 
   const getDirection = () => {
@@ -145,8 +146,6 @@ export default function HomeScreen() {
       // Handle error (e.g., show a toast or alert)
     }
   };
-
-  console.log(JSON.stringify(listAlerts?.listAlertsByUserAssociation))
 
   return (
     <View className="h-full w-full bg-white">
@@ -200,7 +199,8 @@ export default function HomeScreen() {
                 marker.longitude,
                 marker.latitude,
                 marker.emergency,
-                marker.address as string
+                marker.address as string,
+                marker
               )
             }
           />
@@ -269,7 +269,13 @@ export default function HomeScreen() {
       </View>
 
       <View>
-        <SosModal alertData={chatData} type={selectedEmergency || "SOS"} sosModal={sosModal} setSosModal={setSosModal} totalNotified={totalNotified} />
+        <SosModal
+          alertData={chatData}
+          type={selectedEmergency || "SOS"}
+          sosModal={sosModal}
+          setSosModal={setSosModal}
+          totalNotified={totalNotified}
+        />
       </View>
 
       <View>

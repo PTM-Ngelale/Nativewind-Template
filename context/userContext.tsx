@@ -83,11 +83,17 @@ const UserProvider = (props: { children: ReactNode }): ReactElement => {
 
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
+        // Access the badge count from the notification object
+        const badgeCount = notification.request.content.badge;
+        // Set the badge count
+        if (badgeCount) {
+          // edit
+          Notifications.setBadgeCountAsync(badgeCount);
+        } // edit
       });
 
     responseListener.current =
-      Notifications.addNotificationResponseReceivedListener((response) => {
-      });
+      Notifications.addNotificationResponseReceivedListener((response) => {});
 
     return () => {
       notificationListener.current &&
@@ -161,10 +167,7 @@ const UserProvider = (props: { children: ReactNode }): ReactElement => {
         longitude,
       });
 
-
-
       if (response.length > 0) {
-        const { name, region, country } = response[0];
         const address = response[0].formattedAddress;
         setDisplayCurrentAddress(address as string);
       }
@@ -241,7 +244,6 @@ const UserProvider = (props: { children: ReactNode }): ReactElement => {
       deviceModel,
     });
   };
-
 
   return (
     <UserContext.Provider

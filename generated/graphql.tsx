@@ -2603,6 +2603,7 @@ export type Mutation = {
   updateManyGroup?: Maybe<AffectedRows>;
   updateManyUser?: Maybe<AffectedRows>;
   updateUser?: Maybe<User>;
+  verifyDeviceChange: User;
   verifyEmail: LoginData;
   verifyOtp: User;
   verifyUserAccountOtp: User;
@@ -2814,6 +2815,15 @@ export type MutationUpdateManyUserArgs = {
 export type MutationUpdateUserArgs = {
   data: UserUpdateInput;
   where: UserWhereUniqueInput;
+};
+
+
+export type MutationVerifyDeviceChangeArgs = {
+  deviceModel: Scalars['String']['input'];
+  deviceName: Scalars['String']['input'];
+  email: Scalars['String']['input'];
+  otp: Scalars['String']['input'];
+  pushToken: Scalars['String']['input'];
 };
 
 
@@ -6305,6 +6315,17 @@ export type UpdateUserMutationVariables = Exact<{
 
 export type UpdateUserMutation = { __typename?: 'Mutation', updateUser?: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, profilePhoto?: string | null } | null };
 
+export type VerifyDeviceChangeMutationVariables = Exact<{
+  email: Scalars['String']['input'];
+  otp: Scalars['String']['input'];
+  deviceName: Scalars['String']['input'];
+  deviceModel: Scalars['String']['input'];
+  expoPushToken: Scalars['String']['input'];
+}>;
+
+
+export type VerifyDeviceChangeMutation = { __typename?: 'Mutation', verifyDeviceChange: { __typename?: 'User', email: string } };
+
 export type CreateAlertMutationVariables = Exact<{
   data: AlertCreateInput;
 }>;
@@ -6550,6 +6571,49 @@ export function useUpdateUserMutation(baseOptions?: Apollo.MutationHookOptions<U
 export type UpdateUserMutationHookResult = ReturnType<typeof useUpdateUserMutation>;
 export type UpdateUserMutationResult = Apollo.MutationResult<UpdateUserMutation>;
 export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<UpdateUserMutation, UpdateUserMutationVariables>;
+export const VerifyDeviceChangeDocument = gql`
+    mutation VerifyDeviceChange($email: String!, $otp: String!, $deviceName: String!, $deviceModel: String!, $expoPushToken: String!) {
+  verifyDeviceChange(
+    deviceName: $deviceName
+    deviceModel: $deviceModel
+    pushToken: $expoPushToken
+    email: $email
+    otp: $otp
+  ) {
+    email
+  }
+}
+    `;
+export type VerifyDeviceChangeMutationFn = Apollo.MutationFunction<VerifyDeviceChangeMutation, VerifyDeviceChangeMutationVariables>;
+
+/**
+ * __useVerifyDeviceChangeMutation__
+ *
+ * To run a mutation, you first call `useVerifyDeviceChangeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useVerifyDeviceChangeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [verifyDeviceChangeMutation, { data, loading, error }] = useVerifyDeviceChangeMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *      otp: // value for 'otp'
+ *      deviceName: // value for 'deviceName'
+ *      deviceModel: // value for 'deviceModel'
+ *      expoPushToken: // value for 'expoPushToken'
+ *   },
+ * });
+ */
+export function useVerifyDeviceChangeMutation(baseOptions?: Apollo.MutationHookOptions<VerifyDeviceChangeMutation, VerifyDeviceChangeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<VerifyDeviceChangeMutation, VerifyDeviceChangeMutationVariables>(VerifyDeviceChangeDocument, options);
+      }
+export type VerifyDeviceChangeMutationHookResult = ReturnType<typeof useVerifyDeviceChangeMutation>;
+export type VerifyDeviceChangeMutationResult = Apollo.MutationResult<VerifyDeviceChangeMutation>;
+export type VerifyDeviceChangeMutationOptions = Apollo.BaseMutationOptions<VerifyDeviceChangeMutation, VerifyDeviceChangeMutationVariables>;
 export const CreateAlertDocument = gql`
     mutation CreateAlert($data: AlertCreateInput!) {
   createAlert(data: $data) {

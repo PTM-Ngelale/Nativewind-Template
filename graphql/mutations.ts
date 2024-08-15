@@ -61,6 +61,26 @@ export const UPDATE_USER_MUTATION = gql`
   }
 `;
 
+export const DEVICE_CHANGE_MUTATION = gql`
+  mutation VerifyDeviceChange(
+    $email: String!
+    $otp: String!
+    $deviceName: String!
+    $deviceModel: String!
+    $expoPushToken: String!
+  ) {
+    verifyDeviceChange(
+      deviceName: $deviceName
+      deviceModel: $deviceModel
+      pushToken: $expoPushToken
+      email: $email
+      otp: $otp
+    ) {
+      email
+    }
+  }
+`;
+
 //Alerts
 export const CREATE_ALERT_MUTATION = gql`
   mutation CreateAlert($data: AlertCreateInput!) {
@@ -71,28 +91,25 @@ export const CREATE_ALERT_MUTATION = gql`
         latitude
         longitude
         address
-       
       }
       totalNotified
     }
   }
 `;
 
-
 //Chats
 export const CREATE_CHAT_MUTATIon = gql`
   mutation CreateChat($data: ChatCreateInput!) {
     createChat(data: $data) {
       id
-      message 
+      message
       timestamp
       imageUrl
       user {
-      firstName
-      lastName
-      profilePhoto
+        firstName
+        lastName
+        profilePhoto
       }
     }
   }
 `;
-

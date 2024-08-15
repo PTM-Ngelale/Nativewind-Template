@@ -18,10 +18,11 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 
 const Profile: React.FC = () => {
   const { data, loading, error } = useQuery(GetUserBasicInfoQuery);
-  const { userToken, } = useAuth();
+  const { userToken } = useAuth();
   const [updateUser, { loading: userUpdating, error: userUpdateError }] =
     useUpdateUserMutation({
       onCompleted: () => {
@@ -85,21 +86,22 @@ const Profile: React.FC = () => {
         name: asset.fileName,
       } as any); // Type assertion to satisfy FormData.append
 
+      console.log(asset)
+
       const response = await axios.post(
-        "https://c647-2c0f-2a80-a-6f10-f81d-47fe-97cc-679c.ngrok-free.app/upload",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        "https://a9ea-102-90-43-140.ngrok-free.app/upload",
+        formData
       );
+
 
       return response.data.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
         // If the error is an AxiosError, log the response error
-        console.log("error", error.response?.data?.message || error.message);
+        Toast.show({
+          type: "error",
+          text1: error.response?.data?.message || error.message,
+        });
       } else {
         // For non-Axios errors, log the error message
         console.log("error", (error as Error).message);
@@ -138,7 +140,7 @@ const Profile: React.FC = () => {
 
   if (loading) return <Loading />;
   if (error || userUpdateError) {
-    console.log(error?.message)
+    console.log(error?.message);
     console.log("error", error?.message || "An unknown error occurred");
   }
 
