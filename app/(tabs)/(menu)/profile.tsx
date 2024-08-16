@@ -22,7 +22,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 
 const Profile: React.FC = () => {
-  const { data, loading, error } = useQuery(GetUserBasicInfoQuery);
+  const { data, loading, error } = useQuery(GetUserBasicInfoQuery, {
+    fetchPolicy: "network-only"
+  });
   const { userToken } = useAuth();
   const [updateUser, { loading: userUpdating, error: userUpdateError }] =
     useUpdateUserMutation({
@@ -42,6 +44,8 @@ const Profile: React.FC = () => {
     nextOfKinName: initialNextOfKinName,
     nextOfKinContact: initalNextOfKinContact,
   } = data?.getCurrentUser || {};
+
+  console.log(initialFirstName)
 
   const [firstName, setFirstName] = useState<string>(initialFirstName || "");
   const [lastName, setLastName] = useState<string>(initialLastName || "");

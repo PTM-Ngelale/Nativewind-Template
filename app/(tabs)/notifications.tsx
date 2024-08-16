@@ -32,6 +32,8 @@ const notifications = () => {
 
   const allAlerts = listAlerts?.listAlerts;
   const myAlerts = listUserAlerts?.listAlerts;
+
+  console.log(id)
   const toggleTab = (tab: any) => {
     setActiveTab(tab);
   };

@@ -51,7 +51,7 @@ export const createAuthLink = (userToken: string) => {
 
 // Apollo Client initialization
 export const createApolloClient =
-  async (cache: InMemoryCache): Promise<ApolloClient<any> | null> => { 
+  async () => { 
     try {
       const tokenData = await SecureStore.getItemAsync("alarmixToken");
       let userToken = "";
@@ -62,7 +62,7 @@ export const createApolloClient =
           const currentTime = new Date().getTime();
 
           if (currentTime < expiration) {
-            userToken = token;
+            userToken = token; // Ensure userToken is set correctly
           } else {
             // Token has expired, handle accordingly (i.e., redirect to login)
             await SecureStore.deleteItemAsync("alarmixToken");
@@ -72,6 +72,9 @@ export const createApolloClient =
           await SecureStore.deleteItemAsync("alarmixToken");
           router.replace("/(auth)/Login" as Href<string>);
         }
+      } else {
+        // Handle case where tokenData is null (e.g., first login)
+        console.log("No token found, please log in.");
       }
 
       const authLink = createAuthLink(userToken);
@@ -90,7 +93,6 @@ export const createApolloClient =
         authLink.concat(httpLink) // Use HTTP link for queries and mutations
       );
 
-      const cache = new InMemoryCache();
       const defaultOptions: DefaultOptions = {
         watchQuery: {
           fetchPolicy: "no-cache",
@@ -99,8 +101,8 @@ export const createApolloClient =
 
       return new ApolloClient({
         link,
-        cache,
         defaultOptions,
+          cache: new InMemoryCache(), 
       });
     } catch (error) {
       console.log(error);

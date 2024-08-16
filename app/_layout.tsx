@@ -31,16 +31,15 @@ export default function RootLayout() {
   const setClient = useApolloStore((state) => state.setClient);
   // Function to initialize Apollo Client
   const initializeApolloClient = async () => {
-    const cache = new InMemoryCache(); // Create a new cache instance
-    await persistCache({
-      cache,
-      storage: AsyncStorage, // Use AsyncStorage for persistence
-    });
-    apolloClientRef.current = await createApolloClient(cache); // Pass the cache to the client
-    setClient(apolloClientRef.current); // Store the client in Zustand
-    setLoadingCache(false); // Update loading state
+    const newClient = await createApolloClient();
+    await newClient!.clearStore(); // This ensures no stale data is carried over
+    await newClient!.cache.reset(); // Just in case, reset the cache too
+    apolloClientRef.current = newClient;
+    setClient(apolloClientRef.current);
+    setLoadingCache(false);
     await SplashScreen.hideAsync();
   };
+
 
   // Call the initialization function immediately
   initializeApolloClient();

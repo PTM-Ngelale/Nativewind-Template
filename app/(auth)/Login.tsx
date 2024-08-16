@@ -24,6 +24,8 @@ const Login = () => {
     email: "",
     password: "",
   });
+
+  
   const [loginUser, { loading }] = useLoginUserMutation({
     onCompleted: async (data) => {
       if (data.loginUser.token) {
@@ -38,6 +40,8 @@ const Login = () => {
 
         // Store token and expiration time in AsyncStorage
         await SecureStore.setItemAsync("alarmixToken", tokenData);
+        const { token, expiration } = JSON.parse(tokenData);
+        console.log(token)
 
         router.push("/(tabs)" as Href<string>);
       } else {
@@ -89,6 +93,7 @@ const Login = () => {
       });
     }
   };
+
 
   return (
     <SafeAreaView className="bg-white h-full">

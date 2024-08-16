@@ -62,11 +62,23 @@ const Menu = () => {
               <TouchableOpacity
                 onPress={async () => {
                   if (item.name === "Logout") {
+                    // Clear the Apollo Client's cache and store
+                    await apolloClient?.resetStore(); // Clears the store
+                    await apolloClient?.cache.reset(); // Resets the cache
+
+                    // Delete the authentication token from SecureStore
                     await SecureStore.deleteItemAsync("alarmixToken");
-                    apolloClient?.clearStore();
+
+                    // Optionally, you can also reset your local state or Zustand state if necessary
+                    setClient(null); // Remove the Apollo Client from Zustand
+
+                    // Navigate to the login screen
                     router.replace("/(auth)/Login" as Href<string>);
+
+                    // Show a toast message indicating successful logout
                     Toast.show({ type: "success", text1: "Logout Successful" });
                   } else {
+                    // Navigate to the selected menu item
                     router.push(item.link as Href<string>);
                   }
                 }}
