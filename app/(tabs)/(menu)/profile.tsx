@@ -6,6 +6,7 @@ import ImageUpload from "@/components/ui/ImageUpload";
 import { useUpdateUserMutation } from "@/generated/graphql";
 import { GetUserBasicInfoQuery } from "@/graphql/query";
 import useAuth from "@/hooks/useAuth";
+import * as FileSystem from 'expo-file-system';
 import { ApolloError, useQuery } from "@apollo/client";
 import axios from "axios";
 import { ImagePickerAsset, ImagePickerResult } from "expo-image-picker";
@@ -80,38 +81,46 @@ const Profile: React.FC = () => {
       }
 
       const formData = new FormData();
+      //  Get the file contents from the URI
+      const fileContents = await FileSystem.readAsStringAsync(asset.uri, { encoding: 'base64' });
+      const fileBlob = new Blob([fileContents], { type: asset.type });
+
       formData.append("file", {
         uri: asset.uri,
         type: asset.type,
         name: asset.fileName,
+        data: fileBlob,
       } as any); // Type assertion to satisfy FormData.append
 
-      console.log(asset)
 
-      const response = await axios.post(
+      const response = await fetch(
         "https://a9ea-102-90-43-140.ngrok-free.app/upload",
-        formData
+        {
+          method: 'POST',
+          body: formData,
+
+        }
       );
-
-
-      return response.data.data;
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        // If the error is an AxiosError, log the response error
-        Toast.show({
-          type: "error",
-          text1: error.response?.data?.message || error.message,
-        });
-      } else {
-        // For non-Axios errors, log the error message
-        console.log("error", (error as Error).message);
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Upload failed:", errorText);
+        throw new Error(`Upload failed: ${response.status} ${errorText}`);
       }
+
+      const responseData = await response.json();
+      return responseData.data.data;
+    } catch (error) {
+      // Handle errors here
+      console.error("Error uploading image:", error);
+      Toast.show({
+        type: "error",
+        text1: "Error uploading image",
+      });
       throw error;
     } finally {
       setIsUploading(false);
     }
   };
-
   const handleUpdateProfile = async () => {
     try {
       let profilePhotoUrl = profilePhoto || "";

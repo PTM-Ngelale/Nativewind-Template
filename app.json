@@ -4,7 +4,7 @@
     "slug": "alarmix",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/Alarmix_logo.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -25,7 +25,13 @@
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION"
       ],
-      "package": "com.expectoo.alarmix"
+      "package": "com.expectoo.alarmix",
+      "googleServicesFile": "./google-services.json",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyAarxyzQsNQtOzS0rSr51QGbDSkxJkcwzk"
+        }
+      }
     },
     "web": {
       "bundler": "metro",

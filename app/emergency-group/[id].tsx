@@ -72,7 +72,11 @@ const EmergencyPost = ({
   timestamp: string;
 }) => {
   const getInitials = (firstName: string, lastName: string) => {
-    return `${firstName.charAt(0)}${lastName.charAt(0)}`;
+    // Check if firstName or lastName is null
+    if (!firstName && !lastName) {
+      return "JD"; // Return "Unknown User" if both are null
+    }
+    return `${firstName?.charAt(0) || ''}${lastName?.charAt(0) || ''}`;
   };
 
   return (
@@ -92,10 +96,13 @@ const EmergencyPost = ({
               </Text>
             </View>
           )}
-          <Text className="font-bold text-[16px]">
-            {user.firstName}
-            {user.lastName}
-          </Text>
+          {
+            user?.firstName &&
+            <Text className="font-bold text-[16px]">
+              {user.firstName}
+              {user.lastName}
+            </Text>
+          }
         </View>
 
         <View className="flex ml-auto">
@@ -130,7 +137,7 @@ const EmergencyGroup = () => {
   const params = useLocalSearchParams();
   const { id, address, emergency, userId } = params;
   const [message, setMessage] = useState("");
-  const { data: chatMessages,} = useGetChatsByAlertIdQuery({
+  const { data: chatMessages, } = useGetChatsByAlertIdQuery({
     variables: {
       alertId: id as string,
     },
@@ -148,7 +155,7 @@ const EmergencyGroup = () => {
   }, [chatMessages]);
 
   const [createChat] = useCreateChatMutation({
-    onCompleted: async () => {},
+    onCompleted: async () => { },
 
     onError: (error: ApolloError) => {
       console.error("Error creating chat", error);

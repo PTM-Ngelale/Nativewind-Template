@@ -51,7 +51,7 @@ export const createAuthLink = (userToken: string) => {
 
 // Apollo Client initialization
 export const createApolloClient =
-  async (): Promise<ApolloClient<any> | null> => {
+  async (cache: InMemoryCache): Promise<ApolloClient<any> | null> => { 
     try {
       const tokenData = await SecureStore.getItemAsync("alarmixToken");
       let userToken = "";
@@ -93,7 +93,7 @@ export const createApolloClient =
       const cache = new InMemoryCache();
       const defaultOptions: DefaultOptions = {
         watchQuery: {
-          fetchPolicy: "network-only",
+          fetchPolicy: "no-cache",
         },
       };
 

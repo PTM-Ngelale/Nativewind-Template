@@ -13,6 +13,7 @@ import { Href, router } from "expo-router";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import * as SecureStore from 'expo-secure-store';
 import Toast from "react-native-toast-message";
+import { useApolloStore } from "@/store/apolloStore";
 
 const MenuNavigation: {
   name: string;
@@ -26,7 +27,7 @@ const MenuNavigation: {
     },
     // {
     //   name: "Settings",
-    //   link: "/test",
+    //   link: "/splashscreen",
     //   icon: <TabBarIcon name={"settings"} color={"#192655"} />
     // },
     {
@@ -37,6 +38,10 @@ const MenuNavigation: {
   ];
 
 const Menu = () => {
+  const setClient = useApolloStore((state) => state.setClient); // Get the setClient function from the store
+  const apolloClient = useApolloStore((state) => state.client); // Get the Apollo Client from the store
+
+
   return (
     <SafeAreaView edges={["top"]} className="bg-white h-full">
       <ScrollView className="h-full relative">
@@ -58,6 +63,7 @@ const Menu = () => {
                 onPress={async () => {
                   if (item.name === "Logout") {
                     await SecureStore.deleteItemAsync("alarmixToken");
+                    apolloClient?.clearStore();
                     router.replace("/(auth)/Login" as Href<string>);
                     Toast.show({ type: "success", text1: "Logout Successful" });
                   } else {

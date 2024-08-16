@@ -44,7 +44,7 @@ const Login = () => {
         Toast.show({ type: "success", text1: "New device detected" });
         router.push({
           pathname: "/(auth)/Validation",
-          params: { email: form.email },
+          params: { email: form.email, type: "device_change" },
         } as Href<string>);
       }
     },
@@ -75,7 +75,7 @@ const Login = () => {
 
     return true;
   };
-  
+
   const handleContinue = async () => {
     if (validateForm()) {
       await loginUser({

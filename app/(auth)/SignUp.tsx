@@ -27,7 +27,7 @@ const SignUp = () => {
         });
         router.push({
           pathname: "/(auth)/Validation",
-          params: { email: data.registerUser.email },
+          params: { email: data.registerUser.email, type: "account_verification" },
         } as Href<string>);
       }
     },
