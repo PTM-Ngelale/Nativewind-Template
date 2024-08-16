@@ -14,18 +14,12 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.expectoo.alarmix",
-      "config": {
-        "googleMapsApiKey": "AIzaSyAarxyzQsNQtOzS0rSr51QGbDSkxJkcwzk"
-      }
+      "bundleIdentifier": "com.expectoo.alarmix"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "config": {
-        "googleMapsApiKey": "AIzaSyAarxyzQsNQtOzS0rSr51QGbDSkxJkcwzk"
       },
       "permissions": [
         "android.permission.ACCESS_COARSE_LOCATION",
