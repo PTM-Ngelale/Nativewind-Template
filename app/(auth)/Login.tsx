@@ -39,13 +39,13 @@ const Login = () => {
       }
     },
     onError: (error: ApolloError) => {
-      console.log(error.message)
+      console.log(error.message);
       Toast.show({ type: "error", text1: error.message });
     },
   });
 
   const handleBack = () => {
-    router.replace("/");
+    router.back();
   };
 
   const [form, setForm] = useState({
@@ -88,7 +88,7 @@ const Login = () => {
 
   return (
     <SafeAreaView className="bg-white h-full">
-      <KeyboardAvoidingView enabled behavior="position">
+      <KeyboardAvoidingView behavior="padding">
         <ScrollView contentContainerStyle={{ height: "100%" }}>
           <View className="relative h-full">
             <View className=" relative h-full">

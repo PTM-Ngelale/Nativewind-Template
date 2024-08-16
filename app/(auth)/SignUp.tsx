@@ -18,10 +18,9 @@ import Toast from "react-native-toast-message";
 
 const SignUp = () => {
   const router = useRouter();
-  const [registerUser, { loading}] = useCreateUserMutation({
+  const [registerUser, { loading }] = useCreateUserMutation({
     onCompleted: async (data) => {
-
-      console.log(data)
+      console.log(data);
       if (data.registerUser) {
         Toast.show({
           type: "success",
@@ -44,14 +43,16 @@ const SignUp = () => {
     // router.push("/(tokenValidation)");
   };
   const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
     token: "",
   });
 
   const validateForm = () => {
-    const { email, password, token } = form;
-    if (!email || !password || !token) {
+    const { firstName, lastName, email, password, token } = form;
+    if (!firstName || !lastName || !email || !password || !token) {
       Toast.show({ type: "error", text1: "All fields are required." });
       return false;
     }
@@ -116,6 +117,26 @@ const SignUp = () => {
 
                   <View className="flex-col space-y-[25px]">
                     <View className="space-y-[15px]">
+                      {/* <View>
+                        <CustomTextInput
+                          placeholder="First Name"
+                          placeholderTextColor="#000"
+                          value={form.firstName}
+                          onChangeText={(e: any) =>
+                            setForm({ ...form, firstName: e })
+                          }
+                        />
+                      </View>
+                      <View>
+                        <CustomTextInput
+                          placeholder="Last Name"
+                          placeholderTextColor="#000"
+                          value={form.lastName}
+                          onChangeText={(e: any) =>
+                            setForm({ ...form, lastName: e })
+                          }
+                        />
+                      </View> */}
                       <View>
                         <CustomTextInput
                           placeholder="Email"

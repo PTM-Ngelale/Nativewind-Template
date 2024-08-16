@@ -18,10 +18,8 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
 const Profile: React.FC = () => {
   const { data, loading, error } = useQuery(GetUserBasicInfoQuery);
-
   const [updateUser, { loading: userUpdating, error: userUpdateError }] =
     useUpdateUserMutation({
       onCompleted: () => {
@@ -31,7 +29,6 @@ const Profile: React.FC = () => {
         showToast("error", err.message || "Error updating profile");
       },
     });
-
   const {
     firstName: initialFirstName,
     lastName: initialLastName,
@@ -40,7 +37,6 @@ const Profile: React.FC = () => {
     nextOfKinName: initialNextOfKinName,
     nextOfKinContact: initalNextOfKinContact,
   } = data?.getCurrentUser || {};
-
   const [firstName, setFirstName] = useState<string>(initialFirstName || "");
   const [lastName, setLastName] = useState<string>(initialLastName || "");
   const [nextOfKinName, setNextOfKinName] = useState<string>(
@@ -53,7 +49,6 @@ const Profile: React.FC = () => {
     null
   );
   const [isUploading, setIsUploading] = useState<boolean>(false);
-
   useEffect(() => {
     setFirstName(initialFirstName || "");
     setLastName(initialLastName || "");
@@ -65,7 +60,6 @@ const Profile: React.FC = () => {
     initalNextOfKinContact,
     initialNextOfKinName,
   ]);
-
   const handleImageUpload = async (
     image: ImagePickerResult
   ): Promise<string> => {
@@ -77,14 +71,12 @@ const Profile: React.FC = () => {
       if (!asset || !asset.uri || !asset.type || !asset.fileName) {
         throw new Error("No image selected or missing required properties");
       }
-
       const formData = new FormData();
       formData.append("file", {
         uri: asset.uri,
         type: asset.type,
         name: asset.fileName,
       } as any); // Type assertion to satisfy FormData.append
-
       const response = await axios.post(
         "https://alarm-saas-backend-y2v2v.ondigitalocean.app/upload",
         formData,
@@ -94,25 +86,28 @@ const Profile: React.FC = () => {
           },
         }
       );
-
       return response.data.data;
     } catch (error) {
-      showToast("error", "Error uploading image");
+      if (axios.isAxiosError(error)) {
+        // If the error is an AxiosError, log the response error
+        showToast("error", error.response?.data?.message || error.message);
+        console.log("error", error.response?.data?.message || error.message);
+      } else {
+        // For non-Axios errors, log the error message
+        showToast("error", (error as Error).message);
+      }
       throw error;
     } finally {
       setIsUploading(false);
     }
   };
-
   const handleUpdateProfile = async () => {
     try {
       let profilePhotoUrl = profilePhoto || "";
-
       if (selectedImage) {
         // Check if an image is selected
         profilePhotoUrl = await handleImageUpload(selectedImage);
       }
-
       await updateUser({
         variables: {
           where: { id },
@@ -126,15 +121,13 @@ const Profile: React.FC = () => {
         },
       });
     } catch (err) {
-      showToast("error", "Error updating profile");
+      showToast("error", "Error updating profile", err as any);
     }
   };
-
   if (loading) return <Loading />;
   if (error || userUpdateError) {
     showToast("error", error?.message || "An unknown error occurred");
   }
-
   return (
     <KeyboardAvoidingView
       className="flex-1 flex items-start"
@@ -201,8 +194,8 @@ const Profile: React.FC = () => {
               backgroundColor: "rgba(0,0,0,0.5)",
             }}
           >
-            <ActivityIndicator size="large" color="#ffffff" />
-            <Text style={{ color: "#ffffff", marginTop: 10 }}>
+            <ActivityIndicator size="large" color="#FFFFFF" />
+            <Text style={{ color: "#FFFFFF", marginTop: 10 }}>
               Uploading...
             </Text>
           </View>
@@ -211,5 +204,4 @@ const Profile: React.FC = () => {
     </KeyboardAvoidingView>
   );
 };
-
 export default Profile;
