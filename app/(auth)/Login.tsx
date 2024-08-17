@@ -16,6 +16,7 @@ import {
 } from "react-native";
 import Toast from "react-native-toast-message";
 import * as SecureStore from "expo-secure-store";
+import { getCurrentServerIdentifier } from "@/utils/authUtil";
 
 const Login = () => {
   const router = useRouter();
@@ -30,18 +31,17 @@ const Login = () => {
     onCompleted: async (data) => {
       if (data.loginUser.token) {
         Toast.show({ type: "success", text1: "Welcome back." });
-        // Store token in AsyncStorage
         // Calculate expiration time (current time + 72 hours)
         const expirationTime = new Date().getTime() + 72 * 60 * 60 * 1000;
+        const serverIdentifier = getCurrentServerIdentifier(); // Get the current server identifier
         const tokenData = JSON.stringify({
           token: data.loginUser.token,
           expiration: expirationTime,
+          serverIdentifier, // Include server identifier
         });
 
-        // Store token and expiration time in AsyncStorage
+        // Store token and expiration time in SecureStore
         await SecureStore.setItemAsync("alarmixToken", tokenData);
-        const { token, expiration } = JSON.parse(tokenData);
-        console.log(token)
 
         router.push("/(tabs)" as Href<string>);
       } else {

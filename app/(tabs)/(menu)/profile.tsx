@@ -5,10 +5,8 @@ import CustomTextInput from "@/components/ui/CustomInput";
 import ImageUpload from "@/components/ui/ImageUpload";
 import { useUpdateUserMutation } from "@/generated/graphql";
 import { GetUserBasicInfoQuery } from "@/graphql/query";
-import useAuth from "@/hooks/useAuth";
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from "expo-file-system";
 import { ApolloError, useQuery } from "@apollo/client";
-import axios from "axios";
 import { ImagePickerAsset, ImagePickerResult } from "expo-image-picker";
 import React, { useEffect, useState } from "react";
 import {
@@ -23,16 +21,19 @@ import Toast from "react-native-toast-message";
 
 const Profile: React.FC = () => {
   const { data, loading, error } = useQuery(GetUserBasicInfoQuery, {
-    fetchPolicy: "network-only"
+    fetchPolicy: "no-cache",
   });
-  const { userToken } = useAuth();
+
   const [updateUser, { loading: userUpdating, error: userUpdateError }] =
     useUpdateUserMutation({
       onCompleted: () => {
-        console.log("success", "Profile updated successfully");
+        Toast.show({ type: "success", text1: "Profile updated successfully" });
       },
       onError: (err: ApolloError) => {
-        console.log("error", err.message || "Error updating profile");
+        Toast.show({
+          type: "error",
+          text1: err.message || "Error updating profile",
+        });
       },
     });
 
@@ -44,8 +45,6 @@ const Profile: React.FC = () => {
     nextOfKinName: initialNextOfKinName,
     nextOfKinContact: initalNextOfKinContact,
   } = data?.getCurrentUser || {};
-
-  console.log(initialFirstName)
 
   const [firstName, setFirstName] = useState<string>(initialFirstName || "");
   const [lastName, setLastName] = useState<string>(initialLastName || "");
@@ -86,7 +85,9 @@ const Profile: React.FC = () => {
 
       const formData = new FormData();
       //  Get the file contents from the URI
-      const fileContents = await FileSystem.readAsStringAsync(asset.uri, { encoding: 'base64' });
+      const fileContents = await FileSystem.readAsStringAsync(asset.uri, {
+        encoding: "base64",
+      });
       const fileBlob = new Blob([fileContents], { type: asset.type });
 
       formData.append("file", {
@@ -96,13 +97,11 @@ const Profile: React.FC = () => {
         data: fileBlob,
       } as any); // Type assertion to satisfy FormData.append
 
-
       const response = await fetch(
         "https://a9ea-102-90-43-140.ngrok-free.app/upload",
         {
-          method: 'POST',
+          method: "POST",
           body: formData,
-
         }
       );
       if (!response.ok) {

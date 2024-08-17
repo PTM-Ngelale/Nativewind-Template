@@ -1,46 +1,58 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  Image,
-  FlatList,
-  TouchableOpacity
-} from "react-native";
-import CustomButton from "@/components/ui/CustomButton";
-import { SafeAreaView } from "react-native-safe-area-context";
-import React from "react";
-import { Href, router } from "expo-router";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
-import * as SecureStore from 'expo-secure-store';
+import CustomButton from "@/components/ui/CustomButton";
+import { Href, router } from "expo-router";
+import * as SecureStore from "expo-secure-store";
+import React from "react";
+import {
+  FlatList,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
-import { useApolloStore } from "@/store/apolloStore";
 
 const MenuNavigation: {
   name: string;
   link: any;
   icon: React.JSX.Element;
 }[] = [
-    {
-      name: "My Profile",
-      link: "/profile",
-      icon: <TabBarIcon name={"person"} color={"#192655"} />
-    },
-    // {
-    //   name: "Settings",
-    //   link: "/splashscreen",
-    //   icon: <TabBarIcon name={"settings"} color={"#192655"} />
-    // },
-    {
-      name: "Logout",
-      link: "/(auth)/Login",
-      icon: <TabBarIcon name={"log-out"} color={"#192655"} />
-    }
-  ];
+  {
+    name: "My Profile",
+    link: "/profile",
+    icon: <TabBarIcon name={"person"} color={"#192655"} />,
+  },
+  // {
+  //   name: "Settings",
+  //   link: "/splashscreen",
+  //   icon: <TabBarIcon name={"settings"} color={"#192655"} />
+  // },
+  {
+    name: "Logout",
+    link: "/(auth)/Login",
+    icon: <TabBarIcon name={"log-out"} color={"#192655"} />,
+  },
+];
 
 const Menu = () => {
-  const setClient = useApolloStore((state) => state.setClient); // Get the setClient function from the store
-  const apolloClient = useApolloStore((state) => state.client); // Get the Apollo Client from the store
+  const handleLogout = async () => {
+    try {
+      // Delete the authentication token from SecureStore
+      await SecureStore.deleteItemAsync("alarmixToken");
 
+      // Navigate to the login screen
+      router.replace("/(auth)/Login" as Href<string>); // Use replace to reset the stack
+
+      // Show a toast message indicating successful logout
+      Toast.show({ type: "success", text1: "Logout Successful" });
+    } catch (error) {
+      // Handle any errors during the logout process
+      console.error("Error during logout:", error);
+      Toast.show({ type: "error", text1: "Logout failed. Please try again." });
+    }
+  };
 
   return (
     <SafeAreaView edges={["top"]} className="bg-white h-full">
@@ -55,39 +67,25 @@ const Menu = () => {
         <View className="px-4">
           <FlatList
             data={MenuNavigation}
-            keyExtractor={item => item.name}
+            keyExtractor={(item) => item.name}
             contentContainerStyle={{ height: "100%" }}
             scrollEnabled={false}
-            renderItem={({ item }) =>
+            renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={async () => {
                   if (item.name === "Logout") {
-                    // Clear the Apollo Client's cache and store
-                    await apolloClient?.resetStore(); // Clears the store
-                    await apolloClient?.cache.reset(); // Resets the cache
-
-                    // Delete the authentication token from SecureStore
-                    await SecureStore.deleteItemAsync("alarmixToken");
-
-                    // Optionally, you can also reset your local state or Zustand state if necessary
-                    setClient(null); // Remove the Apollo Client from Zustand
-
-                    // Navigate to the login screen
-                    router.replace("/(auth)/Login" as Href<string>);
-
-                    // Show a toast message indicating successful logout
-                    Toast.show({ type: "success", text1: "Logout Successful" });
+                    await handleLogout();
                   } else {
                     // Navigate to the selected menu item
                     router.push(item.link as Href<string>);
                   }
                 }}
-                className="py-4 last:border-b-none border-b border-b-[#D9D9D9] flex flex-row items-center space-x-4">
+                className="py-4 last:border-b-none border-b border-b-[#D9D9D9] flex flex-row items-center space-x-4"
+              >
                 {item.icon}
-                <Text>
-                  {item.name}
-                </Text>
-              </TouchableOpacity>}
+                <Text>{item.name}</Text>
+              </TouchableOpacity>
+            )}
           />
         </View>
         <View className="w-full absolute bottom-[-450px] px-4 ">
