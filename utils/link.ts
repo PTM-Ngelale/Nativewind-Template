@@ -2,13 +2,13 @@ import { createHttpLink, split } from "@apollo/client";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
 import * as SecureStore from "expo-secure-store";
-import { getCurrentServerIdentifier } from "./authUtil"; // Import the function
 import { getMainDefinition } from "@apollo/client/utilities";
 import { setContext } from "@apollo/client/link/context";
+import { getCurrentServerIdentifier } from "./serverIdentifier";
 
 // HTTP connection to the GraphQL API
 const httpLink = createHttpLink({
-  uri: "https://alarm-saas-backend-y2v2v.ondigitalocean.app/graphql",
+  uri: process.env.EXPO_PUBLIC_API_URL,
 });
 
 // Middleware to set the authorization header for HTTP requests
@@ -33,7 +33,7 @@ const authLink = setContext(async (_, { headers }) => {
 // WebSocket link for subscriptions
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: "wss://alarm-saas-backend-y2v2v.ondigitalocean.app/graphql",
+    url: process.env.EXPO_PUBLIC_API_SUBSCRIPTION as string,
     connectionParams: async () => {
       const tokenData = await SecureStore.getItemAsync("alarmixToken");
       let authToken = "";
@@ -44,7 +44,6 @@ const wsLink = new GraphQLWsLink(
           serverIdentifier === currentServerIdentifier ? `Bearer ${token}` : "";
       }
 
-      console.log(authToken);
       return {
         headers: {
           Authorization: authToken,

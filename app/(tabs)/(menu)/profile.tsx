@@ -3,7 +3,10 @@ import BackArrow from "@/components/ui/BackArrow";
 import CustomButton from "@/components/ui/CustomButton";
 import CustomTextInput from "@/components/ui/CustomInput";
 import ImageUpload from "@/components/ui/ImageUpload";
-import { useUpdateUserMutation } from "@/generated/graphql";
+import {
+  useUpdateUserMutation,
+  useUploadFileMutation,
+} from "@/generated/graphql";
 import { GetUserBasicInfoQuery } from "@/graphql/query";
 import * as FileSystem from "expo-file-system";
 import { ApolloError, useQuery } from "@apollo/client";
@@ -71,6 +74,36 @@ const Profile: React.FC = () => {
     initialNextOfKinName,
   ]);
 
+  const [uploadFile] =
+    useUploadFileMutation({
+      onError: (err: ApolloError) => {
+        console.log(err, "Error uploading file");
+        Toast.show({
+          type: "error",
+          text1: err.message || "Error updating profile",
+        });
+      },
+    });
+
+  const handleFileUpload = async (file) => {
+    console.log(file, "file data");
+    const image = file;
+    try {
+      const response = await uploadFile({
+        variables: {
+          file: image,
+        },
+      });
+      return response.data.uploadFile;
+    } catch (err) {
+      Toast.show({
+        type: "error",
+        text1: "Error uploading file",
+      });
+      throw err;
+    }
+  };
+
   const handleImageUpload = async (
     image: ImagePickerResult
   ): Promise<string> => {
@@ -83,38 +116,24 @@ const Profile: React.FC = () => {
         throw new Error("No image selected or missing required properties");
       }
 
-      const formData = new FormData();
-      //  Get the file contents from the URI
       const fileContents = await FileSystem.readAsStringAsync(asset.uri, {
-        encoding: "base64",
+        encoding: FileSystem.EncodingType.Base64,
       });
       const fileBlob = new Blob([fileContents], { type: asset.type });
 
-      formData.append("file", {
+      const file = {
         uri: asset.uri,
         type: asset.type,
         name: asset.fileName,
         data: fileBlob,
-      } as any); // Type assertion to satisfy FormData.append
+        lastModified: Date.now(),
+      };
 
-      const response = await fetch(
-        "https://a9ea-102-90-43-140.ngrok-free.app/upload",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Upload failed:", errorText);
-        throw new Error(`Upload failed: ${response.status} ${errorText}`);
-      }
-
-      const responseData = await response.json();
-      return responseData.data.data;
+      const uploadedFileLocation = await handleFileUpload({
+        data: fileBlob,
+      });
+      return uploadedFileLocation;
     } catch (error) {
-      // Handle errors here
-      console.error("Error uploading image:", error);
       Toast.show({
         type: "error",
         text1: "Error uploading image",
@@ -124,6 +143,7 @@ const Profile: React.FC = () => {
       setIsUploading(false);
     }
   };
+
   const handleUpdateProfile = async () => {
     try {
       let profilePhotoUrl = profilePhoto || "";
@@ -145,9 +165,7 @@ const Profile: React.FC = () => {
           },
         },
       });
-    } catch (err: any) {
-      console.log("error", "Error updating profile", err);
-    }
+    } catch (err: any) {}
   };
 
   if (loading) return <Loading />;

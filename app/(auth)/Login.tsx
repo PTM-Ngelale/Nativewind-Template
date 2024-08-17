@@ -16,7 +16,8 @@ import {
 } from "react-native";
 import Toast from "react-native-toast-message";
 import * as SecureStore from "expo-secure-store";
-import { getCurrentServerIdentifier } from "@/utils/authUtil";
+import { getCurrentServerIdentifier } from "@/utils/serverIdentifier";
+
 
 const Login = () => {
   const router = useRouter();
