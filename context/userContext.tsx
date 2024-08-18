@@ -210,11 +210,10 @@ const UserProvider = (props: { children: ReactNode }): ReactElement => {
         );
         return;
       }
-      const projectId =
-        Constants?.expoConfig?.extra?.eas?.projectId ??
-        Constants?.easConfig?.projectId;
+      const projectId = "a8126bdd-cca9-4add-bf98-49a271cf0e3a";
       if (!projectId) {
         handleRegistrationError("Project ID not found");
+        return;
       }
       try {
         const pushTokenString = (

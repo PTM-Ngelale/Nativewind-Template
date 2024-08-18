@@ -8,9 +8,8 @@ import {
   useUploadFileMutation,
 } from "@/generated/graphql";
 import { GetUserBasicInfoQuery } from "@/graphql/query";
-import * as FileSystem from "expo-file-system";
 import { ApolloError, useQuery } from "@apollo/client";
-import { ImagePickerAsset, ImagePickerResult } from "expo-image-picker";
+import { ImagePickerResult } from "expo-image-picker";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -74,27 +73,25 @@ const Profile: React.FC = () => {
     initialNextOfKinName,
   ]);
 
-  const [uploadFile] =
-    useUploadFileMutation({
-      onError: (err: ApolloError) => {
-        console.log(err, "Error uploading file");
-        Toast.show({
-          type: "error",
-          text1: err.message || "Error updating profile",
-        });
-      },
-    });
+  const [uploadFile] = useUploadFileMutation({
+    onError: (err: ApolloError) => {
+      console.log(err, "Error uploading file");
+      Toast.show({
+        type: "error",
+        text1: err.message || "Error updating profile",
+      });
+    },
+  });
 
-  const handleFileUpload = async (file) => {
-    console.log(file, "file data");
-    const image = file;
+  const handleFileUpload = async (file: File) => {
     try {
       const response = await uploadFile({
         variables: {
-          file: image,
+          file, // Directly pass the file
         },
       });
-      return response.data.uploadFile;
+
+      return response.data?.uploadFile;
     } catch (err) {
       Toast.show({
         type: "error",
@@ -109,29 +106,20 @@ const Profile: React.FC = () => {
   ): Promise<string> => {
     try {
       setIsUploading(true);
-      const asset: ImagePickerAsset | undefined = image.assets
-        ? image.assets[0]
-        : undefined;
+      const asset = image.assets ? image.assets[0] : undefined;
       if (!asset || !asset.uri || !asset.type || !asset.fileName) {
         throw new Error("No image selected or missing required properties");
       }
 
-      const fileContents = await FileSystem.readAsStringAsync(asset.uri, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
-      const fileBlob = new Blob([fileContents], { type: asset.type });
+      const fileBlob = await fetch(asset.uri).then((res) => res.blob());
 
-      const file = {
-        uri: asset.uri,
+      // Create a new File object
+      const file = new File([fileBlob], asset.fileName, {
         type: asset.type,
-        name: asset.fileName,
-        data: fileBlob,
         lastModified: Date.now(),
-      };
-
-      const uploadedFileLocation = await handleFileUpload({
-        data: fileBlob,
       });
+
+      const uploadedFileLocation = (await handleFileUpload(file)) || "";
       return uploadedFileLocation;
     } catch (error) {
       Toast.show({

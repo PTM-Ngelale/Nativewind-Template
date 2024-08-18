@@ -16,6 +16,18 @@ import * as SplashScreen from "expo-splash-screen";
 import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
+import { TextEncoder, TextDecoder } from "text-encoding";
+import { polyfill as polyfillEncoding } from "react-native-polyfill-globals/src/encoding";
+import { polyfill as polyfillReadableStream } from "react-native-polyfill-globals/src/readable-stream";
+import { polyfill as polyfillFetch } from "react-native-polyfill-globals/src/fetch";
+
+polyfillReadableStream();
+polyfillFetch();
+
+polyfillEncoding(() => ({
+  TextEncoder,
+  TextDecoder,
+}));
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();

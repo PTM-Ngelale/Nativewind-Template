@@ -5,9 +5,10 @@ import * as SecureStore from "expo-secure-store";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { setContext } from "@apollo/client/link/context";
 import { getCurrentServerIdentifier } from "./serverIdentifier";
-
+import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
 // HTTP connection to the GraphQL API
-const httpLink = createHttpLink({
+// Upload link for handling file uploads and regular queries/mutations
+const httpLink = createUploadLink({
   uri: process.env.EXPO_PUBLIC_API_URL,
 });
 

@@ -89,7 +89,7 @@ const Login = () => {
           password: form.password,
           deviceName: deviceInfo.deviceName,
           deviceModel: deviceInfo.deviceModel,
-          expoPushToken,
+          pushToken: expoPushToken,
         },
       });
     }

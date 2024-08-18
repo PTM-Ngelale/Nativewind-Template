@@ -2766,7 +2766,7 @@ export type MutationLoginUserArgs = {
   deviceName: Scalars['String']['input'];
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
-  pushToken: Scalars['String']['input'];
+  pushToken?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -6384,7 +6384,7 @@ export type LoginUserMutationVariables = Exact<{
   password: Scalars['String']['input'];
   deviceName: Scalars['String']['input'];
   deviceModel: Scalars['String']['input'];
-  expoPushToken: Scalars['String']['input'];
+  pushToken?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
@@ -6498,13 +6498,13 @@ export type AlertCreatedSubscription = { __typename?: 'Subscription', alertCreat
 
 
 export const LoginUserDocument = gql`
-    mutation loginUser($email: String!, $password: String!, $deviceName: String!, $deviceModel: String!, $expoPushToken: String!) {
+    mutation loginUser($email: String!, $password: String!, $deviceName: String!, $deviceModel: String!, $pushToken: String) {
   loginUser(
     email: $email
     password: $password
     deviceName: $deviceName
     deviceModel: $deviceModel
-    pushToken: $expoPushToken
+    pushToken: $pushToken
   ) {
     token
   }
@@ -6529,7 +6529,7 @@ export type LoginUserMutationFn = Apollo.MutationFunction<LoginUserMutation, Log
  *      password: // value for 'password'
  *      deviceName: // value for 'deviceName'
  *      deviceModel: // value for 'deviceModel'
- *      expoPushToken: // value for 'expoPushToken'
+ *      pushToken: // value for 'pushToken'
  *   },
  * });
  */
