@@ -27,7 +27,13 @@ interface Props {
   };
 }
 
-const SosModal = ({ sosModal, setSosModal, totalNotified, type, alertData }: Props) => {
+const SosModal = ({
+  sosModal,
+  setSosModal,
+  totalNotified,
+  type,
+  alertData,
+}: Props) => {
   return (
     <View style={styles.centeredView}>
       <Modal
@@ -38,62 +44,73 @@ const SosModal = ({ sosModal, setSosModal, totalNotified, type, alertData }: Pro
           setSosModal(!sosModal);
         }}
       >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView} className="px-6">
-            <View className="px-10 items-center">
-              <Image
-                source={require("../assets/images/SOS-2.png")}
-                className="h-[182px] w-[182px]"
-                resizeMode="contain"
-              />
-              <View className="flex-row bg-[#D22121] items-center gap-x-1 rounded-xl px-2 py-1 mt-5">
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0, 0, 0, 0.7)",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView} className="px-6">
+              <View className="px-10 items-center">
                 <Image
-                  source={require("../assets/images/Caution.png")}
-                  className="h-[24px] w-[24px]"
+                  source={require("../assets/images/SOS-2.png")}
+                  className="h-[182px] w-[182px]"
                   resizeMode="contain"
                 />
-                <Text className="text-white">{type}</Text>
-              </View>
-              <View className="gap-y-1 items-center">
-                <Text className="text-base font-bold">Emergency Escalated</Text>
-                <Text>{totalNotified} People Notified</Text>
-              </View>
+                <View className="flex-row bg-[#D22121] items-center gap-x-1 rounded-xl px-2 py-1 mt-5">
+                  <Image
+                    source={require("../assets/images/Caution.png")}
+                    className="h-[24px] w-[24px]"
+                    resizeMode="contain"
+                  />
+                  <Text className="text-white">{type}</Text>
+                </View>
+                <View className="gap-y-1 items-center">
+                  <Text className="text-base font-bold">
+                    Emergency Escalated
+                  </Text>
+                  <Text>{totalNotified} People Notified</Text>
+                </View>
 
-              <View className="mt-4 items-center">
-                <TouchableOpacity
-                  onPress={() => {
-                    setSosModal(false); // Close the modal
-                    router.push({
-                      pathname: `/emergency-group/[id]`,
-                      params: {
-                        id: alertData.id,
-                        emergency: alertData.emergency,
-                        latitude: alertData.latitude,
-                        longitude: alertData.longitude,
-                        address: alertData.address,
-                        createdAt: alertData.createdAt,
-                        userId: alertData.createdBy,
-                      },
-                    });
-                  }}
-                  activeOpacity={0.8}
-                  className="bg-[#192655] border px-4 py-[10px] rounded-xl"
-                >
-                  <Text className="text-white">View Chat</Text>
-                </TouchableOpacity>
+                <View className="mt-4 items-center">
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSosModal(false); // Close the modal
+                      router.push({
+                        pathname: `/emergency-group/[id]`,
+                        params: {
+                          id: alertData.id,
+                          emergency: alertData.emergency,
+                          latitude: alertData.latitude,
+                          longitude: alertData.longitude,
+                          address: alertData.address,
+                          createdAt: alertData.createdAt,
+                          userId: alertData.createdBy,
+                        },
+                      });
+                    }}
+                    activeOpacity={0.8}
+                    className="bg-[#192655] border px-4 py-[10px] rounded-xl"
+                  >
+                    <Text className="text-white">View Chat</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => setSosModal(!sosModal)}
+                className="absolute top-3 right-3"
+              >
+                <Image
+                  source={require("../assets/images/Close.png")}
+                  className="h-[30px] w-[30px]"
+                  resizeMode="contain"
+                />
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={() => setSosModal(!sosModal)}
-              className="absolute top-3 right-3"
-            >
-              <Image
-                source={require("../assets/images/Close.png")}
-                className="h-[30px] w-[30px]"
-                resizeMode="contain"
-              />
-            </TouchableOpacity>
           </View>
         </View>
       </Modal>

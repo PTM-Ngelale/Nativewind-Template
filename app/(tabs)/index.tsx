@@ -2,6 +2,8 @@ import EmergencyModal from "@/components/EmergencyModal";
 import Onboarding from "@/components/Onboarding";
 import ReportModal from "@/components/ReportModal";
 import SosModal from "@/components/SosModal";
+import Loading from "@/components/Loading";
+import SosLoading from "@/components/SosLoading";
 import { useUser } from "@/context/userContext";
 import {
   Alert,
@@ -41,6 +43,7 @@ export default function HomeScreen() {
   const [selectedEmergency, setSelectedEmergency] = useState("");
   const [reportModal, setReportModal] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [modalLoading, setModalLoading] = useState(false); // Loading state for SOS modal
   const [modalDetails, setModalDetails] = useState(0.0);
   const [emergency, setEmergency] = useState("");
   const [address, setAddress] = useState("");
@@ -53,12 +56,14 @@ export default function HomeScreen() {
     onCompleted: (data) => {
       const alert = data.createAlert;
       setReportModal(false);
-      setSosModal(true);
       setTotalNotified(data.createAlert?.totalNotified || 0);
       setChatData(data.createAlert?.alert);
+      setModalLoading(false);
+      setSosModal(true);
       Toast.show({ type: "success", text1: "Report has been escalated!" });
     },
     onError: (error: ApolloError) => {
+      setModalLoading(false);
       Toast.show({ type: "error", text1: error.message });
     },
   });
@@ -108,12 +113,7 @@ export default function HomeScreen() {
   const GOOGLE_MAPS_APIKEY = "AIzaSyAarxyzQsNQtOzS0rSr51QGbDSkxJkcwzk";
 
   if (loading) {
-    return (
-      <View className="h-full w-full bg-white items-center justify-center">
-        <ActivityIndicator size="large" color="#0000ff" />
-        <Text>Loading...</Text>
-      </View>
-    );
+    return <Loading />;
   }
 
   const handleClick = async () => {
@@ -123,6 +123,7 @@ export default function HomeScreen() {
 
       setEmergencyModal(false);
       setSelectedEmergency("");
+      setModalLoading(true);
       await createAlert({
         variables: {
           data: {
@@ -139,9 +140,8 @@ export default function HomeScreen() {
           },
         },
       });
-
-      setSosModal(true);
     } catch (error) {
+      setModalLoading(false);
       console.error("Error creating alert:", error);
       // Handle error (e.g., show a toast or alert)
     }
@@ -269,13 +269,17 @@ export default function HomeScreen() {
       </View>
 
       <View>
-        <SosModal
-          alertData={chatData}
-          type={selectedEmergency || "SOS"}
-          sosModal={sosModal}
-          setSosModal={setSosModal}
-          totalNotified={totalNotified}
-        />
+        {modalLoading ? (
+          <SosLoading />
+        ) : (
+          <SosModal
+            alertData={chatData}
+            type={selectedEmergency || "SOS"}
+            sosModal={sosModal}
+            setSosModal={setSosModal}
+            totalNotified={totalNotified}
+          />
+        )}
       </View>
 
       <View>
