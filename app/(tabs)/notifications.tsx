@@ -138,6 +138,7 @@ const notifications = () => {
                       <View className="relative ml-4 w-[92%]">
                         <View className="flex-row w-[92%] justify-between">
                           <Text className="text-md font-extrabold">
+                            <Text className="font-semibold">Alert:</Text>{" "}
                             {truncateText(alert.emergency, 20)}
                           </Text>
                           <Text className="absolute right-0 text-xs">
@@ -148,7 +149,8 @@ const notifications = () => {
                           </Text>
                         </View>
                         <Text className="text-sm w-full break-words flex-shrink max-w-[92%] flex-wrap line-clamp-2">
-                          Location: {alert.address}
+                          <Text className="font-semibold">Location:</Text>{" "}
+                          {alert.address}
                         </Text>
                       </View>
                     </TouchableOpacity>
