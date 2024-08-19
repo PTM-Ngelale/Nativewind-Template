@@ -187,6 +187,8 @@ const UserProvider = (props: { children: ReactNode }): ReactElement => {
   };
 
   const registerForPushNotificationsAsync = async () => {
+    let token;
+
     if (Platform.OS === "android") {
       Notifications.setNotificationChannelAsync("default", {
         name: "default",
@@ -210,21 +212,15 @@ const UserProvider = (props: { children: ReactNode }): ReactElement => {
         );
         return;
       }
-      const projectId = "a8126bdd-cca9-4add-bf98-49a271cf0e3a";
+      const projectId = Constants?.expoConfig?.extra?.eas?.projectId;
       if (!projectId) {
         handleRegistrationError("Project ID not found");
-        return;
       }
-      try {
-        const pushTokenString = (
-          await Notifications.getExpoPushTokenAsync({
-            projectId,
-          })
-        ).data;
-        return pushTokenString;
-      } catch (e: unknown) {
-        handleRegistrationError(`${e}`);
-      }
+      token = await Notifications.getExpoPushTokenAsync({
+        projectId: Constants.expoConfig!.extra!.eas.projectId,
+      });
+
+      return token.data;
     } else {
       handleRegistrationError(
         "Must use physical device for push notifications"

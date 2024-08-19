@@ -1,5 +1,5 @@
 // Static server identifiers
-const SERVER_IDENTIFIERS = {
+export const SERVER_IDENTIFIERS = {
   development: "devServer",
   staging: "stagingServer",
   production: "prodServer",

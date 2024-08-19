@@ -2,8 +2,10 @@ import CustomButton from "@/components/ui/CustomButton";
 import CustomTextInput from "@/components/ui/CustomInput";
 import { useUser } from "@/context/userContext";
 import { useLoginUserMutation } from "@/generated/graphql";
+import { getCurrentServerIdentifier } from "@/utils/serverIdentifier";
 import { ApolloError } from "@apollo/client";
 import { Href, useRouter } from "expo-router";
+import * as SecureStore from "expo-secure-store";
 import { useState } from "react";
 import {
   Image,
@@ -15,9 +17,6 @@ import {
   View,
 } from "react-native";
 import Toast from "react-native-toast-message";
-import * as SecureStore from "expo-secure-store";
-import { getCurrentServerIdentifier } from "@/utils/serverIdentifier";
-
 
 const Login = () => {
   const router = useRouter();
@@ -27,7 +26,6 @@ const Login = () => {
     password: "",
   });
 
-  
   const [loginUser, { loading }] = useLoginUserMutation({
     onCompleted: async (data) => {
       if (data.loginUser.token) {
@@ -38,13 +36,13 @@ const Login = () => {
         const tokenData = JSON.stringify({
           token: data.loginUser.token,
           expiration: expirationTime,
-          serverIdentifier, // Include server identifier
+          serverIdentifier, // Include final server identifier
         });
 
         // Store token and expiration time in SecureStore
         await SecureStore.setItemAsync("alarmixToken", tokenData);
 
-        router.push("/(tabs)" as Href<string>);
+        router.replace("/(tabs)" as Href<string>);
       } else {
         Toast.show({ type: "success", text1: "New device detected" });
         router.push({
@@ -94,7 +92,6 @@ const Login = () => {
       });
     }
   };
-
 
   return (
     <SafeAreaView className="bg-white h-full">

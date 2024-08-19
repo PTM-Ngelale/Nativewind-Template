@@ -9,12 +9,13 @@
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
-      "resizeMode": "contain",
+      "resizeMode": "cover",
       "backgroundColor": "#192655"
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.expectoo.alarmix"
+      "bundleIdentifier": "com.expectoo.alarmix",
+      "googleServicesFile":"./GoogleService-info.plist"
     },
     "android": {
       "adaptiveIcon": {
