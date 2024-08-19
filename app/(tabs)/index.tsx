@@ -151,6 +151,7 @@ export default function HomeScreen() {
     <View className="h-full w-full bg-white">
       <MapView
         region={initialRegion}
+        userInterfaceStyle="dark"
         showsUserLocation={true}
         // followsUserLocation={true}
         style={styles.map}
@@ -253,7 +254,7 @@ export default function HomeScreen() {
           direction={direction}
           setDirection={setDirection}
           emergencyModal={emergencyModal}
-          setEmergencyModal={setSosModal}
+          setEmergencyModal={setEmergencyModal}
           modalDetails={modalDetails}
           emergency={emergency}
           address={address}
