@@ -6,14 +6,14 @@ export const LOGIN_MUTATION = gql`
     $password: String!
     $deviceName: String!
     $deviceModel: String!
-    $expoPushToken: String!
+    $pushToken: String
   ) {
     loginUser(
       email: $email
       password: $password
       deviceName: $deviceName
       deviceModel: $deviceModel
-      pushToken: $expoPushToken
+      pushToken: $pushToken
     ) {
       token
     }
@@ -111,5 +111,12 @@ export const CREATE_CHAT_MUTATIon = gql`
         profilePhoto
       }
     }
+  }
+`;
+
+
+export const UPLOAD_FILE = gql`
+  mutation UploadFile($file: Upload!) {
+    uploadFile(file: $file)
   }
 `;

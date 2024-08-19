@@ -30,8 +30,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     if (!result.canceled) {
       setSelectedImage(result.assets[0].uri);
       onImageSelected(result); // Pass the selected image to the parent component
-    } else {
-      alert("You did not select any image.");
     }
   };
 

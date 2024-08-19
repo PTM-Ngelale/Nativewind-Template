@@ -18,6 +18,7 @@ import {
   FlatList,
   Image,
   ImageProps,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   Text,
@@ -72,7 +73,11 @@ const EmergencyPost = ({
   timestamp: string;
 }) => {
   const getInitials = (firstName: string, lastName: string) => {
-    return `${firstName.charAt(0)}${lastName.charAt(0)}`;
+    // Check if firstName or lastName is null
+    if (!firstName && !lastName) {
+      return "JD"; // Return "Unknown User" if both are null
+    }
+    return `${firstName?.charAt(0) || ""}${lastName?.charAt(0) || ""}`;
   };
 
   return (
@@ -92,10 +97,12 @@ const EmergencyPost = ({
               </Text>
             </View>
           )}
-          <Text className="font-bold text-[16px]">
-            {user.firstName}
-            {user.lastName}
-          </Text>
+          {user?.firstName && (
+            <Text className="font-bold text-[16px]">
+              {user.firstName}
+              {user.lastName}
+            </Text>
+          )}
         </View>
 
         <View className="flex ml-auto">
@@ -130,7 +137,7 @@ const EmergencyGroup = () => {
   const params = useLocalSearchParams();
   const { id, address, emergency, userId } = params;
   const [message, setMessage] = useState("");
-  const { data: chatMessages,} = useGetChatsByAlertIdQuery({
+  const { data: chatMessages } = useGetChatsByAlertIdQuery({
     variables: {
       alertId: id as string,
     },
@@ -194,6 +201,10 @@ const EmergencyGroup = () => {
         },
       },
     });
+    setMessage(""); // Clear the input field after sending the message
+    setTimeout(() => {
+      flatListRef?.current?.scrollToEnd({ animated: true });
+    }, 100);
   };
 
   const pickImageAsync = async () => {
@@ -213,8 +224,24 @@ const EmergencyGroup = () => {
     if (flatListRef.current) {
       setTimeout(() => {
         flatListRef?.current?.scrollToEnd({ animated: true });
-      }, 100);
+      }, 150);
     }
+  }, [chats]);
+
+  // Scroll to bottom when the keyboard opens
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => {
+        setTimeout(() => {
+          flatListRef?.current?.scrollToEnd({ animated: true });
+        }, 100);
+      }
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+    };
   }, []);
 
   return (
@@ -227,9 +254,6 @@ const EmergencyGroup = () => {
         <FlatList
           ref={flatListRef}
           data={chats}
-          onContentSizeChange={() =>
-            flatListRef.current?.scrollToEnd({ animated: true })
-          }
           ListHeaderComponent={() => {
             return (
               <View>
@@ -285,7 +309,7 @@ const EmergencyGroup = () => {
           renderItem={({ item }) => <EmergencyPost {...item} />}
         />
       </SafeAreaView>
-      <View className="px-4  py-4 space-x-3 flex items-center justify-between flex-row">
+      <View className="px-4  py-2 space-x-3 flex items-center justify-between flex-row">
         <TouchableOpacity onPress={pickImageAsync}>
           <View className="w-10 h-10 items-center justify-center rounded-full border border-[#6B728080]">
             <Image
@@ -313,11 +337,10 @@ const EmergencyGroup = () => {
           onPress={() => {
             if (message.trim()) {
               handleSendMessage(); // Call createChat with the message
-              setMessage(""); // Clear the input field after sending the message
             }
           }}
           title="send"
-          textStyle="text-[#6B7280] text-center "
+          textStyle="text-[#6B7280] text-center  text-sm"
           customStyle="bg-[#192655] border border-[#D1D5DB] w-[70px] bg-white"
         />
       </View>

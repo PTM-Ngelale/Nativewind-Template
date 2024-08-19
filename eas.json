@@ -1,7 +1,4 @@
 {
-  "cli": {
-    "version": ">= 7.6.0"
-  },
   "build": {
     "development": {
       "developmentClient": true,
@@ -13,7 +10,12 @@
       "channel": "preview",
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://alarm-saas-backend-y2v2v.ondigitalocean.app/graphql",
+        "EXPO_PUBLIC_API_SUBSCRIPTION": "wss://alarm-saas-backend-y2v2v.ondigitalocean.app/graphql",
       }
+    
     },
     "production": {
       "channel": "production"

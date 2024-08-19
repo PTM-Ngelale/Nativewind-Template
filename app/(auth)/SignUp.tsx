@@ -25,9 +25,9 @@ const SignUp = () => {
           type: "success",
           text1: "Please check your mail to confirm account.",
         });
-        router.push({
+        router.replace({
           pathname: "/(auth)/Validation",
-          params: { email: data.registerUser.email },
+          params: { email: data.registerUser.email, type: "account_verification" },
         } as Href<string>);
       }
     },

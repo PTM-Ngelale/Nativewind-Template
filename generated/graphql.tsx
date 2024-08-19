@@ -16,6 +16,14 @@ export type Scalars = {
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
   DateTime: { input: any; output: any; }
+  Upload: { input: any; output: any; }
+};
+
+export type AddressComponent = {
+  __typename?: 'AddressComponent';
+  long_name: Scalars['String']['output'];
+  short_name: Scalars['String']['output'];
+  types: Array<Scalars['String']['output']>;
 };
 
 export type AffectedRows = {
@@ -1899,6 +1907,12 @@ export type FloatWithAggregatesFilter = {
   notIn?: InputMaybe<Array<Scalars['Float']['input']>>;
 };
 
+export type Geometry = {
+  __typename?: 'Geometry';
+  location: Location;
+  viewport: Viewport;
+};
+
 export type Group = {
   __typename?: 'Group';
   _count: GroupCount;
@@ -2556,12 +2570,24 @@ export type GroupWhereUniqueInput = {
   users?: InputMaybe<UserListRelationFilter>;
 };
 
+export type Location = {
+  __typename?: 'Location';
+  lat: Scalars['Float']['output'];
+  lng: Scalars['Float']['output'];
+};
+
 export type LoginData = {
   __typename?: 'LoginData';
   error?: Maybe<Scalars['String']['output']>;
   message: Scalars['String']['output'];
   status: Scalars['String']['output'];
   token?: Maybe<Scalars['String']['output']>;
+};
+
+export type MatchedSubstring = {
+  __typename?: 'MatchedSubstring';
+  length: Scalars['Int']['output'];
+  offset: Scalars['Int']['output'];
 };
 
 export type Mutation = {
@@ -2603,6 +2629,8 @@ export type Mutation = {
   updateManyGroup?: Maybe<AffectedRows>;
   updateManyUser?: Maybe<AffectedRows>;
   updateUser?: Maybe<User>;
+  uploadFile: Scalars['String']['output'];
+  uploadMultipleFile: Array<Scalars['String']['output']>;
   verifyDeviceChange: User;
   verifyEmail: LoginData;
   verifyOtp: User;
@@ -2738,7 +2766,7 @@ export type MutationLoginUserArgs = {
   deviceName: Scalars['String']['input'];
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
-  pushToken: Scalars['String']['input'];
+  pushToken?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -2815,6 +2843,16 @@ export type MutationUpdateManyUserArgs = {
 export type MutationUpdateUserArgs = {
   data: UserUpdateInput;
   where: UserWhereUniqueInput;
+};
+
+
+export type MutationUploadFileArgs = {
+  file: Scalars['Upload']['input'];
+};
+
+
+export type MutationUploadMultipleFileArgs = {
+  files: Array<Scalars['Upload']['input']>;
 };
 
 
@@ -3128,6 +3166,35 @@ export type PaginatedUser = {
   totalPages: Scalars['Int']['output'];
 };
 
+export type PlaceResult = {
+  __typename?: 'PlaceResult';
+  address_components: Array<AddressComponent>;
+  adr_address: Scalars['String']['output'];
+  formatted_address: Scalars['String']['output'];
+  geometry: Geometry;
+  icon: Scalars['String']['output'];
+  icon_background_color: Scalars['String']['output'];
+  icon_mask_base_uri: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  place_id: Scalars['String']['output'];
+  reference: Scalars['String']['output'];
+  types: Array<Scalars['String']['output']>;
+  url: Scalars['String']['output'];
+  utc_offset: Scalars['Int']['output'];
+  vicinity: Scalars['String']['output'];
+};
+
+export type Prediction = {
+  __typename?: 'Prediction';
+  description: Scalars['String']['output'];
+  matched_substrings: Array<MatchedSubstring>;
+  place_id: Scalars['String']['output'];
+  reference: Scalars['String']['output'];
+  structured_formatting: StructuredFormatting;
+  terms: Array<Term>;
+  types: Array<Scalars['String']['output']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   aggregateAlert: AggregateAlert;
@@ -3147,7 +3214,10 @@ export type Query = {
   findUniqueGroup: Group;
   findUniqueUser: User;
   getCurrentUser: User;
+  getLocation: Array<Prediction>;
+  getPlaceDetails: PlaceResult;
   getSubAdminsOfSuperAdmin: PaginatedUser;
+  getSuperAdmins: PaginatedUser;
   getUsersAndSubAdminsOfSuperAdmin: PaginatedUser;
   getUsersOfSubAdmin: PaginatedGroup;
   groupByAlert: Array<AlertGroupBy>;
@@ -3310,7 +3380,22 @@ export type QueryFindUniqueUserArgs = {
 };
 
 
+export type QueryGetLocationArgs = {
+  args: Scalars['String']['input'];
+};
+
+
+export type QueryGetPlaceDetailsArgs = {
+  args: Scalars['String']['input'];
+};
+
+
 export type QueryGetSubAdminsOfSuperAdminArgs = {
+  page?: Scalars['Int']['input'];
+};
+
+
+export type QueryGetSuperAdminsArgs = {
   page?: Scalars['Int']['input'];
 };
 
@@ -3548,10 +3633,24 @@ export type StringWithAggregatesFilter = {
   startsWith?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type StructuredFormatting = {
+  __typename?: 'StructuredFormatting';
+  main_text: Scalars['String']['output'];
+  main_text_matched_substrings: Array<MatchedSubstring>;
+  secondary_text: Scalars['String']['output'];
+  secondary_text_matched_substrings: Array<MatchedSubstring>;
+};
+
 export type Subscription = {
   __typename?: 'Subscription';
   alertCreated: Alert;
   chatCreated: Chat;
+};
+
+export type Term = {
+  __typename?: 'Term';
+  offset: Scalars['Int']['output'];
+  value: Scalars['String']['output'];
 };
 
 export type User = {
@@ -6274,12 +6373,18 @@ export type UserWhereUniqueInput = {
   verificationOtp?: InputMaybe<StringNullableFilter>;
 };
 
+export type Viewport = {
+  __typename?: 'Viewport';
+  northeast: Location;
+  southwest: Location;
+};
+
 export type LoginUserMutationVariables = Exact<{
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
   deviceName: Scalars['String']['input'];
   deviceModel: Scalars['String']['input'];
-  expoPushToken: Scalars['String']['input'];
+  pushToken?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
@@ -6340,6 +6445,13 @@ export type CreateChatMutationVariables = Exact<{
 
 export type CreateChatMutation = { __typename?: 'Mutation', createChat?: { __typename?: 'Chat', id: string, message: string, timestamp: any, imageUrl?: string | null, user?: { __typename?: 'User', firstName?: string | null, lastName?: string | null, profilePhoto?: string | null } | null } | null };
 
+export type UploadFileMutationVariables = Exact<{
+  file: Scalars['Upload']['input'];
+}>;
+
+
+export type UploadFileMutation = { __typename?: 'Mutation', uploadFile: string };
+
 export type GetUserBasicInfoQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -6386,13 +6498,13 @@ export type AlertCreatedSubscription = { __typename?: 'Subscription', alertCreat
 
 
 export const LoginUserDocument = gql`
-    mutation loginUser($email: String!, $password: String!, $deviceName: String!, $deviceModel: String!, $expoPushToken: String!) {
+    mutation loginUser($email: String!, $password: String!, $deviceName: String!, $deviceModel: String!, $pushToken: String) {
   loginUser(
     email: $email
     password: $password
     deviceName: $deviceName
     deviceModel: $deviceModel
-    pushToken: $expoPushToken
+    pushToken: $pushToken
   ) {
     token
   }
@@ -6417,7 +6529,7 @@ export type LoginUserMutationFn = Apollo.MutationFunction<LoginUserMutation, Log
  *      password: // value for 'password'
  *      deviceName: // value for 'deviceName'
  *      deviceModel: // value for 'deviceModel'
- *      expoPushToken: // value for 'expoPushToken'
+ *      pushToken: // value for 'pushToken'
  *   },
  * });
  */
@@ -6695,6 +6807,37 @@ export function useCreateChatMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreateChatMutationHookResult = ReturnType<typeof useCreateChatMutation>;
 export type CreateChatMutationResult = Apollo.MutationResult<CreateChatMutation>;
 export type CreateChatMutationOptions = Apollo.BaseMutationOptions<CreateChatMutation, CreateChatMutationVariables>;
+export const UploadFileDocument = gql`
+    mutation UploadFile($file: Upload!) {
+  uploadFile(file: $file)
+}
+    `;
+export type UploadFileMutationFn = Apollo.MutationFunction<UploadFileMutation, UploadFileMutationVariables>;
+
+/**
+ * __useUploadFileMutation__
+ *
+ * To run a mutation, you first call `useUploadFileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadFileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uploadFileMutation, { data, loading, error }] = useUploadFileMutation({
+ *   variables: {
+ *      file: // value for 'file'
+ *   },
+ * });
+ */
+export function useUploadFileMutation(baseOptions?: Apollo.MutationHookOptions<UploadFileMutation, UploadFileMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UploadFileMutation, UploadFileMutationVariables>(UploadFileDocument, options);
+      }
+export type UploadFileMutationHookResult = ReturnType<typeof useUploadFileMutation>;
+export type UploadFileMutationResult = Apollo.MutationResult<UploadFileMutation>;
+export type UploadFileMutationOptions = Apollo.BaseMutationOptions<UploadFileMutation, UploadFileMutationVariables>;
 export const GetUserBasicInfoDocument = gql`
     query GetUserBasicInfo {
   getCurrentUser {

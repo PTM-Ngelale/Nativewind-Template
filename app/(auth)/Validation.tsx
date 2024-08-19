@@ -14,12 +14,15 @@ import OTPTextView from "react-native-otp-textinput";
 import { showToast } from "@/components/ToastComponent";
 import {
   useGenerateOtpMutation,
+  useVerifyDeviceChangeMutation,
   useVerifyUserAccountOtpMutation,
 } from "@/generated/graphql";
 import Toast from "react-native-toast-message";
+import { useUser } from "@/context/userContext";
 
 const Validation = () => {
   const router = useRouter();
+  const { expoPushToken, deviceInfo } = useUser();
   const [verifyUserAccountOtp, { loading }] = useVerifyUserAccountOtpMutation({
     onCompleted: async () => {
       router.push("/(auth)/Login");
@@ -30,6 +33,15 @@ const Validation = () => {
       Toast.show({ type: "error", text1: error.message });
     },
   });
+  const [verifyDeviceChange, { loading: deviceChangeLoading }] = useVerifyDeviceChangeMutation({
+    onCompleted: async () => {
+      router.push("/(auth)/Login");
+      showToast("success", "New Device Registered, Please Login Again");
+    },
+    onError: (error: ApolloError) => {
+      Toast.show({ type: "error", text1: error.message });
+    },
+  })
   const [generateOtp, { loading: resendLoading }] = useGenerateOtpMutation({
     onCompleted: async () => {
       showToast("success", "OTP resent successfully.");
@@ -40,7 +52,7 @@ const Validation = () => {
     },
   });
   const params = useLocalSearchParams();
-  const { email } = params;
+  const { email, type } = params;
   const emailString = Array.isArray(email) ? email[0] : email;
   const handleBack = () => {
     router.back();
@@ -58,15 +70,29 @@ const Validation = () => {
         email: emailString,
       },
     });
+    setOtp("");
   };
 
   const handleValidation = async () => {
-    await verifyUserAccountOtp({
-      variables: {
-        email: emailString,
-        otp,
-      },
-    });
+    if (type === "device_change") {
+      console.log("hello world")
+      await verifyDeviceChange({
+        variables: {
+          email: emailString,
+          otp,
+          deviceName: deviceInfo.deviceName,
+          deviceModel: deviceInfo.deviceModel,
+          expoPushToken,
+        },
+      });
+    } else {
+      await verifyUserAccountOtp({
+        variables: {
+          email: emailString,
+          otp,
+        },
+      });
+    }
   };
 
   return (
@@ -113,7 +139,7 @@ const Validation = () => {
                 onPress={handleValidation}
                 title="Validate"
                 customStyle="bg-[#192655]"
-                isLoading={loading || resendLoading}
+                isLoading={loading || resendLoading || deviceChangeLoading}
                 textStyle="text-white"
               />
             </View>

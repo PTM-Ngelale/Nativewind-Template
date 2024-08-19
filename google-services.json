@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "1042021613686",
+    "project_id": "alarmix-a2729",
+    "storage_bucket": "alarmix-a2729.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1042021613686:android:963fb8a06b615b4f345f57",
+        "android_client_info": {
+          "package_name": "com.expectoo.alarmix"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1042021613686-24lksjkkrenb3agivuqgto2b87lilmtg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.expectoo.alarmix",
+            "certificate_hash": "178ab2593a447eeac8dd9a559fdfff35692c38f6"
+          }
+        },
+        {
+          "client_id": "1042021613686-f3n0t0hu5f55243oug5883utqr2f61f5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjWYdj9ODF806hoMfbNE68PRJIZ2toU-E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1042021613686-f3n0t0hu5f55243oug5883utqr2f61f5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1042021613686-3nk2dbr6l0pujpukhmqvct2j3ouvbg53.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.expectoo.alarmix"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
