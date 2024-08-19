@@ -1,14 +1,15 @@
 import Loading from "@/components/Loading";
-import { showToast } from "@/components/ToastComponent";
 import BackArrow from "@/components/ui/BackArrow";
 import CustomButton from "@/components/ui/CustomButton";
 import CustomTextInput from "@/components/ui/CustomInput";
 import ImageUpload from "@/components/ui/ImageUpload";
-import { useUpdateUserMutation } from "@/generated/graphql";
+import {
+  useUpdateUserMutation,
+  useUploadFileMutation,
+} from "@/generated/graphql";
 import { GetUserBasicInfoQuery } from "@/graphql/query";
 import { ApolloError, useQuery } from "@apollo/client";
-import axios from "axios";
-import { ImagePickerAsset, ImagePickerResult } from "expo-image-picker";
+import { ImagePickerResult } from "expo-image-picker";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -18,20 +19,25 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 
 const Profile: React.FC = () => {
-  const { data, loading, error } = useQuery(GetUserBasicInfoQuery);
+  const { data, loading, error } = useQuery(GetUserBasicInfoQuery, {
+    fetchPolicy: "no-cache",
+  });
 
   const [updateUser, { loading: userUpdating, error: userUpdateError }] =
     useUpdateUserMutation({
       onCompleted: () => {
-        showToast("success", "Profile updated successfully");
+        Toast.show({ type: "success", text1: "Profile updated successfully" });
       },
       onError: (err: ApolloError) => {
-        showToast("error", err.message || "Error updating profile");
+        Toast.show({
+          type: "error",
+          text1: err.message || "Error updating profile",
+        });
       },
     });
-
   const {
     firstName: initialFirstName,
     lastName: initialLastName,
@@ -40,7 +46,6 @@ const Profile: React.FC = () => {
     nextOfKinName: initialNextOfKinName,
     nextOfKinContact: initalNextOfKinContact,
   } = data?.getCurrentUser || {};
-
   const [firstName, setFirstName] = useState<string>(initialFirstName || "");
   const [lastName, setLastName] = useState<string>(initialLastName || "");
   const [nextOfKinName, setNextOfKinName] = useState<string>(
@@ -53,7 +58,6 @@ const Profile: React.FC = () => {
     null
   );
   const [isUploading, setIsUploading] = useState<boolean>(false);
-
   useEffect(() => {
     setFirstName(initialFirstName || "");
     setLastName(initialLastName || "");
@@ -66,59 +70,71 @@ const Profile: React.FC = () => {
     initialNextOfKinName,
   ]);
 
+  const [uploadFile] = useUploadFileMutation({
+    onError: (err: ApolloError) => {
+      console.log(err, "Error uploading file");
+      Toast.show({
+        type: "error",
+        text1: err.message || "Error updating profile",
+      });
+    },
+  });
+
+  const handleFileUpload = async (file: File) => {
+    try {
+      const response = await uploadFile({
+        variables: {
+          file, // Directly pass the file
+        },
+      });
+
+      return response.data?.uploadFile;
+    } catch (err) {
+      Toast.show({
+        type: "error",
+        text1: "Error uploading file",
+      });
+      throw err;
+    }
+  };
+
   const handleImageUpload = async (
     image: ImagePickerResult
   ): Promise<string> => {
     try {
       setIsUploading(true);
-      const asset: ImagePickerAsset | undefined = image.assets
-        ? image.assets[0]
-        : undefined;
+      const asset = image.assets ? image.assets[0] : undefined;
       if (!asset || !asset.uri || !asset.type || !asset.fileName) {
         throw new Error("No image selected or missing required properties");
       }
 
-      const formData = new FormData();
-      formData.append("file", {
-        uri: asset.uri,
+      const fileBlob = await fetch(asset.uri).then((res) => res.blob());
+
+      // Create a new File object
+      const file = new File([fileBlob], asset.fileName, {
         type: asset.type,
-        name: asset.fileName,
-      } as any); // Type assertion to satisfy FormData.append
+        lastModified: Date.now(),
+      });
 
-      const response = await axios.post(
-        "https://alarm-saas-backend-y2v2v.ondigitalocean.app/upload",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      return response.data.data;
+      const uploadedFileLocation = (await handleFileUpload(file)) || "";
+      return uploadedFileLocation;
     } catch (error) {
-     if (axios.isAxiosError(error)) {
-      // If the error is an AxiosError, log the response error
-      showToast("error", error.response?.data?.message || error.message);
-    } else {
-      // For non-Axios errors, log the error message
-      showToast("error", (error as Error).message);
-    }
-    throw error;
+      Toast.show({
+        type: "error",
+        text1: "Error uploading image",
+      });
+      throw error;
     } finally {
       setIsUploading(false);
     }
   };
-
   const handleUpdateProfile = async () => {
     try {
       let profilePhotoUrl = profilePhoto || "";
-
       if (selectedImage) {
         // Check if an image is selected
         profilePhotoUrl = await handleImageUpload(selectedImage);
       }
-
       await updateUser({
         variables: {
           where: { id },
@@ -131,16 +147,13 @@ const Profile: React.FC = () => {
           },
         },
       });
-    } catch (err) {
-      showToast("error", "Error updating profile", err);
-    }
+    } catch (err: any) {}
   };
-
   if (loading) return <Loading />;
   if (error || userUpdateError) {
-    showToast("error", error?.message || "An unknown error occurred");
+    console.log(error?.message);
+    console.log("error", error?.message || "An unknown error occurred");
   }
-
   return (
     <KeyboardAvoidingView
       className="flex-1 flex items-start"
@@ -207,8 +220,8 @@ const Profile: React.FC = () => {
               backgroundColor: "rgba(0,0,0,0.5)",
             }}
           >
-            <ActivityIndicator size="large" color="#ffffff" />
-            <Text style={{ color: "#ffffff", marginTop: 10 }}>
+            <ActivityIndicator size="large" color="#FFFFFF" />
+            <Text style={{ color: "#FFFFFF", marginTop: 10 }}>
               Uploading...
             </Text>
           </View>
@@ -217,5 +230,4 @@ const Profile: React.FC = () => {
     </KeyboardAvoidingView>
   );
 };
-
 export default Profile;

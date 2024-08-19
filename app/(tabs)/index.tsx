@@ -1,34 +1,31 @@
 import EmergencyModal from "@/components/EmergencyModal";
 import Onboarding from "@/components/Onboarding";
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Text,
-  Image,
-  TouchableOpacity,
-  ActivityIndicator,
-} from "react-native";
-import MapView, {
-  Circle,
-  Marker,
-  PROVIDER_DEFAULT,
-  PROVIDER_GOOGLE,
-} from "react-native-maps";
-
-import SosModal from "@/components/SosModal";
-import MapViewDirections from "react-native-maps-directions";
 import ReportModal from "@/components/ReportModal";
+import SosModal from "@/components/SosModal";
+import Loading from "@/components/Loading";
+import SosLoading from "@/components/SosLoading";
 import { useUser } from "@/context/userContext";
 import {
+  Alert,
   AlertType,
   GetUserEmailDocument,
-  RoleType,
   useCreateAlertMutation,
-  useListAlertsQuery,
+  useListAlertsByUserAssociationQuery,
+  useListUserAlertsQuery,
 } from "@/generated/graphql";
-import Toast from "react-native-toast-message";
 import { ApolloError, useQuery } from "@apollo/client";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import MapView, { Circle, Marker, PROVIDER_DEFAULT } from "react-native-maps";
+import MapViewDirections from "react-native-maps-directions";
+import Toast from "react-native-toast-message";
 
 export default function HomeScreen() {
   const [emergencyModal, setEmergencyModal] = useState(false);
@@ -46,20 +43,27 @@ export default function HomeScreen() {
   const [selectedEmergency, setSelectedEmergency] = useState("");
   const [reportModal, setReportModal] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [modalLoading, setModalLoading] = useState(false); // Loading state for SOS modal
   const [modalDetails, setModalDetails] = useState(0.0);
-
+  const [emergency, setEmergency] = useState("");
+  const [address, setAddress] = useState("");
+  const [totalNotified, setTotalNotified] = useState(0);
   const { data } = useQuery(GetUserEmailDocument);
   const userData = data?.getCurrentUser;
+  const [chatData, setChatData] = useState<any>(null);
 
   const [createAlert, { loading: loadingAlerts }] = useCreateAlertMutation({
-    onCompleted: () => {
+    onCompleted: (data) => {
+      const alert = data.createAlert;
       setReportModal(false);
-      setEmergencyModal(true);
-      setSelectedEmergency("");
+      setTotalNotified(data.createAlert?.totalNotified || 0);
+      setChatData(data.createAlert?.alert);
+      setModalLoading(false);
+      setSosModal(true);
       Toast.show({ type: "success", text1: "Report has been escalated!" });
     },
-
     onError: (error: ApolloError) => {
+      setModalLoading(false);
       Toast.show({ type: "error", text1: error.message });
     },
   });
@@ -76,16 +80,15 @@ export default function HomeScreen() {
     fetchLocation();
   }, []);
 
-  const {
-    data: listAlerts,
-    loading: alertLoading,
-    error,
-  } = useListAlertsQuery();
+  const { data: listAlerts } = useListAlertsByUserAssociationQuery();
 
   const setMarkerDirection = (
     latitude: number,
     longitude: number,
-    id: number
+    id: number,
+    emergency: string,
+    address: string,
+    alert: any
   ) => {
     setDirectionOrigin({
       latitude: initialRegion.latitude,
@@ -97,6 +100,9 @@ export default function HomeScreen() {
     });
     setEmergencyModal(true);
     setModalDetails(id);
+    setEmergency(emergency); // Set the emergency detail
+    setAddress(address); // Set the address detail
+    setChatData(alert);
   };
 
   const getDirection = () => {
@@ -107,12 +113,7 @@ export default function HomeScreen() {
   const GOOGLE_MAPS_APIKEY = "AIzaSyAarxyzQsNQtOzS0rSr51QGbDSkxJkcwzk";
 
   if (loading) {
-    return (
-      <View className="h-full w-full bg-white items-center justify-center">
-        <ActivityIndicator size="large" color="#0000ff" />
-        <Text>Loading...</Text>
-      </View>
-    );
+    return <Loading />;
   }
 
   const handleClick = async () => {
@@ -120,6 +121,9 @@ export default function HomeScreen() {
       // Ensure the current location is up-to-date
       getCurrentLocation();
 
+      setEmergencyModal(false);
+      setSelectedEmergency("");
+      setModalLoading(true);
       await createAlert({
         variables: {
           data: {
@@ -136,9 +140,8 @@ export default function HomeScreen() {
           },
         },
       });
-
-      setSosModal(!sosModal);
     } catch (error) {
+      setModalLoading(false);
       console.error("Error creating alert:", error);
       // Handle error (e.g., show a toast or alert)
     }
@@ -148,6 +151,7 @@ export default function HomeScreen() {
     <View className="h-full w-full bg-white">
       <MapView
         region={initialRegion}
+        userInterfaceStyle="dark"
         showsUserLocation={true}
         // followsUserLocation={true}
         style={styles.map}
@@ -161,7 +165,7 @@ export default function HomeScreen() {
           strokeColor="#0090FA33"
           fillColor="#0090FA33"
         />
-        {listAlerts?.listAlerts.map((circle, i) => {
+        {listAlerts?.listAlertsByUserAssociation.map((circle, i) => {
           const center = {
             latitude: circle.latitude,
             longitude: circle.longitude,
@@ -170,7 +174,7 @@ export default function HomeScreen() {
           };
           return (
             <Circle
-              key={i}
+              key={`circle-${circle.id}`}
               center={center}
               radius={150}
               strokeWidth={1}
@@ -180,8 +184,9 @@ export default function HomeScreen() {
           );
         })}
 
-        {listAlerts?.listAlerts.map((marker, i) => (
+        {listAlerts?.listAlertsByUserAssociation.map((marker, i) => (
           <Marker
+            key={`marker-${marker.id}`}
             coordinate={{
               latitude: marker.latitude,
               longitude: marker.longitude,
@@ -193,7 +198,10 @@ export default function HomeScreen() {
               setMarkerDirection(
                 marker.latitude,
                 marker.longitude,
-                marker.latitude
+                marker.latitude,
+                marker.emergency,
+                marker.address as string,
+                marker
               )
             }
           />
@@ -248,6 +256,9 @@ export default function HomeScreen() {
           emergencyModal={emergencyModal}
           setEmergencyModal={setEmergencyModal}
           modalDetails={modalDetails}
+          emergency={emergency}
+          address={address}
+          alertData={chatData}
         />
       </View>
 
@@ -259,18 +270,30 @@ export default function HomeScreen() {
       </View>
 
       <View>
-        <SosModal sosModal={sosModal} setSosModal={setSosModal} />
+        {modalLoading ? (
+          <SosLoading />
+        ) : (
+          <SosModal
+            alertData={chatData}
+            type={selectedEmergency || "SOS"}
+            sosModal={sosModal}
+            setSosModal={setSosModal}
+            totalNotified={totalNotified}
+          />
+        )}
       </View>
 
       <View>
         <ReportModal
-          emergencyModal={emergencyModal}
+          emergencyModal={sosModal}
           displayCurrentAddress={displayCurrentAddress}
-          setEmergencyModal={setEmergencyModal}
+          setEmergencyModal={setSosModal}
           selectedEmergency={selectedEmergency}
           setSelectedEmergency={setSelectedEmergency}
           reportModal={reportModal}
           setReportModal={setReportModal}
+          setTotalNotified={setTotalNotified}
+          setChatData={setChatData}
         />
       </View>
     </View>

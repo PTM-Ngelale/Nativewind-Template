@@ -6,14 +6,14 @@ export const LOGIN_MUTATION = gql`
     $password: String!
     $deviceName: String!
     $deviceModel: String!
-    $expoPushToken: String!
+    $pushToken: String
   ) {
     loginUser(
       email: $email
       password: $password
       deviceName: $deviceName
       deviceModel: $deviceModel
-      pushToken: $expoPushToken
+      pushToken: $pushToken
     ) {
       token
     }
@@ -61,14 +61,62 @@ export const UPDATE_USER_MUTATION = gql`
   }
 `;
 
+export const DEVICE_CHANGE_MUTATION = gql`
+  mutation VerifyDeviceChange(
+    $email: String!
+    $otp: String!
+    $deviceName: String!
+    $deviceModel: String!
+    $expoPushToken: String!
+  ) {
+    verifyDeviceChange(
+      deviceName: $deviceName
+      deviceModel: $deviceModel
+      pushToken: $expoPushToken
+      email: $email
+      otp: $otp
+    ) {
+      email
+    }
+  }
+`;
+
 //Alerts
 export const CREATE_ALERT_MUTATION = gql`
   mutation CreateAlert($data: AlertCreateInput!) {
     createAlert(data: $data) {
-      id
-      emergency
-      latitude
-      longitude
+      alert {
+        id
+        emergency
+        latitude
+        longitude
+        address
+      }
+      totalNotified
     }
+  }
+`;
+
+//Chats
+export const CREATE_CHAT_MUTATIon = gql`
+  mutation CreateChat($data: ChatCreateInput!) {
+    createChat(data: $data) {
+      id
+      message
+      timestamp
+      imageUrl
+      user {
+        firstName
+        lastName
+        profilePhoto
+      }
+    }
+  }
+`;
+
+
+export const UPLOAD_FILE = gql`
+  mutation UploadFile($file: Upload!) {
+    uploadFile(file: $file)
   }
 `;

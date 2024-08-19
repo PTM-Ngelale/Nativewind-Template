@@ -16,6 +16,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
+import CustomButton from "./ui/CustomButton";
 
 interface Props {
   emergencyModal: boolean;
@@ -25,6 +26,8 @@ interface Props {
   reportModal: boolean;
   setReportModal: Dispatch<SetStateAction<boolean>>;
   displayCurrentAddress: string;
+  setTotalNotified: Dispatch<SetStateAction<number>>;
+  setChatData: Dispatch<SetStateAction<any>>;
 }
 
 const ReportModal = ({
@@ -34,17 +37,22 @@ const ReportModal = ({
   reportModal,
   setReportModal,
   displayCurrentAddress,
+  setTotalNotified,
+  setChatData
 }: Props) => {
-  const { data } = useQuery(GetUserEmailDocument);
+  const { data, } = useQuery(GetUserEmailDocument);
   const { getCurrentLocation, initialRegion } = useUser();
+
 
   const userData = data?.getCurrentUser;
 
   const [createAlert, { loading }] = useCreateAlertMutation({
-    onCompleted: () => {
+    onCompleted: (data) => {
+      const alert = data.createAlert;
       setReportModal(false);
       setEmergencyModal(true);
-      setSelectedEmergency("");
+      setTotalNotified(data.createAlert?.totalNotified || 0)
+      setChatData(data.createAlert?.alert)
       Toast.show({ type: "success", text1: "Report has been escalated!" });
     },
 
@@ -161,28 +169,35 @@ const ReportModal = ({
                       onPress={() => setSelectedEmergency(type.name)}
                       activeOpacity={0.8}
                       key={type.id}
-                      className={`border border-[#19265580] p-4 rounded-lg ${
-                        selectedEmergency === type.name && "border-[#0090FA]"
-                      }`}
+                      className={`border border-[#19265580] p-4 rounded-lg ${selectedEmergency === type.name && "border-[#0090FA]"
+                        }`}
                     >
                       <Text
-                        className={`text-[#6B7280] text-sm ${
-                          selectedEmergency === type.name &&
+                        className={`text-[#6B7280] text-sm ${selectedEmergency === type.name &&
                           "text-[#0090FA] font-bold"
-                        }`}
+                          }`}
                       >
                         {type.name}
                       </Text>
                     </TouchableOpacity>
                   ))}
                 </View>
-                <TouchableOpacity
+                <View className="mt-[15%]">
+                  <CustomButton
+                    title="Submit"
+                    textStyle="text-white"
+                    customStyle="bg-[#192655]"
+                    onPress={handleClick}
+                    isLoading={loading}
+                  />
+                </View>
+                {/* <TouchableOpacity
                   onPress={handleClick}
                   activeOpacity={0.8}
                   className="mt-[15%] w-full items-center border bg-[#192655] py-4 rounded-xl "
                 >
                   <Text className="text-white text-sm">Submit</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
             </ScrollView>
           </View>

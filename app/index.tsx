@@ -2,7 +2,7 @@ import CustomButton from "@/components/ui/CustomButton";
 import { useUser } from "@/context/userContext";
 import { router } from "expo-router";
 import { useEffect } from "react";
-import { Image, SafeAreaView, ScrollView, View } from "react-native";
+import { Image, SafeAreaView, ScrollView, Text, View } from "react-native";
 import useAuth from "@/hooks/useAuth";
 import Loading from "@/components/Loading";
 
@@ -10,16 +10,13 @@ const OnBoarding = () => {
   const { checkIfLocationEnabled } = useUser();
   const { isLoading, userToken } = useAuth();
 
-  useEffect(
-    () => {
-      if (userToken) {
-        router.push("/(tabs)");
-      } else {
-        checkIfLocationEnabled();
-      }
-    },
-    [isLoading, userToken, checkIfLocationEnabled]
-  );
+  useEffect(() => {
+    if (userToken) {
+      router.push("/(tabs)");
+    } else {
+      checkIfLocationEnabled();
+    }
+  }, [isLoading, userToken, checkIfLocationEnabled]);
 
   if (isLoading) {
     return <Loading />;

@@ -2,9 +2,10 @@ import CustomButton from "@/components/ui/CustomButton";
 import CustomTextInput from "@/components/ui/CustomInput";
 import { useUser } from "@/context/userContext";
 import { useLoginUserMutation } from "@/generated/graphql";
+import { getCurrentServerIdentifier } from "@/utils/serverIdentifier";
 import { ApolloError } from "@apollo/client";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Href, useRouter } from "expo-router";
+import * as SecureStore from "expo-secure-store";
 import { useState } from "react";
 import {
   Image,
@@ -20,38 +21,45 @@ import Toast from "react-native-toast-message";
 const Login = () => {
   const router = useRouter();
   const { expoPushToken, deviceInfo } = useUser();
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
+
   const [loginUser, { loading }] = useLoginUserMutation({
     onCompleted: async (data) => {
       if (data.loginUser.token) {
         Toast.show({ type: "success", text1: "Welcome back." });
-        // Store token in AsyncStorage
         // Calculate expiration time (current time + 72 hours)
         const expirationTime = new Date().getTime() + 72 * 60 * 60 * 1000;
+        const serverIdentifier = getCurrentServerIdentifier(); // Get the current server identifier
         const tokenData = JSON.stringify({
           token: data.loginUser.token,
           expiration: expirationTime,
+          serverIdentifier, // Include final server identifier
         });
 
-        // Store token and expiration time in AsyncStorage
-        await AsyncStorage.setItem("userToken", tokenData);
+        // Store token and expiration time in SecureStore
+        await SecureStore.setItemAsync("alarmixToken", tokenData);
 
-        router.push("/(tabs)" as Href<string>);
+        router.replace("/(tabs)" as Href<string>);
+      } else {
+        Toast.show({ type: "success", text1: "New device detected" });
+        router.push({
+          pathname: "/(auth)/Validation",
+          params: { email: form.email, type: "device_change" },
+        } as Href<string>);
       }
     },
     onError: (error: ApolloError) => {
-      console.log(error.message)
       Toast.show({ type: "error", text1: error.message });
+      console.log(error.message)
     },
   });
 
   const handleBack = () => {
-    router.replace("/");
+    router.back();
   };
-
-  const [form, setForm] = useState({
-    email: "",
-    password: ""
-  });
 
   const validateForm = () => {
     const { email, password } = form;
@@ -80,7 +88,7 @@ const Login = () => {
           password: form.password,
           deviceName: deviceInfo.deviceName,
           deviceModel: deviceInfo.deviceModel,
-          expoPushToken,
+          pushToken: expoPushToken,
         },
       });
     }
@@ -88,13 +96,14 @@ const Login = () => {
 
   return (
     <SafeAreaView className="bg-white h-full">
-      <KeyboardAvoidingView enabled behavior="position">
+      <KeyboardAvoidingView behavior="padding">
         <ScrollView contentContainerStyle={{ height: "100%" }}>
           <View className="relative h-full">
             <View className=" relative h-full">
               <TouchableOpacity
                 className="absolute top-5 left-5 z-10"
-                onPress={handleBack}>
+                onPress={handleBack}
+              >
                 <Image source={require("@/assets/images/left-white.png")} />
               </TouchableOpacity>
               <Image
@@ -126,7 +135,8 @@ const Login = () => {
                           placeholderTextColor="#000"
                           value={form.email}
                           onChangeText={(e: any) =>
-                            setForm({ ...form, email: e })}
+                            setForm({ ...form, email: e })
+                          }
                         />
                       </View>
                       <View>
@@ -135,7 +145,8 @@ const Login = () => {
                           placeholderTextColor="#000"
                           value={form.password}
                           onChangeText={(e: any) =>
-                            setForm({ ...form, password: e })}
+                            setForm({ ...form, password: e })
+                          }
                         />
                       </View>
                     </View>
@@ -153,7 +164,9 @@ const Login = () => {
                       <Text>Don't have an account?</Text>
                       <TouchableOpacity
                         onPress={() =>
-                          router.push("/(auth)/SignUp" as Href<string>)}>
+                          router.push("/(auth)/SignUp" as Href<string>)
+                        }
+                      >
                         <Text className="text-[#192655] font-bold">
                           Sign Up
                         </Text>
