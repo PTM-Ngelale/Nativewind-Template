@@ -19,24 +19,25 @@ const MenuNavigation: {
   link: any;
   icon: React.JSX.Element;
 }[] = [
-  {
-    name: "My Profile",
-    link: "/profile",
-    icon: <TabBarIcon name={"person"} color={"#192655"} />,
-  },
-  // {
-  //   name: "Settings",
-  //   link: "/splashscreen",
-  //   icon: <TabBarIcon name={"settings"} color={"#192655"} />
-  // },
-  {
-    name: "Logout",
-    link: "/(auth)/Login",
-    icon: <TabBarIcon name={"log-out"} color={"#192655"} />,
-  },
-];
+    {
+      name: "My Profile",
+      link: "/profile",
+      icon: <TabBarIcon name={"person"} color={"#192655"} />,
+    },
+    // {
+    //   name: "Settings",
+    //   link: "/splashscreen",
+    //   icon: <TabBarIcon name={"settings"} color={"#192655"} />
+    // },
+    {
+      name: "Logout",
+      link: "/(auth)/Login",
+      icon: <TabBarIcon name={"log-out"} color={"#192655"} />,
+    },
+  ];
 
 const Menu = () => {
+
   const handleLogout = async () => {
     try {
       // Delete the authentication token from SecureStore

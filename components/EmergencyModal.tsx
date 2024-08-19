@@ -42,7 +42,9 @@ const EmergencyModal = ({
   emergency,
   alertData,
 }: Props) => {
+  console.log(emergencyModal)
   return (
+
     <View style={styles.centeredView}>
       <Modal
         animationType="slide"
@@ -52,7 +54,7 @@ const EmergencyModal = ({
           setEmergencyModal(!emergencyModal);
         }}
       >
-        <View style={styles.centeredView}>
+        <View style={{ flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.7)', justifyContent: 'center', alignItems: 'center' }}>
           <View style={styles.modalView} className="px-5">
             <View className="px-6 items-center">
               <Image
@@ -119,7 +121,10 @@ const EmergencyModal = ({
             </View>
             <TouchableOpacity
               activeOpacity={0.8}
-              onPress={() => setEmergencyModal(!emergencyModal)}
+              onPress={() => {
+                console.log("Close button pressed");
+                setEmergencyModal(!emergencyModal);
+              }}
               className="absolute top-3 right-3"
             >
               <Image

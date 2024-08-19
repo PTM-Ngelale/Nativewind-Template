@@ -93,7 +93,7 @@ const UserProvider = (props: { children: ReactNode }): ReactElement => {
       });
 
     responseListener.current =
-      Notifications.addNotificationResponseReceivedListener((response) => {});
+      Notifications.addNotificationResponseReceivedListener((response) => { });
 
     return () => {
       notificationListener.current &&
@@ -167,97 +167,105 @@ const UserProvider = (props: { children: ReactNode }): ReactElement => {
         longitude,
       });
 
-      if (response.length > 0) {
-        const address = response[0].formattedAddress;
-        setDisplayCurrentAddress(address as string);
+      if (Platform.OS === 'ios') {
+        for (let item of response) {
+          let address = `${item.name}, ${item.street}, ${item.postalCode}, ${item.city}`;
+          console.log(address, "from ios");
+        }
+
       }
-    }
-  };
 
-  const requestPermissionAgain = async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status === "granted") {
-      getCurrentLocation();
-    }
-  };
-
-  const handleRegistrationError = (errorMessage: string) => {
-    alert(errorMessage);
-    throw new Error(errorMessage);
-  };
-
-  const registerForPushNotificationsAsync = async () => {
-    let token;
-
-    if (Platform.OS === "android") {
-      Notifications.setNotificationChannelAsync("default", {
-        name: "default",
-        importance: Notifications.AndroidImportance.MAX,
-        vibrationPattern: [0, 250, 250, 250],
-        lightColor: "#FF231F7C",
-      });
-    }
-
-    if (Device.isDevice) {
-      const { status: existingStatus } =
-        await Notifications.getPermissionsAsync();
-      let finalStatus = existingStatus;
-      if (existingStatus !== "granted") {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
+        if (response.length > 0) {
+          const address = response[0].formattedAddress;
+          setDisplayCurrentAddress(address as string);
+        }
       }
-      if (finalStatus !== "granted") {
+    };
+
+    const requestPermissionAgain = async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status === "granted") {
+        getCurrentLocation();
+      }
+    };
+
+    const handleRegistrationError = (errorMessage: string) => {
+      alert(errorMessage);
+      throw new Error(errorMessage);
+    };
+
+    const registerForPushNotificationsAsync = async () => {
+      let token;
+
+      if (Platform.OS === "android") {
+        Notifications.setNotificationChannelAsync("default", {
+          name: "default",
+          importance: Notifications.AndroidImportance.MAX,
+          vibrationPattern: [0, 250, 250, 250],
+          lightColor: "#FF231F7C",
+        });
+      }
+
+      if (Device.isDevice) {
+        const { status: existingStatus } =
+          await Notifications.getPermissionsAsync();
+        let finalStatus = existingStatus;
+        if (existingStatus !== "granted") {
+          const { status } = await Notifications.requestPermissionsAsync();
+          finalStatus = status;
+        }
+        if (finalStatus !== "granted") {
+          handleRegistrationError(
+            "Permission not granted to get push token for push notification!"
+          );
+          return;
+        }
+        const projectId = Constants?.expoConfig?.extra?.eas?.projectId;
+        if (!projectId) {
+          handleRegistrationError("Project ID not found");
+        }
+        token = await Notifications.getExpoPushTokenAsync({
+          projectId: Constants.expoConfig!.extra!.eas.projectId,
+        });
+
+        return token.data;
+      } else {
         handleRegistrationError(
-          "Permission not granted to get push token for push notification!"
+          "Must use physical device for push notifications"
         );
-        return;
       }
-      const projectId = Constants?.expoConfig?.extra?.eas?.projectId;
-      if (!projectId) {
-        handleRegistrationError("Project ID not found");
-      }
-      token = await Notifications.getExpoPushTokenAsync({
-        projectId: Constants.expoConfig!.extra!.eas.projectId,
+    };
+
+    const getDeviceInfo = async () => {
+      const deviceId = Device.osBuildId || "unknown";
+      const deviceName = Device.manufacturer || "unknown";
+      const deviceModel = Device.modelName || "unknown";
+
+      setDeviceInfo({
+        deviceId,
+        deviceName,
+        deviceModel,
       });
+    };
 
-      return token.data;
-    } else {
-      handleRegistrationError(
-        "Must use physical device for push notifications"
-      );
-    }
+    return (
+      <UserContext.Provider
+        {...props}
+        value={{
+          displayCurrentAddress,
+          setDisplayCurrentAddress,
+          locationServicesEnabled,
+          setLocationServicesEnabled,
+          initialRegion,
+          setInitialRegion,
+          checkIfLocationEnabled,
+          getCurrentLocation,
+          requestPermissionAgain,
+          expoPushToken,
+          deviceInfo,
+        }}
+      />
+    );
   };
 
-  const getDeviceInfo = async () => {
-    const deviceId = Device.osBuildId || "unknown";
-    const deviceName = Device.manufacturer || "unknown";
-    const deviceModel = Device.modelName || "unknown";
-
-    setDeviceInfo({
-      deviceId,
-      deviceName,
-      deviceModel,
-    });
-  };
-
-  return (
-    <UserContext.Provider
-      {...props}
-      value={{
-        displayCurrentAddress,
-        setDisplayCurrentAddress,
-        locationServicesEnabled,
-        setLocationServicesEnabled,
-        initialRegion,
-        setInitialRegion,
-        checkIfLocationEnabled,
-        getCurrentLocation,
-        requestPermissionAgain,
-        expoPushToken,
-        deviceInfo,
-      }}
-    />
-  );
-};
-
-export { UserProvider, useUser };
+  export { UserProvider, useUser };

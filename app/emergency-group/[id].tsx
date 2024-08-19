@@ -80,6 +80,8 @@ const EmergencyPost = ({
     return `${firstName?.charAt(0) || ""}${lastName?.charAt(0) || ""}`;
   };
 
+  console.log(imageUrl)
+
   return (
     <View className=" flex flex-col  bg-[#EAEAEA]">
       <View className="flex flex-row  justify-between px-4 pt-4 space-x-2 items-center w-full">
@@ -119,10 +121,10 @@ const EmergencyPost = ({
         ></TouchableOpacity>
         <View className="space-y-2.5 flex-1">
           <Text className="text-[#4B5563] leading-[16px]">{message}</Text>
-          {imageUrl ? (
+          {typeof imageUrl === 'string' && imageUrl ? (
             <TouchableOpacity className="w-full rounded-md h-[198px]">
               <Image
-                source={imageUrl}
+                source={{ uri: imageUrl }}
                 className="w-full h-full rounded-md"
                 resizeMode="cover"
               />
@@ -142,7 +144,7 @@ const EmergencyGroup = () => {
       alertId: id as string,
     },
   });
-
+  const [isSending, setIsSending] = useState(false);
   const [chats, setChats] = useState<Chat[]>([]);
   useEffect(() => {
     if (chatMessages?.findChatsByAlertId) {
@@ -168,16 +170,21 @@ const EmergencyGroup = () => {
     if (subscriptionData) {
       // Check if the new message belongs to the current alert
       if (subscriptionData.chatCreated.alertId === id) {
-        // Update the chat state by appending the new message
-        setChats([...chats, subscriptionData.chatCreated as Chat]);
+        // Check if the message already exists in the chats
+        const messageExists = chats.some(chat => chat.id === subscriptionData.chatCreated.id);
 
-        // Scroll to the end of the list when a new message is added
-        flatListRef.current?.scrollToEnd({ animated: true });
+        if (!messageExists) {
+          // Update the chat state by appending the new message
+          setChats(prevChats => [...prevChats, subscriptionData.chatCreated as Chat]);
 
-        // Check if the message is from a different user
-        if (subscriptionData?.chatCreated?.user?.id !== userId) {
-          // Play a sound or vibrate
-          Vibration.vibrate(); // Vibrate the device
+          // Scroll to the end of the list when a new message is added
+          flatListRef.current?.scrollToEnd({ animated: true });
+
+          // Check if the message is from a different user
+          if (subscriptionData?.chatCreated?.user?.id !== userId) {
+            // Play a sound or vibrate
+            Vibration.vibrate(); // Vibrate the device
+          }
         }
       }
     }
@@ -187,6 +194,7 @@ const EmergencyGroup = () => {
   const flatListRef = useRef<FlatList>(null);
 
   const handleSendMessage = async () => {
+    setIsSending(true);
     await createChat({
       variables: {
         data: {
@@ -208,6 +216,7 @@ const EmergencyGroup = () => {
     setTimeout(() => {
       flatListRef?.current?.scrollToEnd({ animated: true });
     }, 100);
+    setIsSending(false);
   };
 
   const pickImageAsync = async () => {
@@ -227,7 +236,7 @@ const EmergencyGroup = () => {
     if (flatListRef.current) {
       setTimeout(() => {
         flatListRef?.current?.scrollToEnd({ animated: true });
-      }, 150);
+      }, 100);
     }
   }, [chats]);
 
@@ -249,15 +258,15 @@ const EmergencyGroup = () => {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === "ios" ? "height" : "height"}
       className="bg-white w-full h-full"
       style={{ flex: 1 }}
     >
-      <SafeAreaView className="flex-1" edges={["top", "bottom"]}>
+      <SafeAreaView className="flex-1">
         <FlatList
           ref={flatListRef}
           data={chats}
-          keyExtractor={(item) => item.id} 
+          keyExtractor={(item) => item.id}
           ListHeaderComponent={() => {
             return (
               <View>
@@ -343,7 +352,8 @@ const EmergencyGroup = () => {
               handleSendMessage(); // Call createChat with the message
             }
           }}
-          title="send"
+          disabled={isSending}
+          title="Send"
           textStyle="text-[#6B7280] text-center  text-sm"
           customStyle="bg-[#192655] border border-[#D1D5DB] w-[70px] bg-white"
         />

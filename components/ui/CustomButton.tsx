@@ -4,8 +4,9 @@ interface CustomButtonProps {
   title: string;
   onPress?: any;
   customStyle?: string;
-  isLoading?: Boolean;
+  isLoading?: boolean; // Changed to lowercase 'boolean'
   textStyle?: string;
+  disabled?: boolean; // Added disabled prop
 }
 
 const CustomButton = ({
@@ -14,11 +15,12 @@ const CustomButton = ({
   customStyle,
   textStyle,
   isLoading,
+  disabled, // Destructure disabled prop
 }: CustomButtonProps) => {
   return (
     <TouchableOpacity
-      onPress={isLoading ? null : onPress} // Disable onPress when loading
-      className={`rounded-xl min-h-[50px] justify-center items-center ${customStyle}`}
+      onPress={isLoading || disabled ? null : onPress} // Disable onPress when loading or disabled
+      className={`rounded-xl min-h-[50px] justify-center items-center ${customStyle} ${disabled ? 'opacity-50' : ''}`} // Add opacity for disabled state
     >
       {isLoading ? (
         <View className="flex-row items-center">
