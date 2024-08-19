@@ -1,14 +1,12 @@
-import { useListUserAlertsQuery } from "@/generated/graphql";
 import { router } from "expo-router";
 import React, { Dispatch, SetStateAction } from "react";
 import {
-  Alert,
+  Image,
   Modal,
   StyleSheet,
   Text,
-  View,
-  Image,
   TouchableOpacity,
+  View,
 } from "react-native";
 
 interface Props {
@@ -19,41 +17,44 @@ interface Props {
   direction: boolean;
   setDirection: Dispatch<SetStateAction<boolean>>;
   modalDetails: number;
+  name?: string;
+  address: string;
+  emergency: string;
+  alertData: {
+    id: string;
+    emergency: string;
+    latitude: number;
+    longitude: number;
+    address: string;
+    createdAt: string;
+    createdBy: string;
+  };
 }
 
 const EmergencyModal = ({
-  selectedEmergency,
   emergencyModal,
   setEmergencyModal,
   getDirection,
   direction,
   setDirection,
-  modalDetails,
+  name,
+  address,
+  emergency,
+  alertData,
 }: Props) => {
-  const {
-    data: listAlerts,
-    loading: alertLoading,
-    error,
-  } = useListUserAlertsQuery({
-    variables: {
-      where: { latitude: { equals: modalDetails } },
-    },
-  });
-
-  const emergency = listAlerts?.listAlerts[0];
-
+  console.log(emergencyModal)
   return (
+
     <View style={styles.centeredView}>
       <Modal
         animationType="slide"
         transparent={true}
         visible={emergencyModal}
         onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
           setEmergencyModal(!emergencyModal);
         }}
       >
-        <View style={styles.centeredView}>
+        <View style={{ flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.7)', justifyContent: 'center', alignItems: 'center' }}>
           <View style={styles.modalView} className="px-5">
             <View className="px-6 items-center">
               <Image
@@ -67,28 +68,37 @@ const EmergencyModal = ({
                   className="h-[24px] w-[24px]"
                   resizeMode="contain"
                 />
-                <Text className="text-white">
-                  {emergency?.emergency || "Robbery"}
-                </Text>
+                <Text className="text-white">{emergency || "Robbery"}</Text>
               </View>
               <View className="gap-y-1 items-center">
-                <Text className="text-base font-bold">Jane Kameroon</Text>
-                <Text>5km away</Text>
+                <Text className="text-base font-bold">{name}</Text>
+
                 <Text className="text-center text-sm text-[#6B7280] max-w-[200px]">
-                  {emergency?.address}
+                  {address}
                 </Text>
               </View>
 
               <View className="mt-4 flex-row gap-x-4 items-center">
                 <TouchableOpacity
                   onPress={() => {
-                    router.push("/emergency-group/1");
                     setEmergencyModal(false);
+                    router.push({
+                      pathname: `/emergency-group/[id]`,
+                      params: {
+                        id: alertData.id,
+                        emergency: alertData.emergency,
+                        latitude: alertData.latitude,
+                        longitude: alertData.longitude,
+                        address: alertData.address,
+                        createdAt: alertData.createdAt,
+                        userId: alertData.createdBy,
+                      },
+                    });
                   }}
                   activeOpacity={0.8}
                   className="bg-[#192655] border px-4 py-[10px] rounded-xl"
                 >
-                  <Text className="text-white">Join Group</Text>
+                  <Text className="text-white">View Chat</Text>
                 </TouchableOpacity>
                 {direction ? (
                   <TouchableOpacity
@@ -111,7 +121,10 @@ const EmergencyModal = ({
             </View>
             <TouchableOpacity
               activeOpacity={0.8}
-              onPress={() => setEmergencyModal(!emergencyModal)}
+              onPress={() => {
+                console.log("Close button pressed");
+                setEmergencyModal(!emergencyModal);
+              }}
               className="absolute top-3 right-3"
             >
               <Image

@@ -36,28 +36,50 @@ export const GetUserFullInfoQuery = gql`
   }
 `;
 
-export const GetAllAlerts = gql`
-  query listAlerts {
-    listAlerts {
+export const GetUserAlerts = gql`
+  query listUserAlerts($createdByOnly: Boolean) {
+    listAlerts(createdByOnly: $createdByOnly) {
       emergency
       latitude
       longitude
-      id
       address
+      id
+      createdAt
+      chats{
+        id
+        message
+        timestamp
+        userId
+      }
+    }
+  }
+`;
+
+export const GetUSerAssociatedAlertsForMap = gql`
+  query listAlertsByUserAssociation {
+    listAlertsByUserAssociation {
+      emergency
+      latitude
+      longitude
+      address
+      id
       createdAt
     }
   }
 `;
 
-export const GetUserAlerts = gql`
-  query listUserAlerts($where: AlertWhereInput) {
-    listAlerts(where: $where) {
-      emergency
-      latitude
-      longitude
-      address
-      id
-      createdAt
+export const GetSingleChat = gql`
+query GetChatsByAlertId($alertId: String!) {
+  findChatsByAlertId(alertId: $alertId) {
+    id
+    message
+    timestamp
+    imageUrl
+    user {
+      firstName
+      lastName
+      profilePhoto
     }
   }
-`;
+}
+    `

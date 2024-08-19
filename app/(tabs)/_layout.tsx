@@ -1,11 +1,12 @@
 import Loading from "@/components/Loading";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Ionicons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Href, router, Tabs } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
 import { Text, View } from "react-native";
+import * as SecureStore from 'expo-secure-store';
+
 
 interface TabIconProps {
   icon: keyof typeof Ionicons.glyphMap;
@@ -19,7 +20,7 @@ const TabIcon: React.FC<TabIconProps> = ({ icon, color, name, focused }) => {
 
   useEffect(() => {
     const fetchToken = async () => {
-      const token = await AsyncStorage.getItem("userToken");
+      const token = await SecureStore.getItemAsync("alarmixToken");
       if (!token) {
         router.replace("/(auth)/Login" as Href<string>);
       }
@@ -87,7 +88,7 @@ export default function TabLayout() {
                 color={color}
                 name="Notifications"
                 focused={focused}
-                // onPress={() => router.replace("/notifications")}
+              // onPress={() => router.replace("/notifications")}
               />
             ),
           }}
@@ -102,7 +103,7 @@ export default function TabLayout() {
                 color={color}
                 name="Menu"
                 focused={focused}
-                // onPress={() => router.replace("/(menu)")}
+              // onPress={() => router.replace("/(menu)")}
               />
             ),
           }}
