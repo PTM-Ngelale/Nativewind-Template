@@ -56,6 +56,13 @@ const notifications = () => {
     }
   }, [subscriptionData]);
 
+  const truncateText = (text: string, maxLength: number): string => {
+    if (text.length > maxLength) {
+      return text.substring(0, maxLength) + "...";
+    }
+    return text;
+  };
+
   return (
     <SafeAreaView className="h-full w-full bg-slate-100 ">
       <ScrollView>
@@ -131,7 +138,8 @@ const notifications = () => {
                       <View className="relative ml-4 w-[92%]">
                         <View className="flex-row w-[92%] justify-between">
                           <Text className="text-md font-extrabold">
-                            Emergency: {alert.emergency}
+                            <Text className="font-semibold">Alert:</Text>{" "}
+                            {truncateText(alert.emergency, 20)}
                           </Text>
                           <Text className="absolute right-0 text-xs">
                             {formatDistanceToNow(new Date(alert.createdAt), {
@@ -140,8 +148,9 @@ const notifications = () => {
                             }).replace("about ", "")}
                           </Text>
                         </View>
-                        <Text className="text-sm w-full break-words flex-shrink flex-wrap">
-                          Location: {alert.address}
+                        <Text className="text-sm w-full break-words flex-shrink max-w-[92%] flex-wrap line-clamp-2">
+                          <Text className="font-semibold">Location:</Text>{" "}
+                          {alert.address}
                         </Text>
                       </View>
                     </TouchableOpacity>
