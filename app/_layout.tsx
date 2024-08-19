@@ -14,7 +14,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import "react-native-reanimated";
 import Toast from "react-native-toast-message";
-import { JsStack } from "./layouts/js-stack";
+import { Slot } from "expo-router";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -23,7 +23,7 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loadingCache, setLoadingCache] = useState(true);
   const [fontsLoaded] = useFonts({
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    NunitoSans: require("../assets/fonts/nunto-sans.ttf"),
   });
   const [client, setClient] = useState<ApolloClient<any> | null>(null);
 
@@ -33,10 +33,13 @@ export default function RootLayout() {
       setClient(apolloClient);
 
       await persistCache({
-        cache: apolloClient.cache,
-        storage: AsyncStorage,
+        cache: apolloClient!.cache,
+        storage: {
+          getItem: AsyncStorage.getItem,
+          setItem: AsyncStorage.setItem,
+          removeItem: AsyncStorage.removeItem,
+        },
       });
-
       setLoadingCache(false);
     };
 
@@ -45,9 +48,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (!loadingCache && fontsLoaded) {
-      SplashScreen.hideAsync().catch((error) => {
-        console.error("Error hiding splash screen:", error);
-      });
+      SplashScreen.hideAsync();
     }
   }, [loadingCache, fontsLoaded]);
 
@@ -59,11 +60,8 @@ export default function RootLayout() {
     <ApolloProvider client={client}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <UserProvider>
-          <JsStack
-            screenOptions={{
-              headerShown: false,
-            }}
-          />
+          <Slot />
+
           <Toast />
         </UserProvider>
       </ThemeProvider>

@@ -6,6 +6,7 @@ import {
 import { ApolloError, useQuery } from "@apollo/client";
 import React, { Dispatch, SetStateAction } from "react";
 import {
+  Image,
   Modal,
   ScrollView,
   StyleSheet,
@@ -15,6 +16,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
+import CustomButton from "./ui/CustomButton";
 
 interface Props {
   emergencyModal: boolean;
@@ -23,6 +25,9 @@ interface Props {
   setSelectedEmergency: Dispatch<SetStateAction<string>>;
   reportModal: boolean;
   setReportModal: Dispatch<SetStateAction<boolean>>;
+  displayCurrentAddress: string;
+  setTotalNotified: Dispatch<SetStateAction<number>>;
+  setChatData: Dispatch<SetStateAction<any>>;
 }
 
 const ReportModal = ({
@@ -31,19 +36,24 @@ const ReportModal = ({
   setSelectedEmergency,
   reportModal,
   setReportModal,
+  displayCurrentAddress,
+  setTotalNotified,
+  setChatData
 }: Props) => {
-  const { data, loading: loadingUser, error } = useQuery(GetUserEmailDocument);
-  const { getCurrentLocation, initialRegion, deviceInfo } = useUser();
+  const { data, } = useQuery(GetUserEmailDocument);
+  const { getCurrentLocation, initialRegion } = useUser();
+
 
   const userData = data?.getCurrentUser;
 
-  console.log(userData?.id);
   const [createAlert, { loading }] = useCreateAlertMutation({
-    onCompleted: () => {
+    onCompleted: (data) => {
+      const alert = data.createAlert;
       setReportModal(false);
       setEmergencyModal(true);
-      setSelectedEmergency("");
-      Toast.show({ type: "success", text1: "Report Created" });
+      setTotalNotified(data.createAlert?.totalNotified || 0)
+      setChatData(data.createAlert?.alert)
+      Toast.show({ type: "success", text1: "Report has been escalated!" });
     },
 
     onError: (error: ApolloError) => {
@@ -101,6 +111,7 @@ const ReportModal = ({
               emergency: selectedEmergency,
               latitude: initialRegion.latitude,
               longitude: initialRegion.longitude,
+              address: displayCurrentAddress,
               creator: {
                 connect: {
                   id: userData.id,
@@ -133,7 +144,17 @@ const ReportModal = ({
           <View className="mt-10">
             <ScrollView className="h-full w-full bg-white">
               <View className="w-full px-6">
-                <View className="mt-10">
+                <View className="mt-4">
+                  <TouchableOpacity
+                    onPress={() => setReportModal(!reportModal)}
+                    className="w-full items-end"
+                  >
+                    <Image
+                      source={require("../assets/images/Close.png")}
+                      className="w-7 h-7"
+                      resizeMode="contain"
+                    />
+                  </TouchableOpacity>
                   <Text className="text-[#192655] font-bold text-base">
                     What Kind of Emergency?
                   </Text>
@@ -148,28 +169,35 @@ const ReportModal = ({
                       onPress={() => setSelectedEmergency(type.name)}
                       activeOpacity={0.8}
                       key={type.id}
-                      className={`border border-[#19265580] p-4 rounded-lg ${
-                        selectedEmergency === type.name && "border-[#0090FA]"
-                      }`}
+                      className={`border border-[#19265580] p-4 rounded-lg ${selectedEmergency === type.name && "border-[#0090FA]"
+                        }`}
                     >
                       <Text
-                        className={`text-[#6B7280] text-sm ${
-                          selectedEmergency === type.name &&
+                        className={`text-[#6B7280] text-sm ${selectedEmergency === type.name &&
                           "text-[#0090FA] font-bold"
-                        }`}
+                          }`}
                       >
                         {type.name}
                       </Text>
                     </TouchableOpacity>
                   ))}
                 </View>
-                <TouchableOpacity
+                <View className="mt-[15%]">
+                  <CustomButton
+                    title="Submit"
+                    textStyle="text-white"
+                    customStyle="bg-[#192655]"
+                    onPress={handleClick}
+                    isLoading={loading}
+                  />
+                </View>
+                {/* <TouchableOpacity
                   onPress={handleClick}
                   activeOpacity={0.8}
                   className="mt-[15%] w-full items-center border bg-[#192655] py-4 rounded-xl "
                 >
                   <Text className="text-white text-sm">Submit</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
             </ScrollView>
           </View>

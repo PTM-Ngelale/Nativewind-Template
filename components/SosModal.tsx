@@ -1,4 +1,4 @@
-import { useEmergency } from "@/context/EmergencyContext";
+import { router } from "expo-router";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import {
   Alert,
@@ -14,9 +14,20 @@ import {
 interface Props {
   sosModal: boolean;
   setSosModal: Dispatch<SetStateAction<boolean>>;
+  totalNotified: number;
+  type: string;
+  alertData: {
+    id: string;
+    emergency: string;
+    latitude: number;
+    longitude: number;
+    address: string;
+    createdAt: string;
+    createdBy: string;
+  };
 }
 
-const SosModal = ({ sosModal, setSosModal }: Props) => {
+const SosModal = ({ sosModal, setSosModal, totalNotified, type, alertData }: Props) => {
   return (
     <View style={styles.centeredView}>
       <Modal
@@ -41,19 +52,34 @@ const SosModal = ({ sosModal, setSosModal }: Props) => {
                   className="h-[24px] w-[24px]"
                   resizeMode="contain"
                 />
-                <Text className="text-white">{"SOS"}</Text>
+                <Text className="text-white">{type}</Text>
               </View>
               <View className="gap-y-1 items-center">
                 <Text className="text-base font-bold">Emergency Escalated</Text>
-                <Text>20+ People Notified</Text>
+                <Text>{totalNotified} People Notified</Text>
               </View>
 
               <View className="mt-4 items-center">
                 <TouchableOpacity
+                  onPress={() => {
+                    setSosModal(false); // Close the modal
+                    router.push({
+                      pathname: `/emergency-group/[id]`,
+                      params: {
+                        id: alertData.id,
+                        emergency: alertData.emergency,
+                        latitude: alertData.latitude,
+                        longitude: alertData.longitude,
+                        address: alertData.address,
+                        createdAt: alertData.createdAt,
+                        userId: alertData.createdBy,
+                      },
+                    });
+                  }}
                   activeOpacity={0.8}
                   className="bg-[#192655] border px-4 py-[10px] rounded-xl"
                 >
-                  <Text className="text-white">Join Group</Text>
+                  <Text className="text-white">View Chat</Text>
                 </TouchableOpacity>
               </View>
             </View>

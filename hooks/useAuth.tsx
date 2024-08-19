@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SecureStore from 'expo-secure-store';
 
 interface AuthState {
   isLoading: boolean;
@@ -13,7 +13,7 @@ const useAuth = (): AuthState => {
   useEffect(() => {
     const checkToken = async () => {
       try {
-        const token = await AsyncStorage.getItem("userToken");
+        const token = await SecureStore.getItemAsync("alarmixToken");
         setUserToken(token);
       } catch (e) {
         console.error(e);

@@ -1,13 +1,12 @@
 import { router } from "expo-router";
 import React, { Dispatch, SetStateAction } from "react";
 import {
-  Alert,
+  Image,
   Modal,
   StyleSheet,
   Text,
-  View,
-  Image,
   TouchableOpacity,
+  View,
 } from "react-native";
 
 interface Props {
@@ -15,16 +14,34 @@ interface Props {
   getDirection: () => void;
   emergencyModal: boolean;
   setEmergencyModal: Dispatch<SetStateAction<boolean>>;
+  direction: boolean;
+  setDirection: Dispatch<SetStateAction<boolean>>;
+  modalDetails: number;
+  name?: string;
+  address: string;
+  emergency: string;
+  alertData: {
+    id: string;
+    emergency: string;
+    latitude: number;
+    longitude: number;
+    address: string;
+    createdAt: string;
+    createdBy: string;
+  };
 }
 
 const EmergencyModal = ({
-  selectedEmergency,
   emergencyModal,
   setEmergencyModal,
   getDirection,
+  direction,
+  setDirection,
+  name,
+  address,
+  emergency,
+  alertData,
 }: Props) => {
-  const onClick = () => {};
-
   return (
     <View style={styles.centeredView}>
       <Modal
@@ -32,7 +49,6 @@ const EmergencyModal = ({
         transparent={true}
         visible={emergencyModal}
         onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
           setEmergencyModal(!emergencyModal);
         }}
       >
@@ -50,36 +66,55 @@ const EmergencyModal = ({
                   className="h-[24px] w-[24px]"
                   resizeMode="contain"
                 />
-                <Text className="text-white">
-                  {selectedEmergency || "Robbery"}
-                </Text>
+                <Text className="text-white">{emergency || "Robbery"}</Text>
               </View>
               <View className="gap-y-1 items-center">
-                <Text className="text-base font-bold">Jane Kameroon</Text>
-                <Text>5km away</Text>
+                <Text className="text-base font-bold">{name}</Text>
+
                 <Text className="text-center text-sm text-[#6B7280] max-w-[200px]">
-                  4 Baduchm, Off Nvigue Close, Woji, Port Harcourt.
+                  {address}
                 </Text>
               </View>
 
               <View className="mt-4 flex-row gap-x-4 items-center">
                 <TouchableOpacity
                   onPress={() => {
-                    router.push("/emergency-group/1");
                     setEmergencyModal(false);
+                    router.push({
+                      pathname: `/emergency-group/[id]`,
+                      params: {
+                        id: alertData.id,
+                        emergency: alertData.emergency,
+                        latitude: alertData.latitude,
+                        longitude: alertData.longitude,
+                        address: alertData.address,
+                        createdAt: alertData.createdAt,
+                        userId: alertData.createdBy,
+                      },
+                    });
                   }}
                   activeOpacity={0.8}
                   className="bg-[#192655] border px-4 py-[10px] rounded-xl"
                 >
-                  <Text className="text-white">Join Group</Text>
+                  <Text className="text-white">View Chat</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  onPress={getDirection}
-                  className="border border-[#192655] px-4 py-[10px] rounded-xl"
-                >
-                  <Text>Get Directions</Text>
-                </TouchableOpacity>
+                {direction ? (
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    onPress={() => setDirection(false)}
+                    className="border border-[#192655] px-4 py-[10px] rounded-xl"
+                  >
+                    <Text>No Direction</Text>
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    onPress={getDirection}
+                    className="border border-[#192655] px-4 py-[10px] rounded-xl"
+                  >
+                    <Text>Get Direction</Text>
+                  </TouchableOpacity>
+                )}
               </View>
             </View>
             <TouchableOpacity

@@ -1,6 +1,6 @@
 module.exports = {
   overwrite: true,
-  schema: "https://alarm-saas-backend-y2v2v.ondigitalocean.app/graphql",
+  schema: "https://5ed1-102-90-44-80.ngrok-free.app/graphql",
   documents: ["./graphql/**/*.ts"],
   generates: {
     "generated/graphql.tsx": {

@@ -83,13 +83,17 @@ const UserProvider = (props: { children: ReactNode }): ReactElement => {
 
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
-        console.log(notification);
+        // Access the badge count from the notification object
+        const badgeCount = notification.request.content.badge;
+        // Set the badge count
+        if (badgeCount) {
+          // edit
+          Notifications.setBadgeCountAsync(badgeCount);
+        } // edit
       });
 
     responseListener.current =
-      Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log(response);
-      });
+      Notifications.addNotificationResponseReceivedListener((response) => {});
 
     return () => {
       notificationListener.current &&
@@ -164,14 +168,8 @@ const UserProvider = (props: { children: ReactNode }): ReactElement => {
       });
 
       if (response.length > 0) {
-        const { name, region, country } = response[0];
-        const address = `${name} ${region} ${country}`;
-        setDisplayCurrentAddress((prevAddress) => {
-          if (prevAddress === address) {
-            return prevAddress;
-          }
-          return address;
-        });
+        const address = response[0].formattedAddress;
+        setDisplayCurrentAddress(address as string);
       }
     }
   };
@@ -224,7 +222,6 @@ const UserProvider = (props: { children: ReactNode }): ReactElement => {
             projectId,
           })
         ).data;
-        console.log(pushTokenString);
         return pushTokenString;
       } catch (e: unknown) {
         handleRegistrationError(`${e}`);
@@ -247,7 +244,6 @@ const UserProvider = (props: { children: ReactNode }): ReactElement => {
       deviceModel,
     });
   };
-
 
   return (
     <UserContext.Provider

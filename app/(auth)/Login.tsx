@@ -3,7 +3,6 @@ import CustomTextInput from "@/components/ui/CustomInput";
 import { useUser } from "@/context/userContext";
 import { useLoginUserMutation } from "@/generated/graphql";
 import { ApolloError } from "@apollo/client";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Href, useRouter } from "expo-router";
 import { useState } from "react";
 import {
@@ -16,10 +15,15 @@ import {
   View,
 } from "react-native";
 import Toast from "react-native-toast-message";
+import * as SecureStore from "expo-secure-store";
 
 const Login = () => {
   const router = useRouter();
   const { expoPushToken, deviceInfo } = useUser();
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
   const [loginUser, { loading }] = useLoginUserMutation({
     onCompleted: async (data) => {
       if (data.loginUser.token) {
@@ -33,13 +37,18 @@ const Login = () => {
         });
 
         // Store token and expiration time in AsyncStorage
-        await AsyncStorage.setItem("userToken", tokenData);
+        await SecureStore.setItemAsync("alarmixToken", tokenData);
 
         router.push("/(tabs)" as Href<string>);
+      } else {
+        Toast.show({ type: "success", text1: "New device detected" });
+        router.push({
+          pathname: "/(auth)/Validation",
+          params: { email: form.email },
+        } as Href<string>);
       }
     },
     onError: (error: ApolloError) => {
-      console.log(error.message);
       Toast.show({ type: "error", text1: error.message });
     },
   });
@@ -47,11 +56,6 @@ const Login = () => {
   const handleBack = () => {
     router.back();
   };
-
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-  });
 
   const validateForm = () => {
     const { email, password } = form;

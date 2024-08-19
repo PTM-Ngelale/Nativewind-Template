@@ -10,14 +10,16 @@ const OnBoarding = () => {
   const { checkIfLocationEnabled } = useUser();
   const { isLoading, userToken } = useAuth();
 
-  useEffect(() => {
+  useEffect(
+    () => {
       if (userToken) {
         router.push("/(tabs)");
       } else {
         checkIfLocationEnabled();
       }
-    
-  }, [isLoading, userToken, checkIfLocationEnabled]);
+    },
+    [isLoading, userToken, checkIfLocationEnabled]
+  );
 
   if (isLoading) {
     return <Loading />;

@@ -1,11 +1,11 @@
 import Loading from "@/components/Loading";
-import { showToast } from "@/components/ToastComponent";
 import BackArrow from "@/components/ui/BackArrow";
 import CustomButton from "@/components/ui/CustomButton";
 import CustomTextInput from "@/components/ui/CustomInput";
 import ImageUpload from "@/components/ui/ImageUpload";
 import { useUpdateUserMutation } from "@/generated/graphql";
 import { GetUserBasicInfoQuery } from "@/graphql/query";
+import useAuth from "@/hooks/useAuth";
 import { ApolloError, useQuery } from "@apollo/client";
 import axios from "axios";
 import { ImagePickerAsset, ImagePickerResult } from "expo-image-picker";
@@ -18,15 +18,18 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
+
 const Profile: React.FC = () => {
   const { data, loading, error } = useQuery(GetUserBasicInfoQuery);
+  const { userToken } = useAuth();
   const [updateUser, { loading: userUpdating, error: userUpdateError }] =
     useUpdateUserMutation({
       onCompleted: () => {
-        showToast("success", "Profile updated successfully");
+        console.log("success", "Profile updated successfully");
       },
       onError: (err: ApolloError) => {
-        showToast("error", err.message || "Error updating profile");
+        console.log("error", err.message || "Error updating profile");
       },
     });
   const {
@@ -77,24 +80,25 @@ const Profile: React.FC = () => {
         type: asset.type,
         name: asset.fileName,
       } as any); // Type assertion to satisfy FormData.append
+
+      console.log(asset);
+
       const response = await axios.post(
-        "https://alarm-saas-backend-y2v2v.ondigitalocean.app/upload",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        "https://a9ea-102-90-43-140.ngrok-free.app/upload",
+        formData
       );
+
       return response.data.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
         // If the error is an AxiosError, log the response error
-        showToast("error", error.response?.data?.message || error.message);
-        console.log("error", error.response?.data?.message || error.message);
+        Toast.show({
+          type: "error",
+          text1: error.response?.data?.message || error.message,
+        });
       } else {
         // For non-Axios errors, log the error message
-        showToast("error", (error as Error).message);
+        console.log("error", (error as Error).message);
       }
       throw error;
     } finally {
@@ -120,13 +124,14 @@ const Profile: React.FC = () => {
           },
         },
       });
-    } catch (err) {
-      showToast("error", "Error updating profile", err as any);
+    } catch (err: any) {
+      console.log("error", "Error updating profile", err);
     }
   };
   if (loading) return <Loading />;
   if (error || userUpdateError) {
-    showToast("error", error?.message || "An unknown error occurred");
+    console.log(error?.message);
+    console.log("error", error?.message || "An unknown error occurred");
   }
   return (
     <KeyboardAvoidingView

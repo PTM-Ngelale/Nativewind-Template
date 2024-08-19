@@ -20,7 +20,6 @@ const SignUp = () => {
   const router = useRouter();
   const [registerUser, { loading }] = useCreateUserMutation({
     onCompleted: async (data) => {
-      console.log(data);
       if (data.registerUser) {
         Toast.show({
           type: "success",

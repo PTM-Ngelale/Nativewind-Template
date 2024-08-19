@@ -8,24 +8,18 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/images/logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.expectoo.alarmix",
-      "config": {
-        "googleMapsApiKey": "AIzaSyAarxyzQsNQtOzS0rSr51QGbDSkxJkcwzk"
-      }
+      "bundleIdentifier": "com.expectoo.alarmix"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-       "config": {
-        "googleMapsApiKey": "AIzaSyAarxyzQsNQtOzS0rSr51QGbDSkxJkcwzk"
       },
       "permissions": [
         "android.permission.ACCESS_COARSE_LOCATION",
@@ -45,7 +39,8 @@
         {
           "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true
