@@ -155,7 +155,7 @@ const EmergencyGroup = () => {
   }, [chatMessages]);
 
   const [createChat] = useCreateChatMutation({
-    onCompleted: async () => {},
+    onCompleted: async () => { },
 
     onError: (error: ApolloError) => {
       console.error("Error creating chat", error);
@@ -170,6 +170,9 @@ const EmergencyGroup = () => {
       if (subscriptionData.chatCreated.alertId === id) {
         // Update the chat state by appending the new message
         setChats([...chats, subscriptionData.chatCreated as Chat]);
+
+        // Scroll to the end of the list when a new message is added
+        flatListRef.current?.scrollToEnd({ animated: true });
 
         // Check if the message is from a different user
         if (subscriptionData?.chatCreated?.user?.id !== userId) {
@@ -254,6 +257,7 @@ const EmergencyGroup = () => {
         <FlatList
           ref={flatListRef}
           data={chats}
+          keyExtractor={(item) => item.id} 
           ListHeaderComponent={() => {
             return (
               <View>

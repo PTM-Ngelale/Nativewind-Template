@@ -1,10 +1,8 @@
 import SplashScreenView from "@/components/splashscreen";
 import { UserProvider } from "@/context/userContext";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { useApolloStore } from "@/store/apolloStore";
-import { createApolloClient } from "@/utils/authUtil";
 import { client } from "@/utils/client";
-import { ApolloClient, ApolloProvider } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client";
 import {
   DarkTheme,
   DefaultTheme,
@@ -16,18 +14,6 @@ import * as SplashScreen from "expo-splash-screen";
 import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
-import { TextEncoder, TextDecoder } from "text-encoding";
-import { polyfill as polyfillEncoding } from "react-native-polyfill-globals/src/encoding";
-import { polyfill as polyfillReadableStream } from "react-native-polyfill-globals/src/readable-stream";
-import { polyfill as polyfillFetch } from "react-native-polyfill-globals/src/fetch";
-
-polyfillReadableStream();
-polyfillFetch();
-
-polyfillEncoding(() => ({
-  TextEncoder,
-  TextDecoder,
-}));
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();

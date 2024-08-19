@@ -131,7 +131,7 @@ const UserProvider = (props: { children: ReactNode }): ReactElement => {
     if (status !== "granted") {
       Alert.alert(
         "Permission denied",
-        "Allow the app to use the location services",
+        "Please allow the app to use the location services",
         [
           {
             text: "Cancel",
