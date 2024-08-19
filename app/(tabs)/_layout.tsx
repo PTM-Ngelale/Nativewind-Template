@@ -31,8 +31,6 @@ const TabIcon: React.FC<TabIconProps> = ({ icon, color, name, focused }) => {
 
   if (isLoading) return <Loading />;
 
-
-
   return (
     <View className="items-center justify-center gap-2">
       <View

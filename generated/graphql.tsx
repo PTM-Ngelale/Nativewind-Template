@@ -6446,7 +6446,7 @@ export type CreateChatMutationVariables = Exact<{
 export type CreateChatMutation = { __typename?: 'Mutation', createChat?: { __typename?: 'Chat', id: string, message: string, timestamp: any, imageUrl?: string | null, user?: { __typename?: 'User', firstName?: string | null, lastName?: string | null, profilePhoto?: string | null } | null } | null };
 
 export type UploadFileMutationVariables = Exact<{
-  file: Scalars['Upload']['input'];
+  data: Scalars['Upload']['input'];
 }>;
 
 
@@ -6808,8 +6808,8 @@ export type CreateChatMutationHookResult = ReturnType<typeof useCreateChatMutati
 export type CreateChatMutationResult = Apollo.MutationResult<CreateChatMutation>;
 export type CreateChatMutationOptions = Apollo.BaseMutationOptions<CreateChatMutation, CreateChatMutationVariables>;
 export const UploadFileDocument = gql`
-    mutation UploadFile($file: Upload!) {
-  uploadFile(file: $file)
+    mutation uploadFile($data: Upload!) {
+  uploadFile(file: $data)
 }
     `;
 export type UploadFileMutationFn = Apollo.MutationFunction<UploadFileMutation, UploadFileMutationVariables>;
@@ -6827,7 +6827,7 @@ export type UploadFileMutationFn = Apollo.MutationFunction<UploadFileMutation, U
  * @example
  * const [uploadFileMutation, { data, loading, error }] = useUploadFileMutation({
  *   variables: {
- *      file: // value for 'file'
+ *      data: // value for 'data'
  *   },
  * });
  */

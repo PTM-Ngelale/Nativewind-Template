@@ -3,6 +3,7 @@ import CustomTextInput from "@/components/ui/CustomInput";
 import {
   useChatCreatedSubscription,
   useCreateChatMutation,
+  useUploadFileMutation,
   useGetChatsByAlertIdQuery,
 } from "@/generated/graphql";
 import { ApolloError } from "@apollo/client";
@@ -12,6 +13,7 @@ import {
   formatDistanceToNow,
 } from "date-fns";
 import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -27,6 +29,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 
 type Chat = {
   __typename?: "Chat";
@@ -80,8 +83,6 @@ const EmergencyPost = ({
     return `${firstName?.charAt(0) || ""}${lastName?.charAt(0) || ""}`;
   };
 
-  console.log(imageUrl)
-
   return (
     <View className=" flex flex-col  bg-[#EAEAEA]">
       <View className="flex flex-row  justify-between px-4 pt-4 space-x-2 items-center w-full">
@@ -121,7 +122,7 @@ const EmergencyPost = ({
         ></TouchableOpacity>
         <View className="space-y-2.5 flex-1">
           <Text className="text-[#4B5563] leading-[16px]">{message}</Text>
-          {typeof imageUrl === 'string' && imageUrl ? (
+          {typeof imageUrl === "string" && imageUrl ? (
             <TouchableOpacity className="w-full rounded-md h-[198px]">
               <Image
                 source={{ uri: imageUrl }}
@@ -139,6 +140,9 @@ const EmergencyGroup = () => {
   const params = useLocalSearchParams();
   const { id, address, emergency, userId } = params;
   const [message, setMessage] = useState("");
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<null | string>(null);
+  const [selectedImageFile, setSelectedImageFile] = useState<null | File>(null);
   const { data: chatMessages } = useGetChatsByAlertIdQuery({
     variables: {
       alertId: id as string,
@@ -146,6 +150,7 @@ const EmergencyGroup = () => {
   });
   const [isSending, setIsSending] = useState(false);
   const [chats, setChats] = useState<Chat[]>([]);
+
   useEffect(() => {
     if (chatMessages?.findChatsByAlertId) {
       setChats(
@@ -157,10 +162,11 @@ const EmergencyGroup = () => {
   }, [chatMessages]);
 
   const [createChat] = useCreateChatMutation({
-    onCompleted: async () => { },
+    onCompleted: async () => {},
 
     onError: (error: ApolloError) => {
-      console.error("Error creating chat", error);
+      Toast.show({ type: "error", text1: error.message });
+      console.log(error.message);
     },
   });
 
@@ -171,11 +177,16 @@ const EmergencyGroup = () => {
       // Check if the new message belongs to the current alert
       if (subscriptionData.chatCreated.alertId === id) {
         // Check if the message already exists in the chats
-        const messageExists = chats.some(chat => chat.id === subscriptionData.chatCreated.id);
+        const messageExists = chats.some(
+          (chat) => chat.id === subscriptionData.chatCreated.id
+        );
 
         if (!messageExists) {
           // Update the chat state by appending the new message
-          setChats(prevChats => [...prevChats, subscriptionData.chatCreated as Chat]);
+          setChats((prevChats) => [
+            ...prevChats,
+            subscriptionData.chatCreated as Chat,
+          ]);
 
           // Scroll to the end of the list when a new message is added
           flatListRef.current?.scrollToEnd({ animated: true });
@@ -190,15 +201,40 @@ const EmergencyGroup = () => {
     }
   }, [subscriptionData]);
 
-  const [selectedImage, setSelectedImage] = useState<null | string>(null);
   const flatListRef = useRef<FlatList>(null);
+
+  const [handleUploadFile, { loading: uploadLoading }] = useUploadFileMutation({
+    onCompleted: (data) => {
+      setImageUrl(data.uploadFile);
+      console.log(data.uploadFile);
+      // console.log(imageUrl);
+    },
+    onError: (error) => {
+      Toast.show({ type: "error", text1: error.message });
+      console.log(error.message);
+    },
+    context: {
+      headers: {
+        "x-apollo-operation-name": "UploadFile",
+      },
+    },
+  });
 
   const handleSendMessage = async () => {
     setIsSending(true);
+    if (selectedImageFile) {
+      await handleUploadFile({
+        variables: {
+          data: selectedImageFile,
+        },
+      });
+    }
+
     await createChat({
       variables: {
         data: {
           message: message,
+          imageUrl: imageUrl,
           alert: {
             connect: {
               id: id as string,
@@ -212,7 +248,11 @@ const EmergencyGroup = () => {
         },
       },
     });
-    setMessage(""); // Clear the input field after sending the message
+
+    setMessage("");
+    setImageUrl(null);
+    setSelectedImageFile(null);
+    setSelectedImage(null);
     setTimeout(() => {
       flatListRef?.current?.scrollToEnd({ animated: true });
     }, 100);
@@ -221,12 +261,24 @@ const EmergencyGroup = () => {
 
   const pickImageAsync = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
       quality: 1,
     });
 
     if (!result.canceled) {
-      setSelectedImage(result.assets[0].uri);
+      const asset = result.assets[0];
+      const fileUri = asset.uri;
+      const response = await fetch(fileUri);
+      const blob = await response.blob();
+      const file = new File([blob], asset.fileName as string, {
+        type: asset.type,
+        lastModified: Date.now(),
+      });
+      setSelectedImageFile({
+        name: "test.jpg",
+        type: "image/jpeg",
+        lastModified: Date.now(),
+      } as File);
+      setSelectedImage(fileUri);
     } else {
       alert("You did not select any image.");
     }
@@ -240,7 +292,6 @@ const EmergencyGroup = () => {
     }
   }, [chats]);
 
-  // Scroll to bottom when the keyboard opens
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",

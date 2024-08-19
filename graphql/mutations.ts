@@ -114,9 +114,8 @@ export const CREATE_CHAT_MUTATIon = gql`
   }
 `;
 
-
-export const UPLOAD_FILE = gql`
-  mutation UploadFile($file: Upload!) {
-    uploadFile(file: $file)
+export const UPDATE_SINGLE_FILES = gql`
+  mutation uploadFile($data: Upload!) {
+    uploadFile(file: $data)
   }
 `;
