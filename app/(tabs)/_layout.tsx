@@ -1,37 +1,115 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
+import Loading from "@/components/Loading";
+import { TabBarIcon } from "@/components/navigation/TabBarIcon";
+import { Ionicons } from "@expo/vector-icons";
+import { Href, router, Tabs } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import React, { useEffect, useState } from "react";
+import { Text, View } from "react-native";
+import * as SecureStore from 'expo-secure-store';
 
-import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
+interface TabIconProps {
+  icon: keyof typeof Ionicons.glyphMap;
+  color: string;
+  name: string;
+  focused: boolean;
+}
+
+const TabIcon: React.FC<TabIconProps> = ({ icon, color, name, focused }) => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      const token = await SecureStore.getItemAsync("alarmixToken");
+      if (!token) {
+        router.replace("/(auth)/Login" as Href<string>);
+      }
+      setIsLoading(false);
+    };
+    fetchToken();
+  }, []);
+
+  if (isLoading) return <Loading />;
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
-          ),
-        }}
+    <View className="items-center justify-center gap-2">
+      <View
+        className={`${focused ? "" : "opacity-0"} w-[36px] bg-[#0090FA] h-1`}
       />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
-          ),
+      <TabBarIcon name={icon} color={color} />
+      <Text
+        style={{ color: color }}
+        className={`${focused ? "font-bold" : "font-normal"} text-xs`}
+      >
+        {name}
+      </Text>
+    </View>
+  );
+};
+
+export default function TabLayout() {
+  return (
+    <>
+      <Tabs
+        screenOptions={{
+          tabBarActiveTintColor: "#FFFFFF",
+          tabBarInactiveTintColor: "#BDBDBD",
+          headerShown: false,
+          tabBarShowLabel: false,
+          tabBarStyle: {
+            backgroundColor: "#192655",
+            height: 100,
+            paddingVertical: 10,
+          },
         }}
-      />
-    </Tabs>
+      >
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: "Home",
+            tabBarIcon: ({ color, focused }) => (
+              <TabIcon
+                icon={"map"}
+                color={color}
+                name="Home"
+                focused={focused}
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="notifications"
+          options={{
+            title: "Notifications",
+            headerShown: true,
+            tabBarIcon: ({ color, focused }) => (
+              <TabIcon
+                icon={"notifications"}
+                color={color}
+                name="Notifications"
+                focused={focused}
+              // onPress={() => router.replace("/notifications")}
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="(menu)"
+          options={{
+            title: "Menu",
+            tabBarIcon: ({ color, focused }) => (
+              <TabIcon
+                icon={"menu"}
+                color={color}
+                name="Menu"
+                focused={focused}
+              // onPress={() => router.replace("/(menu)")}
+              />
+            ),
+          }}
+        />
+      </Tabs>
+      <StatusBar backgroundColor="#FFFFFF" style="light" />
+    </>
   );
 }
